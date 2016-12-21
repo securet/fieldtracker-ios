@@ -1,0 +1,843 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
+		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
+		7FFB54721E092EBC00A930C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54711E092EBC00A930C7 /* main.m */; };
+		7FFB54751E092EBC00A930C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54741E092EBC00A930C7 /* AppDelegate.m */; };
+		7FFB54781E092EBC00A930C7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54771E092EBC00A930C7 /* ViewController.m */; };
+		7FFB547B1E092EBC00A930C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB54791E092EBC00A930C7 /* Main.storyboard */; };
+		7FFB547D1E092EBC00A930C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB547C1E092EBC00A930C7 /* Assets.xcassets */; };
+		7FFB54801E092EBC00A930C7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB547E1E092EBC00A930C7 /* LaunchScreen.storyboard */; };
+		7FFB548B1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB548A1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m */; };
+		7FFB54961E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */; };
+		7FFB54A51E092F7700A930C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB54A41E092F7700A930C7 /* Images.xcassets */; };
+		7FFB54A91E09338200A930C7 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54A81E09338200A930C7 /* KeyboardManager.framework */; };
+		7FFB54CB1E0933B400A930C7 /* IQNSArray+Sort.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54AD1E0933B400A930C7 /* IQNSArray+Sort.m */; };
+		7FFB54CC1E0933B400A930C7 /* IQUIView+Hierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54AF1E0933B400A930C7 /* IQUIView+Hierarchy.m */; };
+		7FFB54CD1E0933B400A930C7 /* IQUIWindow+Hierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54B11E0933B400A930C7 /* IQUIWindow+Hierarchy.m */; };
+		7FFB54CE1E0933B400A930C7 /* IQKeyboardManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54B61E0933B400A930C7 /* IQKeyboardManager.m */; };
+		7FFB54CF1E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54B81E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m */; };
+		7FFB54D01E0933B400A930C7 /* IQSegmentedNextPrevious.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54BB1E0933B400A930C7 /* IQSegmentedNextPrevious.m */; };
+		7FFB54D11E0933B400A930C7 /* IQTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54BE1E0933B400A930C7 /* IQTextView.m */; };
+		7FFB54D21E0933B400A930C7 /* IQBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54C11E0933B400A930C7 /* IQBarButtonItem.m */; };
+		7FFB54D31E0933B400A930C7 /* IQTitleBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54C31E0933B400A930C7 /* IQTitleBarButtonItem.m */; };
+		7FFB54D41E0933B400A930C7 /* IQToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54C51E0933B400A930C7 /* IQToolbar.m */; };
+		7FFB54D51E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54C71E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m */; };
+		7FFB54D61E0933B400A930C7 /* IQKeyboardManager.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB54CA1E0933B400A930C7 /* IQKeyboardManager.bundle */; };
+		7FFB54DA1E0938FB00A930C7 /* MKHomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54D91E0938FB00A930C7 /* MKHomeVC.m */; };
+		7FFB54DF1E093C1200A930C7 /* MKHistoryVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54DE1E093C1200A930C7 /* MKHistoryVC.m */; };
+		7FFB54E31E09427200A930C7 /* MKMoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54E21E09427200A930C7 /* MKMoreVC.m */; };
+		7FFB54E61E09520C00A930C7 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54E51E09520C00A930C7 /* MapKit.framework */; };
+		7FFB54EA1E0963E300A930C7 /* MKHistoryCustomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54E91E0963E300A930C7 /* MKHistoryCustomCell.m */; };
+		A15D87B1546E16BC35F4D318 /* libPods-OppoAttendanceTracker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26756394BBA37D07ABBDEE22 /* libPods-OppoAttendanceTracker.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7FFB54871E092EBC00A930C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7FFB54651E092EBC00A930C7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7FFB546C1E092EBC00A930C7;
+			remoteInfo = OppoAttendanceTracker;
+		};
+		7FFB54921E092EBC00A930C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7FFB54651E092EBC00A930C7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7FFB546C1E092EBC00A930C7;
+			remoteInfo = OppoAttendanceTracker;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		26756394BBA37D07ABBDEE22 /* libPods-OppoAttendanceTracker.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OppoAttendanceTracker.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.release.xcconfig"; sourceTree = "<group>"; };
+		489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.debug.xcconfig"; sourceTree = "<group>"; };
+		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OppoAttendanceTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FFB54711E092EBC00A930C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		7FFB54731E092EBC00A930C7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		7FFB54741E092EBC00A930C7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		7FFB54761E092EBC00A930C7 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		7FFB54771E092EBC00A930C7 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		7FFB547A1E092EBC00A930C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		7FFB547C1E092EBC00A930C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7FFB547F1E092EBC00A930C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		7FFB54811E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7FFB54861E092EBC00A930C7 /* OppoAttendanceTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OppoAttendanceTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FFB548A1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OppoAttendanceTrackerTests.m; sourceTree = "<group>"; };
+		7FFB548C1E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7FFB54911E092EBC00A930C7 /* OppoAttendanceTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OppoAttendanceTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OppoAttendanceTrackerUITests.m; sourceTree = "<group>"; };
+		7FFB54971E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7FFB54A41E092F7700A930C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		7FFB54A81E09338200A930C7 /* KeyboardManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KeyboardManager.framework; sourceTree = "<group>"; };
+		7FFB54AC1E0933B400A930C7 /* IQNSArray+Sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQNSArray+Sort.h"; sourceTree = "<group>"; };
+		7FFB54AD1E0933B400A930C7 /* IQNSArray+Sort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQNSArray+Sort.m"; sourceTree = "<group>"; };
+		7FFB54AE1E0933B400A930C7 /* IQUIView+Hierarchy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQUIView+Hierarchy.h"; sourceTree = "<group>"; };
+		7FFB54AF1E0933B400A930C7 /* IQUIView+Hierarchy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQUIView+Hierarchy.m"; sourceTree = "<group>"; };
+		7FFB54B01E0933B400A930C7 /* IQUIWindow+Hierarchy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQUIWindow+Hierarchy.h"; sourceTree = "<group>"; };
+		7FFB54B11E0933B400A930C7 /* IQUIWindow+Hierarchy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQUIWindow+Hierarchy.m"; sourceTree = "<group>"; };
+		7FFB54B31E0933B400A930C7 /* IQKeyboardManagerConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManagerConstants.h; sourceTree = "<group>"; };
+		7FFB54B41E0933B400A930C7 /* IQKeyboardManagerConstantsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManagerConstantsInternal.h; sourceTree = "<group>"; };
+		7FFB54B51E0933B400A930C7 /* IQKeyboardManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQKeyboardManager.h; sourceTree = "<group>"; };
+		7FFB54B61E0933B400A930C7 /* IQKeyboardManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQKeyboardManager.m; sourceTree = "<group>"; };
+		7FFB54B71E0933B400A930C7 /* IQKeyboardReturnKeyHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQKeyboardReturnKeyHandler.h; sourceTree = "<group>"; };
+		7FFB54B81E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQKeyboardReturnKeyHandler.m; sourceTree = "<group>"; };
+		7FFB54BA1E0933B400A930C7 /* IQSegmentedNextPrevious.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQSegmentedNextPrevious.h; sourceTree = "<group>"; };
+		7FFB54BB1E0933B400A930C7 /* IQSegmentedNextPrevious.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQSegmentedNextPrevious.m; sourceTree = "<group>"; };
+		7FFB54BD1E0933B400A930C7 /* IQTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQTextView.h; sourceTree = "<group>"; };
+		7FFB54BE1E0933B400A930C7 /* IQTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQTextView.m; sourceTree = "<group>"; };
+		7FFB54C01E0933B400A930C7 /* IQBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQBarButtonItem.h; sourceTree = "<group>"; };
+		7FFB54C11E0933B400A930C7 /* IQBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQBarButtonItem.m; sourceTree = "<group>"; };
+		7FFB54C21E0933B400A930C7 /* IQTitleBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQTitleBarButtonItem.h; sourceTree = "<group>"; };
+		7FFB54C31E0933B400A930C7 /* IQTitleBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQTitleBarButtonItem.m; sourceTree = "<group>"; };
+		7FFB54C41E0933B400A930C7 /* IQToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQToolbar.h; sourceTree = "<group>"; };
+		7FFB54C51E0933B400A930C7 /* IQToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQToolbar.m; sourceTree = "<group>"; };
+		7FFB54C61E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQUIView+IQKeyboardToolbar.h"; sourceTree = "<group>"; };
+		7FFB54C71E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQUIView+IQKeyboardToolbar.m"; sourceTree = "<group>"; };
+		7FFB54C81E0933B400A930C7 /* KeyboardManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardManager.h; sourceTree = "<group>"; };
+		7FFB54CA1E0933B400A930C7 /* IQKeyboardManager.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IQKeyboardManager.bundle; sourceTree = "<group>"; };
+		7FFB54D81E0938FB00A930C7 /* MKHomeVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKHomeVC.h; sourceTree = "<group>"; };
+		7FFB54D91E0938FB00A930C7 /* MKHomeVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKHomeVC.m; sourceTree = "<group>"; };
+		7FFB54DD1E093C1200A930C7 /* MKHistoryVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKHistoryVC.h; sourceTree = "<group>"; };
+		7FFB54DE1E093C1200A930C7 /* MKHistoryVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKHistoryVC.m; sourceTree = "<group>"; };
+		7FFB54E11E09427200A930C7 /* MKMoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMoreVC.h; sourceTree = "<group>"; };
+		7FFB54E21E09427200A930C7 /* MKMoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMoreVC.m; sourceTree = "<group>"; };
+		7FFB54E51E09520C00A930C7 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		7FFB54E81E0963E300A930C7 /* MKHistoryCustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKHistoryCustomCell.h; sourceTree = "<group>"; };
+		7FFB54E91E0963E300A930C7 /* MKHistoryCustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKHistoryCustomCell.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7FFB546A1E092EBC00A930C7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */,
+				7FFB54E61E09520C00A930C7 /* MapKit.framework in Frameworks */,
+				7FFB54A91E09338200A930C7 /* KeyboardManager.framework in Frameworks */,
+				A15D87B1546E16BC35F4D318 /* libPods-OppoAttendanceTracker.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7FFB54831E092EBC00A930C7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7FFB548E1E092EBC00A930C7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6DD7983B09A6BAE248205E4C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */,
+				2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		7FFB54641E092EBC00A930C7 = {
+			isa = PBXGroup;
+			children = (
+				7FECDA501E0A460F000E923F /* Podfile */,
+				7FFB54E41E0951F400A930C7 /* Frameworks */,
+				7FFB54D71E0938D500A930C7 /* View */,
+				7FFB54AA1E0933B400A930C7 /* IQKeyBoardManager */,
+				7FFB54A81E09338200A930C7 /* KeyboardManager.framework */,
+				7FFB54A31E092F4800A930C7 /* ImageAssets */,
+				7FFB546F1E092EBC00A930C7 /* OppoAttendanceTracker */,
+				7FFB54891E092EBC00A930C7 /* OppoAttendanceTrackerTests */,
+				7FFB54941E092EBC00A930C7 /* OppoAttendanceTrackerUITests */,
+				7FFB546E1E092EBC00A930C7 /* Products */,
+				6DD7983B09A6BAE248205E4C /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		7FFB546E1E092EBC00A930C7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */,
+				7FFB54861E092EBC00A930C7 /* OppoAttendanceTrackerTests.xctest */,
+				7FFB54911E092EBC00A930C7 /* OppoAttendanceTrackerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7FFB546F1E092EBC00A930C7 /* OppoAttendanceTracker */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54731E092EBC00A930C7 /* AppDelegate.h */,
+				7FFB54741E092EBC00A930C7 /* AppDelegate.m */,
+				7FFB54761E092EBC00A930C7 /* ViewController.h */,
+				7FFB54771E092EBC00A930C7 /* ViewController.m */,
+				7FFB54791E092EBC00A930C7 /* Main.storyboard */,
+				7FFB547C1E092EBC00A930C7 /* Assets.xcassets */,
+				7FFB547E1E092EBC00A930C7 /* LaunchScreen.storyboard */,
+				7FFB54811E092EBC00A930C7 /* Info.plist */,
+				7FFB54701E092EBC00A930C7 /* Supporting Files */,
+			);
+			path = OppoAttendanceTracker;
+			sourceTree = "<group>";
+		};
+		7FFB54701E092EBC00A930C7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54711E092EBC00A930C7 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7FFB54891E092EBC00A930C7 /* OppoAttendanceTrackerTests */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB548A1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m */,
+				7FFB548C1E092EBC00A930C7 /* Info.plist */,
+			);
+			path = OppoAttendanceTrackerTests;
+			sourceTree = "<group>";
+		};
+		7FFB54941E092EBC00A930C7 /* OppoAttendanceTrackerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */,
+				7FFB54971E092EBC00A930C7 /* Info.plist */,
+			);
+			path = OppoAttendanceTrackerUITests;
+			sourceTree = "<group>";
+		};
+		7FFB54A31E092F4800A930C7 /* ImageAssets */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54A41E092F7700A930C7 /* Images.xcassets */,
+			);
+			name = ImageAssets;
+			sourceTree = "<group>";
+		};
+		7FFB54AA1E0933B400A930C7 /* IQKeyBoardManager */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54AB1E0933B400A930C7 /* Categories */,
+				7FFB54B21E0933B400A930C7 /* Constants */,
+				7FFB54B51E0933B400A930C7 /* IQKeyboardManager.h */,
+				7FFB54B61E0933B400A930C7 /* IQKeyboardManager.m */,
+				7FFB54B71E0933B400A930C7 /* IQKeyboardReturnKeyHandler.h */,
+				7FFB54B81E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m */,
+				7FFB54B91E0933B400A930C7 /* IQSegmentedNextPrevious */,
+				7FFB54BC1E0933B400A930C7 /* IQTextView */,
+				7FFB54BF1E0933B400A930C7 /* IQToolbar */,
+				7FFB54C81E0933B400A930C7 /* KeyboardManager.h */,
+				7FFB54C91E0933B400A930C7 /* Resources */,
+			);
+			path = IQKeyBoardManager;
+			sourceTree = "<group>";
+		};
+		7FFB54AB1E0933B400A930C7 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54AC1E0933B400A930C7 /* IQNSArray+Sort.h */,
+				7FFB54AD1E0933B400A930C7 /* IQNSArray+Sort.m */,
+				7FFB54AE1E0933B400A930C7 /* IQUIView+Hierarchy.h */,
+				7FFB54AF1E0933B400A930C7 /* IQUIView+Hierarchy.m */,
+				7FFB54B01E0933B400A930C7 /* IQUIWindow+Hierarchy.h */,
+				7FFB54B11E0933B400A930C7 /* IQUIWindow+Hierarchy.m */,
+			);
+			path = Categories;
+			sourceTree = "<group>";
+		};
+		7FFB54B21E0933B400A930C7 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54B31E0933B400A930C7 /* IQKeyboardManagerConstants.h */,
+				7FFB54B41E0933B400A930C7 /* IQKeyboardManagerConstantsInternal.h */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		7FFB54B91E0933B400A930C7 /* IQSegmentedNextPrevious */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54BA1E0933B400A930C7 /* IQSegmentedNextPrevious.h */,
+				7FFB54BB1E0933B400A930C7 /* IQSegmentedNextPrevious.m */,
+			);
+			path = IQSegmentedNextPrevious;
+			sourceTree = "<group>";
+		};
+		7FFB54BC1E0933B400A930C7 /* IQTextView */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54BD1E0933B400A930C7 /* IQTextView.h */,
+				7FFB54BE1E0933B400A930C7 /* IQTextView.m */,
+			);
+			path = IQTextView;
+			sourceTree = "<group>";
+		};
+		7FFB54BF1E0933B400A930C7 /* IQToolbar */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54C01E0933B400A930C7 /* IQBarButtonItem.h */,
+				7FFB54C11E0933B400A930C7 /* IQBarButtonItem.m */,
+				7FFB54C21E0933B400A930C7 /* IQTitleBarButtonItem.h */,
+				7FFB54C31E0933B400A930C7 /* IQTitleBarButtonItem.m */,
+				7FFB54C41E0933B400A930C7 /* IQToolbar.h */,
+				7FFB54C51E0933B400A930C7 /* IQToolbar.m */,
+				7FFB54C61E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.h */,
+				7FFB54C71E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m */,
+			);
+			path = IQToolbar;
+			sourceTree = "<group>";
+		};
+		7FFB54C91E0933B400A930C7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54CA1E0933B400A930C7 /* IQKeyboardManager.bundle */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		7FFB54D71E0938D500A930C7 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54E01E09425700A930C7 /* More */,
+				7FFB54DC1E093BF900A930C7 /* History */,
+				7FFB54DB1E093BE500A930C7 /* Attendance */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		7FFB54DB1E093BE500A930C7 /* Attendance */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54D81E0938FB00A930C7 /* MKHomeVC.h */,
+				7FFB54D91E0938FB00A930C7 /* MKHomeVC.m */,
+			);
+			name = Attendance;
+			sourceTree = "<group>";
+		};
+		7FFB54DC1E093BF900A930C7 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54E71E0963C000A930C7 /* CutsomCell */,
+				7FFB54DD1E093C1200A930C7 /* MKHistoryVC.h */,
+				7FFB54DE1E093C1200A930C7 /* MKHistoryVC.m */,
+			);
+			name = History;
+			sourceTree = "<group>";
+		};
+		7FFB54E01E09425700A930C7 /* More */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54E11E09427200A930C7 /* MKMoreVC.h */,
+				7FFB54E21E09427200A930C7 /* MKMoreVC.m */,
+			);
+			name = More;
+			sourceTree = "<group>";
+		};
+		7FFB54E41E0951F400A930C7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7FECDA521E0A4D1C000E923F /* CoreLocation.framework */,
+				7FFB54E51E09520C00A930C7 /* MapKit.framework */,
+				26756394BBA37D07ABBDEE22 /* libPods-OppoAttendanceTracker.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7FFB54E71E0963C000A930C7 /* CutsomCell */ = {
+			isa = PBXGroup;
+			children = (
+				7FFB54E81E0963E300A930C7 /* MKHistoryCustomCell.h */,
+				7FFB54E91E0963E300A930C7 /* MKHistoryCustomCell.m */,
+			);
+			name = CutsomCell;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7FFB546C1E092EBC00A930C7 /* OppoAttendanceTracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7FFB549A1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTracker" */;
+			buildPhases = (
+				77BC17008FEAE24919B4B81F /* [CP] Check Pods Manifest.lock */,
+				7FFB54691E092EBC00A930C7 /* Sources */,
+				7FFB546A1E092EBC00A930C7 /* Frameworks */,
+				7FFB546B1E092EBC00A930C7 /* Resources */,
+				CE1202BF5C105D2AD172C434 /* [CP] Embed Pods Frameworks */,
+				39E2F3679B3581F501B62262 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OppoAttendanceTracker;
+			productName = OppoAttendanceTracker;
+			productReference = 7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7FFB54851E092EBC00A930C7 /* OppoAttendanceTrackerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7FFB549D1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTrackerTests" */;
+			buildPhases = (
+				7FFB54821E092EBC00A930C7 /* Sources */,
+				7FFB54831E092EBC00A930C7 /* Frameworks */,
+				7FFB54841E092EBC00A930C7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7FFB54881E092EBC00A930C7 /* PBXTargetDependency */,
+			);
+			name = OppoAttendanceTrackerTests;
+			productName = OppoAttendanceTrackerTests;
+			productReference = 7FFB54861E092EBC00A930C7 /* OppoAttendanceTrackerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7FFB54901E092EBC00A930C7 /* OppoAttendanceTrackerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7FFB54A01E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTrackerUITests" */;
+			buildPhases = (
+				7FFB548D1E092EBC00A930C7 /* Sources */,
+				7FFB548E1E092EBC00A930C7 /* Frameworks */,
+				7FFB548F1E092EBC00A930C7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7FFB54931E092EBC00A930C7 /* PBXTargetDependency */,
+			);
+			name = OppoAttendanceTrackerUITests;
+			productName = OppoAttendanceTrackerUITests;
+			productReference = 7FFB54911E092EBC00A930C7 /* OppoAttendanceTrackerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7FFB54651E092EBC00A930C7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = MK;
+				LastUpgradeCheck = 0730;
+				TargetAttributes = {
+					7FFB546C1E092EBC00A930C7 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					7FFB54851E092EBC00A930C7 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 7FFB546C1E092EBC00A930C7;
+					};
+					7FFB54901E092EBC00A930C7 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 7FFB546C1E092EBC00A930C7;
+					};
+				};
+			};
+			buildConfigurationList = 7FFB54681E092EBC00A930C7 /* Build configuration list for PBXProject "OppoAttendanceTracker" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 7FFB54641E092EBC00A930C7;
+			productRefGroup = 7FFB546E1E092EBC00A930C7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7FFB546C1E092EBC00A930C7 /* OppoAttendanceTracker */,
+				7FFB54851E092EBC00A930C7 /* OppoAttendanceTrackerTests */,
+				7FFB54901E092EBC00A930C7 /* OppoAttendanceTrackerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7FFB546B1E092EBC00A930C7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FECDA511E0A4610000E923F /* Podfile in Resources */,
+				7FFB54D61E0933B400A930C7 /* IQKeyboardManager.bundle in Resources */,
+				7FFB54801E092EBC00A930C7 /* LaunchScreen.storyboard in Resources */,
+				7FFB54A51E092F7700A930C7 /* Images.xcassets in Resources */,
+				7FFB547D1E092EBC00A930C7 /* Assets.xcassets in Resources */,
+				7FFB547B1E092EBC00A930C7 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7FFB54841E092EBC00A930C7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7FFB548F1E092EBC00A930C7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		39E2F3679B3581F501B62262 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		77BC17008FEAE24919B4B81F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		CE1202BF5C105D2AD172C434 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7FFB54691E092EBC00A930C7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FFB54CB1E0933B400A930C7 /* IQNSArray+Sort.m in Sources */,
+				7FFB54EA1E0963E300A930C7 /* MKHistoryCustomCell.m in Sources */,
+				7FFB54D31E0933B400A930C7 /* IQTitleBarButtonItem.m in Sources */,
+				7FFB54DA1E0938FB00A930C7 /* MKHomeVC.m in Sources */,
+				7FFB54CF1E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m in Sources */,
+				7FFB54D51E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m in Sources */,
+				7FFB54D21E0933B400A930C7 /* IQBarButtonItem.m in Sources */,
+				7FFB54D01E0933B400A930C7 /* IQSegmentedNextPrevious.m in Sources */,
+				7FFB54D11E0933B400A930C7 /* IQTextView.m in Sources */,
+				7FFB54CE1E0933B400A930C7 /* IQKeyboardManager.m in Sources */,
+				7FFB54781E092EBC00A930C7 /* ViewController.m in Sources */,
+				7FFB54751E092EBC00A930C7 /* AppDelegate.m in Sources */,
+				7FFB54DF1E093C1200A930C7 /* MKHistoryVC.m in Sources */,
+				7FFB54D41E0933B400A930C7 /* IQToolbar.m in Sources */,
+				7FFB54E31E09427200A930C7 /* MKMoreVC.m in Sources */,
+				7FFB54CD1E0933B400A930C7 /* IQUIWindow+Hierarchy.m in Sources */,
+				7FFB54721E092EBC00A930C7 /* main.m in Sources */,
+				7FFB54CC1E0933B400A930C7 /* IQUIView+Hierarchy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7FFB54821E092EBC00A930C7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FFB548B1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7FFB548D1E092EBC00A930C7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FFB54961E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7FFB54881E092EBC00A930C7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7FFB546C1E092EBC00A930C7 /* OppoAttendanceTracker */;
+			targetProxy = 7FFB54871E092EBC00A930C7 /* PBXContainerItemProxy */;
+		};
+		7FFB54931E092EBC00A930C7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7FFB546C1E092EBC00A930C7 /* OppoAttendanceTracker */;
+			targetProxy = 7FFB54921E092EBC00A930C7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		7FFB54791E092EBC00A930C7 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7FFB547A1E092EBC00A930C7 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		7FFB547E1E092EBC00A930C7 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7FFB547F1E092EBC00A930C7 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		7FFB54981E092EBD00A930C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7FFB54991E092EBD00A930C7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		7FFB549B1E092EBD00A930C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7FFB549C1E092EBD00A930C7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		7FFB549E1E092EBD00A930C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = OppoAttendanceTrackerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTrackerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OppoAttendanceTracker.app/OppoAttendanceTracker";
+			};
+			name = Debug;
+		};
+		7FFB549F1E092EBD00A930C7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = OppoAttendanceTrackerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTrackerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OppoAttendanceTracker.app/OppoAttendanceTracker";
+			};
+			name = Release;
+		};
+		7FFB54A11E092EBD00A930C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = OppoAttendanceTrackerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTrackerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = OppoAttendanceTracker;
+			};
+			name = Debug;
+		};
+		7FFB54A21E092EBD00A930C7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = OppoAttendanceTrackerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTrackerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = OppoAttendanceTracker;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7FFB54681E092EBC00A930C7 /* Build configuration list for PBXProject "OppoAttendanceTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7FFB54981E092EBD00A930C7 /* Debug */,
+				7FFB54991E092EBD00A930C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7FFB549A1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7FFB549B1E092EBD00A930C7 /* Debug */,
+				7FFB549C1E092EBD00A930C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7FFB549D1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTrackerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7FFB549E1E092EBD00A930C7 /* Debug */,
+				7FFB549F1E092EBD00A930C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7FFB54A01E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTrackerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7FFB54A11E092EBD00A930C7 /* Debug */,
+				7FFB54A21E092EBD00A930C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7FFB54651E092EBC00A930C7 /* Project object */;
+}
