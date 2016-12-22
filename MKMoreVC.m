@@ -22,7 +22,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
 
     arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"Log Off", nil];
     
@@ -58,7 +57,27 @@
     _vwForStoreAdd.hidden = YES;
     _vwForPromoterAdd.hidden = YES;
     
+    
+    [self addPromoterViewSetup];
+    
+    
+
+    [self addShadow:_btnAddStore];
+    [self addShadow:_btnAddPromoter];
+    [self addShadow:_btnLeaveRqst];
+
 }
+
+
+-(void)addShadow:(UIButton*)btn
+{
+    btn.layer.shadowColor = [UIColor lightGrayColor].CGColor;
+    btn.layer.shadowOffset = CGSizeMake(1, 1);
+    btn.layer.shadowOpacity = 1;
+    btn.layer.shadowRadius = 1.0;
+
+}
+
 
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -69,12 +88,16 @@
     [self.navigationItem setHidesBackButton:YES];
 }
 
-#pragma mark - Add StoreView
 
+#pragma mark - TextViewDelegate
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
 {
     if (textView== _txtVwStoreAddress && [textView.text isEqualToString:@"Store Address"])
+    {
+        textView.text=@"";
+    }
+    else if (textView== _txtVwAddressPromoter && [textView.text isEqualToString:@"Address"])
     {
         textView.text=@"";
     }
@@ -87,7 +110,16 @@
     {
         textView.text=@"Store Address";
     }
+    else if (textView== _txtVwAddressPromoter && _txtVwAddressPromoter.text.length<=0)
+    {
+        textView.text=@"Address";
+    }
 }
+
+#pragma mark - Add StoreView
+
+
+
 
 -(void)setUpForAddStore
 {
@@ -115,41 +147,20 @@
         _btnAdd.backgroundColor=[[UIColor blueColor] colorWithAlphaComponent:0.6];
     }
     
-    
-    
-    _txtFieldStoreName.layer.cornerRadius = 5;
-    _txtFieldStoreName.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
-    _txtFieldStoreName.keyboardType=UIKeyboardTypeASCIICapable;
-    
-    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 20)];
-    _txtFieldStoreName.leftView = paddingView;
-    _txtFieldStoreName.leftViewMode = UITextFieldViewModeAlways;
-    
-    
+    [self textFieldEdit:_txtFieldStoreName];
     
     _txtVwStoreAddress.layer.cornerRadius = 5;
     _txtVwStoreAddress.layer.masksToBounds = YES;
-    
+    _txtVwStoreAddress.keyboardType=UIKeyboardTypeASCIICapable;
     _txtVwStoreAddress.backgroundColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
     
     
     _btnGetLocation.layer.cornerRadius = 5;
     _btnGetLocation.layer.masksToBounds = YES;
     
+    [self addShadow:_btnAdd];
+    [self addShadow:_btnCancel];
     
-    
-    _btnAdd.layer.shadowColor = [UIColor lightGrayColor].CGColor;
-    _btnAdd.layer.shadowOffset = CGSizeMake(1, 1);
-    _btnAdd.layer.shadowOpacity = 1;
-    _btnAdd.layer.shadowRadius = 1.0;
-    
-    
-    
-    
-    _btnCancel.layer.shadowColor = [UIColor lightGrayColor].CGColor;
-    _btnCancel.layer.shadowOffset = CGSizeMake(1, 1);
-    _btnCancel.layer.shadowOpacity = 1;
-    _btnCancel.layer.shadowRadius = 1.0;
     
     
     [_btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
@@ -282,6 +293,50 @@
     _backBtn.hidden = YES;
 }
 
+
+-(void)addPromoterViewSetup
+{
+    [self textFieldEdit:_txtFieldFNamePromoter];
+    [self textFieldEdit:_txtFieldLNamePromoter];
+    [self textFieldEdit:_txtFieldEmailPromoter];
+    [self textFieldEdit:_txtFieldPhonePromoter];
+    [self textFieldEdit:_txtFieldSEAsgnmntPromoter];
+    [self textFieldEdit:_txtFieldStoreAsgnmntPromoter];
+    
+    
+    _txtVwAddressPromoter.text=@"Address";
+    _txtVwAddressPromoter.layer.cornerRadius = 5;
+    _txtVwAddressPromoter.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+    _txtVwAddressPromoter.keyboardType=UIKeyboardTypeASCIICapable;
+    _txtVwAddressPromoter.delegate = self;
+    
+    
+    _btnPhotoPromoter.layer.cornerRadius = 5;
+    _btnPhotoPromoter.layer.masksToBounds = YES;
+    
+    _btnAadharPromoter.layer.cornerRadius = 5;
+    _btnAadharPromoter.layer.masksToBounds =YES;
+    
+    _btnAdressProofPromoter.layer.cornerRadius = 5;
+    _btnAdressProofPromoter.layer.masksToBounds =YES;
+    
+
+    [self addShadow:_btnAddPromoterConfirm];
+    [self addShadow:_btnCancelPromoterAdd];
+
+}
+
+-(void)textFieldEdit:(UITextField*)txtField
+{
+    txtField.layer.cornerRadius = 5;
+    txtField.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+    txtField.keyboardType=UIKeyboardTypeASCIICapable;
+    
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 20)];
+    txtField.leftView = paddingView;
+    txtField.leftViewMode = UITextFieldViewModeAlways;
+    txtField.layer.cornerRadius=5;
+}
 
 -(void)onClickCancelOfAddPromoter
 {
