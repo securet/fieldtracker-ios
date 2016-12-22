@@ -10,6 +10,15 @@
 		67E8DE5516D9FE7DEEE109DD /* Pods_OppoAttendanceTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		7FA239A71E0A939300D293D5 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54A81E09338200A930C7 /* KeyboardManager.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		7FA239AD1E0AB44F00D293D5 /* MKCustomCellForLeave.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA239AC1E0AB44F00D293D5 /* MKCustomCellForLeave.m */; };
+		7FDB2AC71E0B8AA1002E3117 /* BIZPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2ABA1E0B8AA1002E3117 /* BIZPopupViewController.m */; };
+		7FDB2AC81E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2ABE1E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.m */; };
+		7FDB2AC91E0B8AA1002E3117 /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2AC01E0B8AA1002E3117 /* TPKeyboardAvoidingScrollView.m */; };
+		7FDB2ACA1E0B8AA1002E3117 /* TPKeyboardAvoidingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2AC21E0B8AA1002E3117 /* TPKeyboardAvoidingTableView.m */; };
+		7FDB2ACB1E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2AC41E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
+		7FDB2ACC1E0B8AA1002E3117 /* UIViewController+BIZChildViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2AC61E0B8AA1002E3117 /* UIViewController+BIZChildViewController.m */; };
+		7FDB2AD01E0B8F5E002E3117 /* MKAddStoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2ACF1E0B8F5E002E3117 /* MKAddStoreVC.m */; };
+		7FDB2AD51E0B9FBB002E3117 /* MKSharedClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2AD41E0B9FBB002E3117 /* MKSharedClass.m */; };
+		7FDB2AE51E0BEC65002E3117 /* MultiSelectSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2AE41E0BEC65002E3117 /* MultiSelectSegmentedControl.m */; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
 		7FFB54721E092EBC00A930C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54711E092EBC00A930C7 /* main.m */; };
@@ -62,6 +71,26 @@
 		489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.debug.xcconfig"; sourceTree = "<group>"; };
 		7FA239AB1E0AB44F00D293D5 /* MKCustomCellForLeave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCustomCellForLeave.h; sourceTree = "<group>"; };
 		7FA239AC1E0AB44F00D293D5 /* MKCustomCellForLeave.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCustomCellForLeave.m; sourceTree = "<group>"; };
+		7FDB2ABA1E0B8AA1002E3117 /* BIZPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BIZPopupViewController.m; sourceTree = "<group>"; };
+		7FDB2ABB1E0B8AA1002E3117 /* BIZPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BIZPopupViewController.h; sourceTree = "<group>"; };
+		7FDB2ABC1E0B8AA1002E3117 /* BIZPopupViewControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BIZPopupViewControllerDelegate.h; sourceTree = "<group>"; };
+		7FDB2ABD1E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingCollectionView.h; sourceTree = "<group>"; };
+		7FDB2ABE1E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingCollectionView.m; sourceTree = "<group>"; };
+		7FDB2ABF1E0B8AA1002E3117 /* TPKeyboardAvoidingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingScrollView.h; sourceTree = "<group>"; };
+		7FDB2AC01E0B8AA1002E3117 /* TPKeyboardAvoidingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingScrollView.m; sourceTree = "<group>"; };
+		7FDB2AC11E0B8AA1002E3117 /* TPKeyboardAvoidingTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingTableView.h; sourceTree = "<group>"; };
+		7FDB2AC21E0B8AA1002E3117 /* TPKeyboardAvoidingTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingTableView.m; sourceTree = "<group>"; };
+		7FDB2AC31E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+TPKeyboardAvoidingAdditions.h"; sourceTree = "<group>"; };
+		7FDB2AC41E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+TPKeyboardAvoidingAdditions.m"; sourceTree = "<group>"; };
+		7FDB2AC51E0B8AA1002E3117 /* UIViewController+BIZChildViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+BIZChildViewController.h"; sourceTree = "<group>"; };
+		7FDB2AC61E0B8AA1002E3117 /* UIViewController+BIZChildViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+BIZChildViewController.m"; sourceTree = "<group>"; };
+		7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		7FDB2ACE1E0B8F5E002E3117 /* MKAddStoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKAddStoreVC.h; sourceTree = "<group>"; };
+		7FDB2ACF1E0B8F5E002E3117 /* MKAddStoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKAddStoreVC.m; sourceTree = "<group>"; };
+		7FDB2AD31E0B9FBB002E3117 /* MKSharedClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKSharedClass.h; sourceTree = "<group>"; };
+		7FDB2AD41E0B9FBB002E3117 /* MKSharedClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKSharedClass.m; sourceTree = "<group>"; };
+		7FDB2AE31E0BEC65002E3117 /* MultiSelectSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiSelectSegmentedControl.h; sourceTree = "<group>"; };
+		7FDB2AE41E0BEC65002E3117 /* MultiSelectSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiSelectSegmentedControl.m; sourceTree = "<group>"; };
 		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OppoAttendanceTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,9 +196,66 @@
 			name = "Custom  Cell For Leave";
 			sourceTree = "<group>";
 		};
+		7FDB2AB91E0B8A77002E3117 /* Popup View */ = {
+			isa = PBXGroup;
+			children = (
+				7FDB2ABA1E0B8AA1002E3117 /* BIZPopupViewController.m */,
+				7FDB2ABB1E0B8AA1002E3117 /* BIZPopupViewController.h */,
+				7FDB2ABC1E0B8AA1002E3117 /* BIZPopupViewControllerDelegate.h */,
+				7FDB2ABD1E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.h */,
+				7FDB2ABE1E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.m */,
+				7FDB2ABF1E0B8AA1002E3117 /* TPKeyboardAvoidingScrollView.h */,
+				7FDB2AC01E0B8AA1002E3117 /* TPKeyboardAvoidingScrollView.m */,
+				7FDB2AC11E0B8AA1002E3117 /* TPKeyboardAvoidingTableView.h */,
+				7FDB2AC21E0B8AA1002E3117 /* TPKeyboardAvoidingTableView.m */,
+				7FDB2AC31E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.h */,
+				7FDB2AC41E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.m */,
+				7FDB2AC51E0B8AA1002E3117 /* UIViewController+BIZChildViewController.h */,
+				7FDB2AC61E0B8AA1002E3117 /* UIViewController+BIZChildViewController.m */,
+			);
+			name = "Popup View";
+			sourceTree = "<group>";
+		};
+		7FDB2AD11E0B9065002E3117 /* Add Edit Store */ = {
+			isa = PBXGroup;
+			children = (
+				7FDB2ACE1E0B8F5E002E3117 /* MKAddStoreVC.h */,
+				7FDB2ACF1E0B8F5E002E3117 /* MKAddStoreVC.m */,
+			);
+			name = "Add Edit Store";
+			sourceTree = "<group>";
+		};
+		7FDB2AD21E0B9F97002E3117 /* GlobalClass */ = {
+			isa = PBXGroup;
+			children = (
+				7FDB2AD31E0B9FBB002E3117 /* MKSharedClass.h */,
+				7FDB2AD41E0B9FBB002E3117 /* MKSharedClass.m */,
+			);
+			name = GlobalClass;
+			sourceTree = "<group>";
+		};
+		7FDB2AE11E0BEC3B002E3117 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				7FDB2AE21E0BEC49002E3117 /* MultiSelectSegment */,
+			);
+			name = Helper;
+			sourceTree = "<group>";
+		};
+		7FDB2AE21E0BEC49002E3117 /* MultiSelectSegment */ = {
+			isa = PBXGroup;
+			children = (
+				7FDB2AE31E0BEC65002E3117 /* MultiSelectSegmentedControl.h */,
+				7FDB2AE41E0BEC65002E3117 /* MultiSelectSegmentedControl.m */,
+			);
+			name = MultiSelectSegment;
+			sourceTree = "<group>";
+		};
 		7FFB54641E092EBC00A930C7 = {
 			isa = PBXGroup;
 			children = (
+				7FDB2AE11E0BEC3B002E3117 /* Helper */,
+				7FDB2AD21E0B9F97002E3117 /* GlobalClass */,
 				7FECDA501E0A460F000E923F /* Podfile */,
 				7FFB54E41E0951F400A930C7 /* Frameworks */,
 				7FFB54D71E0938D500A930C7 /* View */,
@@ -206,6 +292,7 @@
 				7FFB547E1E092EBC00A930C7 /* LaunchScreen.storyboard */,
 				7FFB54811E092EBC00A930C7 /* Info.plist */,
 				7FFB54701E092EBC00A930C7 /* Supporting Files */,
+				7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */,
 			);
 			path = OppoAttendanceTracker;
 			sourceTree = "<group>";
@@ -328,9 +415,11 @@
 		7FFB54D71E0938D500A930C7 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7FDB2AB91E0B8A77002E3117 /* Popup View */,
 				7FFB54E01E09425700A930C7 /* More */,
 				7FFB54DC1E093BF900A930C7 /* History */,
 				7FFB54DB1E093BE500A930C7 /* Attendance */,
+				7FDB2AD11E0B9065002E3117 /* Add Edit Store */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -573,20 +662,29 @@
 				7FFB54D31E0933B400A930C7 /* IQTitleBarButtonItem.m in Sources */,
 				7FFB54DA1E0938FB00A930C7 /* MKHomeVC.m in Sources */,
 				7FFB54CF1E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m in Sources */,
+				7FDB2ACC1E0B8AA1002E3117 /* UIViewController+BIZChildViewController.m in Sources */,
+				7FDB2AC91E0B8AA1002E3117 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				7FA239AD1E0AB44F00D293D5 /* MKCustomCellForLeave.m in Sources */,
+				7FDB2AE51E0BEC65002E3117 /* MultiSelectSegmentedControl.m in Sources */,
 				7FFB54D51E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m in Sources */,
 				7FFB54D21E0933B400A930C7 /* IQBarButtonItem.m in Sources */,
 				7FFB54D01E0933B400A930C7 /* IQSegmentedNextPrevious.m in Sources */,
 				7FFB54D11E0933B400A930C7 /* IQTextView.m in Sources */,
 				7FFB54CE1E0933B400A930C7 /* IQKeyboardManager.m in Sources */,
+				7FDB2AC71E0B8AA1002E3117 /* BIZPopupViewController.m in Sources */,
+				7FDB2ACB1E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
 				7FFB54781E092EBC00A930C7 /* ViewController.m in Sources */,
+				7FDB2AC81E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.m in Sources */,
+				7FDB2AD51E0B9FBB002E3117 /* MKSharedClass.m in Sources */,
 				7FFB54751E092EBC00A930C7 /* AppDelegate.m in Sources */,
+				7FDB2AD01E0B8F5E002E3117 /* MKAddStoreVC.m in Sources */,
 				7FFB54DF1E093C1200A930C7 /* MKHistoryVC.m in Sources */,
 				7FFB54D41E0933B400A930C7 /* IQToolbar.m in Sources */,
 				7FFB54E31E09427200A930C7 /* MKMoreVC.m in Sources */,
 				7FFB54CD1E0933B400A930C7 /* IQUIWindow+Hierarchy.m in Sources */,
 				7FFB54721E092EBC00A930C7 /* main.m in Sources */,
 				7FFB54CC1E0933B400A930C7 /* IQUIView+Hierarchy.m in Sources */,
+				7FDB2ACA1E0B8AA1002E3117 /* TPKeyboardAvoidingTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -738,6 +836,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_PREFIX_HEADER = OppoAttendanceTracker/PrefixHeader.pch;
 				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager";
@@ -761,6 +860,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_PREFIX_HEADER = OppoAttendanceTracker/PrefixHeader.pch;
 				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager";

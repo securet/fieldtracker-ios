@@ -73,10 +73,7 @@
 }
 
 
-
-
 #pragma mark - LocationManagaer
-
 
 -(CLLocationCoordinate2D) getLocation
 {
