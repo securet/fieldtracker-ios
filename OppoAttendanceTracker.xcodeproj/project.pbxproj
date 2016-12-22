@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		67E8DE5516D9FE7DEEE109DD /* Pods_OppoAttendanceTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		7FA239A71E0A939300D293D5 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54A81E09338200A930C7 /* KeyboardManager.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		7FA239AD1E0AB44F00D293D5 /* MKCustomCellForLeave.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA239AC1E0AB44F00D293D5 /* MKCustomCellForLeave.m */; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
 		7FFB54721E092EBC00A930C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54711E092EBC00A930C7 /* main.m */; };
@@ -18,7 +21,6 @@
 		7FFB548B1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB548A1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m */; };
 		7FFB54961E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */; };
 		7FFB54A51E092F7700A930C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB54A41E092F7700A930C7 /* Images.xcassets */; };
-		7FFB54A91E09338200A930C7 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54A81E09338200A930C7 /* KeyboardManager.framework */; };
 		7FFB54CB1E0933B400A930C7 /* IQNSArray+Sort.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54AD1E0933B400A930C7 /* IQNSArray+Sort.m */; };
 		7FFB54CC1E0933B400A930C7 /* IQUIView+Hierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54AF1E0933B400A930C7 /* IQUIView+Hierarchy.m */; };
 		7FFB54CD1E0933B400A930C7 /* IQUIWindow+Hierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54B11E0933B400A930C7 /* IQUIWindow+Hierarchy.m */; };
@@ -36,7 +38,6 @@
 		7FFB54E31E09427200A930C7 /* MKMoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54E21E09427200A930C7 /* MKMoreVC.m */; };
 		7FFB54E61E09520C00A930C7 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54E51E09520C00A930C7 /* MapKit.framework */; };
 		7FFB54EA1E0963E300A930C7 /* MKHistoryCustomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54E91E0963E300A930C7 /* MKHistoryCustomCell.m */; };
-		A15D87B1546E16BC35F4D318 /* libPods-OppoAttendanceTracker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26756394BBA37D07ABBDEE22 /* libPods-OppoAttendanceTracker.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,9 +58,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		26756394BBA37D07ABBDEE22 /* libPods-OppoAttendanceTracker.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OppoAttendanceTracker.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.release.xcconfig"; sourceTree = "<group>"; };
 		489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.debug.xcconfig"; sourceTree = "<group>"; };
+		7FA239AB1E0AB44F00D293D5 /* MKCustomCellForLeave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCustomCellForLeave.h; sourceTree = "<group>"; };
+		7FA239AC1E0AB44F00D293D5 /* MKCustomCellForLeave.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCustomCellForLeave.m; sourceTree = "<group>"; };
 		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OppoAttendanceTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,6 +117,7 @@
 		7FFB54E51E09520C00A930C7 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		7FFB54E81E0963E300A930C7 /* MKHistoryCustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKHistoryCustomCell.h; sourceTree = "<group>"; };
 		7FFB54E91E0963E300A930C7 /* MKHistoryCustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKHistoryCustomCell.m; sourceTree = "<group>"; };
+		EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OppoAttendanceTracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,10 +125,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FA239A71E0A939300D293D5 /* KeyboardManager.framework in Frameworks */,
 				7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */,
 				7FFB54E61E09520C00A930C7 /* MapKit.framework in Frameworks */,
-				7FFB54A91E09338200A930C7 /* KeyboardManager.framework in Frameworks */,
-				A15D87B1546E16BC35F4D318 /* libPods-OppoAttendanceTracker.a in Frameworks */,
+				67E8DE5516D9FE7DEEE109DD /* Pods_OppoAttendanceTracker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +156,15 @@
 				2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		7FA239AA1E0AB41F00D293D5 /* Custom  Cell For Leave */ = {
+			isa = PBXGroup;
+			children = (
+				7FA239AB1E0AB44F00D293D5 /* MKCustomCellForLeave.h */,
+				7FA239AC1E0AB44F00D293D5 /* MKCustomCellForLeave.m */,
+			);
+			name = "Custom  Cell For Leave";
 			sourceTree = "<group>";
 		};
 		7FFB54641E092EBC00A930C7 = {
@@ -345,6 +357,7 @@
 		7FFB54E01E09425700A930C7 /* More */ = {
 			isa = PBXGroup;
 			children = (
+				7FA239AA1E0AB41F00D293D5 /* Custom  Cell For Leave */,
 				7FFB54E11E09427200A930C7 /* MKMoreVC.h */,
 				7FFB54E21E09427200A930C7 /* MKMoreVC.m */,
 			);
@@ -356,7 +369,7 @@
 			children = (
 				7FECDA521E0A4D1C000E923F /* CoreLocation.framework */,
 				7FFB54E51E09520C00A930C7 /* MapKit.framework */,
-				26756394BBA37D07ABBDEE22 /* libPods-OppoAttendanceTracker.a */,
+				EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -440,6 +453,7 @@
 				TargetAttributes = {
 					7FFB546C1E092EBC00A930C7 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = S3ATU3GSN7;
 					};
 					7FFB54851E092EBC00A930C7 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -559,6 +573,7 @@
 				7FFB54D31E0933B400A930C7 /* IQTitleBarButtonItem.m in Sources */,
 				7FFB54DA1E0938FB00A930C7 /* MKHomeVC.m in Sources */,
 				7FFB54CF1E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m in Sources */,
+				7FA239AD1E0AB44F00D293D5 /* MKCustomCellForLeave.m in Sources */,
 				7FFB54D51E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m in Sources */,
 				7FFB54D21E0933B400A930C7 /* IQBarButtonItem.m in Sources */,
 				7FFB54D01E0933B400A930C7 /* IQSegmentedNextPrevious.m in Sources */,
@@ -717,13 +732,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -738,13 +755,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTracker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
