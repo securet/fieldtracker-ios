@@ -8,7 +8,12 @@
   
 #import <UIKit/UIKit.h>
 #import "MultiSelectSegmentedControl.h"
-@interface MKMoreVC : UIViewController<UITableViewDelegate,UITableViewDataSource,CLLocationManagerDelegate,UITextViewDelegate,MultiSelectSegmentedControlDelegate>
+
+#import <AssetsLibrary/AssetsLibrary.h>
+#import <AVFoundation/AVBase.h>
+#import <AVFoundation/AVFoundation.h>
+
+@interface MKMoreVC : UIViewController<UITableViewDelegate,UITableViewDataSource,CLLocationManagerDelegate,UITextViewDelegate,MultiSelectSegmentedControlDelegate,UITextFieldDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 {
     CLLocationManager *locationManager;
 }
@@ -26,6 +31,9 @@
 @property (strong, nonatomic) IBOutlet UIView *vwForStoreAdd;
 @property (strong, nonatomic) IBOutlet UIView *vwForPromoterAdd;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollForPromoterAdd;
+
+
+@property (strong, nonatomic) IBOutlet UIView *vwForLeaveRqstAdd;
 
 @property (strong, nonatomic) IBOutlet UIButton *backBtn;
 
@@ -72,6 +80,26 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnPhotoPromoter;
 @property (strong, nonatomic) IBOutlet UIButton *btnAadharPromoter;
 @property (strong, nonatomic) IBOutlet UIButton *btnAdressProofPromoter;
+
+
+
+
+#pragma mark - IBOutlets 
+
+@property (strong, nonatomic) IBOutlet UIButton *btnLeaveRqstSubmit;
+@property (strong, nonatomic) IBOutlet UIButton *btnLeaveRqstCancel;
+
+
+@property (strong, nonatomic) IBOutlet UILabel *lblForNoOfDays;
+
+@property (strong, nonatomic) IBOutlet UITextField *txtFieldStartDate;
+@property (strong, nonatomic) IBOutlet UITextField *txtFieldEndDate;
+@property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveType;
+@property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveReason;
+
+- (IBAction)onClickLeaveStartDate:(UIButton *)sender;
+- (IBAction)onClickLeaveEndDate:(UIButton *)sender;
+
 
 
 @end

@@ -19,6 +19,8 @@
 		7FDB2AD01E0B8F5E002E3117 /* MKAddStoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2ACF1E0B8F5E002E3117 /* MKAddStoreVC.m */; };
 		7FDB2AD51E0B9FBB002E3117 /* MKSharedClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2AD41E0B9FBB002E3117 /* MKSharedClass.m */; };
 		7FDB2AE51E0BEC65002E3117 /* MultiSelectSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2AE41E0BEC65002E3117 /* MultiSelectSegmentedControl.m */; };
+		7FEA254C1E0CF81A000397D0 /* HSDatePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FEA25491E0CF81A000397D0 /* HSDatePickerViewController.m */; };
+		7FEA254D1E0CF81A000397D0 /* HSDatePickerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7FEA254B1E0CF81A000397D0 /* HSDatePickerViewController.xib */; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
 		7FFB54721E092EBC00A930C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54711E092EBC00A930C7 /* main.m */; };
@@ -91,6 +93,9 @@
 		7FDB2AD41E0B9FBB002E3117 /* MKSharedClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKSharedClass.m; sourceTree = "<group>"; };
 		7FDB2AE31E0BEC65002E3117 /* MultiSelectSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiSelectSegmentedControl.h; sourceTree = "<group>"; };
 		7FDB2AE41E0BEC65002E3117 /* MultiSelectSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiSelectSegmentedControl.m; sourceTree = "<group>"; };
+		7FEA25491E0CF81A000397D0 /* HSDatePickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSDatePickerViewController.m; sourceTree = "<group>"; };
+		7FEA254A1E0CF81A000397D0 /* HSDatePickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSDatePickerViewController.h; sourceTree = "<group>"; };
+		7FEA254B1E0CF81A000397D0 /* HSDatePickerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HSDatePickerViewController.xib; sourceTree = "<group>"; };
 		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OppoAttendanceTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -237,6 +242,7 @@
 		7FDB2AE11E0BEC3B002E3117 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				7FEA25481E0CF561000397D0 /* Calendar */,
 				7FDB2AE21E0BEC49002E3117 /* MultiSelectSegment */,
 			);
 			name = Helper;
@@ -249,6 +255,16 @@
 				7FDB2AE41E0BEC65002E3117 /* MultiSelectSegmentedControl.m */,
 			);
 			name = MultiSelectSegment;
+			sourceTree = "<group>";
+		};
+		7FEA25481E0CF561000397D0 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				7FEA25491E0CF81A000397D0 /* HSDatePickerViewController.m */,
+				7FEA254A1E0CF81A000397D0 /* HSDatePickerViewController.h */,
+				7FEA254B1E0CF81A000397D0 /* HSDatePickerViewController.xib */,
+			);
+			name = Calendar;
 			sourceTree = "<group>";
 		};
 		7FFB54641E092EBC00A930C7 = {
@@ -579,6 +595,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FEA254D1E0CF81A000397D0 /* HSDatePickerViewController.xib in Resources */,
 				7FECDA511E0A4610000E923F /* Podfile in Resources */,
 				7FFB54D61E0933B400A930C7 /* IQKeyboardManager.bundle in Resources */,
 				7FFB54801E092EBC00A930C7 /* LaunchScreen.storyboard in Resources */,
@@ -669,6 +686,7 @@
 				7FFB54D51E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m in Sources */,
 				7FFB54D21E0933B400A930C7 /* IQBarButtonItem.m in Sources */,
 				7FFB54D01E0933B400A930C7 /* IQSegmentedNextPrevious.m in Sources */,
+				7FEA254C1E0CF81A000397D0 /* HSDatePickerViewController.m in Sources */,
 				7FFB54D11E0933B400A930C7 /* IQTextView.m in Sources */,
 				7FFB54CE1E0933B400A930C7 /* IQKeyboardManager.m in Sources */,
 				7FDB2AC71E0B8AA1002E3117 /* BIZPopupViewController.m in Sources */,

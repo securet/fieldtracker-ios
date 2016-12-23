@@ -62,11 +62,11 @@
     [CATransaction commit];
     
     
-    markerCar.map = mapView;}
+    markerCar.map = mapView;
+}
 
 
--(void)viewWillAppear:(BOOL)animated
-{
+-(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = YES;
     self.navigationItem.hidesBackButton = YES;
     [self.navigationItem setHidesBackButton:YES];
@@ -75,8 +75,7 @@
 
 #pragma mark - LocationManagaer
 
--(CLLocationCoordinate2D) getLocation
-{
+-(CLLocationCoordinate2D) getLocation{
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
     locationManager.desiredAccuracy = kCLLocationAccuracyBest;
@@ -86,8 +85,7 @@
     CLLocationCoordinate2D coordinate = [location coordinate];
     return coordinate;
 }
--(void)updateLocationManagerr
-{
+-(void)updateLocationManagerr{
     [locationManager startUpdatingLocation];
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate=self;
@@ -103,35 +101,30 @@
 #endif
     
     [locationManager startUpdatingLocation];
-    
 }
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
-           fromLocation:(CLLocation *)oldLocation
-{
+           fromLocation:(CLLocation *)oldLocation{
     strForCurLatitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.latitude];
     strForCurLongitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
 }
 
 - (void)locationManager:(CLLocationManager *)manager
-       didFailWithError:(NSError *)error
-{
+       didFailWithError:(NSError *)error{
     NSLog(@"didFailWithError: %@", error);
 }
 
 #pragma mark -
 
-- (void)mapView:(GMSMapView *)mapView didChangeCameraPosition:(GMSCameraPosition *)position
-{
+- (void)mapView:(GMSMapView *)mapView didChangeCameraPosition:(GMSCameraPosition *)position{
    
 }
 -(void)mapViewDidFinishTileRendering:(GMSMapView *)mapView{
     //TAKE THE SCREENSHOT HERE
     
 }
-- (void) mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position
-{
+- (void) mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position{
     
    
 }
@@ -156,8 +149,7 @@
     
     [mapView clear];
     
-    if ([CLLocationManager locationServicesEnabled])
-    {
+    if ([CLLocationManager locationServicesEnabled]){
         CLLocationCoordinate2D coordinate;
         coordinate.latitude=[strForCurLatitude doubleValue];
         coordinate.longitude=[strForCurLongitude doubleValue];
@@ -192,9 +184,7 @@
         
         markerCar.map = mapView;
         
-    }
-    else
-    {
+    }else{
         UIAlertView *alertLocation=[[UIAlertView alloc]initWithTitle:@"" message:@"Please Enable Location Access" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertLocation show];
     }

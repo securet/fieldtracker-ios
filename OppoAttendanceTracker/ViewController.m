@@ -24,16 +24,14 @@
     _btnLogin.layer.cornerRadius = 5;
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
+-(void)viewWillAppear:(BOOL)animated{
     [self.navigationItem setHidesBackButton:YES];
     self.navigationController.navigationBarHidden = YES;
 }
 
 #pragma mark - AddPadding
 
--(void)addPadding:(UITextField*)txtField
-{
+-(void)addPadding:(UITextField*)txtField{
     
     txtField.delegate = self;
     
@@ -46,28 +44,26 @@
 
     UIImageView *imgVw=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 35, 35)];
     
-    if (txtField == _txtFieldForEmail)
-    {
+    if (txtField == _txtFieldForEmail){
             imgVw.image=[UIImage imageNamed:@"email"];
     }
-    else if (txtField == _txtFieldForPassword)
-    {
+    else if (txtField == _txtFieldForPassword){
             imgVw.image=[UIImage imageNamed:@"password"];
     }
     
     imgVw.contentMode = UIViewContentModeScaleAspectFit;
     txtField.rightView=imgVw;
     txtField.rightViewMode=UITextFieldViewModeAlways;
+    
+    
+    [txtField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 #pragma mark - TextField 
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-    if ([textField isFirstResponder])
-    {
-        if ([[[textField textInputMode] primaryLanguage] isEqualToString:@"emoji"] || ![[textField textInputMode] primaryLanguage])
-        {
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    if ([textField isFirstResponder]){
+        if ([[[textField textInputMode] primaryLanguage] isEqualToString:@"emoji"] || ![[textField textInputMode] primaryLanguage]){
             return NO;
         }
     }
@@ -80,8 +76,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)onClickLogin:(UIButton *)sender
-{
+- (IBAction)onClickLogin:(UIButton *)sender{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
     [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
