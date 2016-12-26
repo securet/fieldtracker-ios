@@ -18,6 +18,11 @@
     CLLocationManager *locationManager;
 }
 
+@property (weak, nonatomic) IBOutlet UILabel *lblFName;
+@property (weak, nonatomic) IBOutlet UILabel *lblLName;
+@property (strong, nonatomic) IBOutlet UILabel *lblTime;
+@property (strong, nonatomic) IBOutlet UILabel *lblAMOrPM;
+
 @property (strong, nonatomic) IBOutlet UITableView *tableVw;
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForStore;
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForPromoters;
@@ -46,7 +51,7 @@
 - (IBAction)onClickBackBtn:(UIButton *)sender;
 
 
-
+#pragma mark - IBOutlets For Add/Edit Store
 
 @property (strong, nonatomic) IBOutlet UILabel *lblForEditStore;
 @property (strong, nonatomic) IBOutlet UILabel *lblForLatLon;
@@ -66,7 +71,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnCancelPromoterAdd;
 
 
-#pragma mark - IBOutlets For Add Promoters
+#pragma mark - IBOutlets For Add/Edit Promoters
 
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldFNamePromoter;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLNamePromoter;
@@ -84,7 +89,7 @@
 
 
 
-#pragma mark - IBOutlets 
+#pragma mark - IBOutlets For Leave Request
 
 @property (strong, nonatomic) IBOutlet UIButton *btnLeaveRqstSubmit;
 @property (strong, nonatomic) IBOutlet UIButton *btnLeaveRqstCancel;

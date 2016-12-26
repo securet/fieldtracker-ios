@@ -24,10 +24,19 @@
     [super viewDidLoad];
     
     
+
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+    NSLog(@"%@",dict);
+    _lblFName.text=[dict valueForKey:@"firstName"];
+    _lblLName.text=[dict valueForKey:@"lastName"];
+    
+    
     arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"Log Off", nil];
     
     
-    arrayForStoreList=[[NSMutableArray alloc] initWithObjects:@"OPPOBHPL",@"OPPOAPNG",@"OPPOTTFL",@"OPPOTRRD",@"OPPOBBGF", nil];
+    arrayForStoreList=[[NSMutableArray alloc] init];
     
     arrayForPromoters=[[NSMutableArray alloc] initWithObjects:@"Anand",@"Vikram",@"Pawan",@"Vijay",@"Pramod", nil];
     
@@ -85,6 +94,17 @@
     self.navigationController.navigationBarHidden = YES;
     self.navigationItem.hidesBackButton = YES;
     [self.navigationItem setHidesBackButton:YES];
+    
+    NSDate *now = [NSDate date];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"hh:mm a";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+    
+    _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
+    
+    _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
 }
 
 
@@ -99,7 +119,7 @@
     return YES;
 }
 
-#pragma mark - TextViewDelegate
+#pragma mark - TextView Delegate
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
 {
@@ -115,17 +135,30 @@
 {
     if (textView== _txtVwStoreAddress && _txtVwStoreAddress.text.length<=0){
         textView.text=@"Store Address";
-    }else if (textView== _txtVwAddressPromoter && _txtVwAddressPromoter.text.length<=0){
+    }else{
+        [self enableAddNewStoreBtn];
+    }
+    
+    if (textView== _txtVwAddressPromoter && _txtVwAddressPromoter.text.length<=0){
         textView.text=@"Address";
     }
 }
 
+
+#pragma mark - TextField Delegate
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if (textField == _txtFieldStoreName) {
+        [self enableAddNewStoreBtn];
+    }
+}
 #pragma mark - Add StoreView
 
 
 
 
--(void)setUpForAddStore{
+-(void)setUpForAddStore:(NSInteger)indexValue{
+    
     _txtVwStoreAddress.delegate = self;
     
     _txtVwStoreAddress.text=@"Store Address";
@@ -140,10 +173,18 @@
         _btnAdd.enabled = NO;
         _btnAdd.alpha = 0.6;
         _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
+        _txtFieldStoreName.text=@"";
     }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
         _lblForEditStore.text=@"Edit Store";
         [_btnAdd setTitle:@"Edit" forState:UIControlStateNormal];
         _btnAdd.backgroundColor=[[UIColor blueColor] colorWithAlphaComponent:0.6];
+        _btnAdd.enabled = YES;
+        _btnAdd.alpha = 1.0;
+
+        _txtVwStoreAddress.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"address"];
+        _txtFieldStoreName.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"storeName"];
+        
+        _lblForLatLon.text=[NSString stringWithFormat:@"Lat: %@ | Lon: %@",[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"],[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"]];
     }
     
     [self textFieldEdit:_txtFieldStoreName];
@@ -162,7 +203,7 @@
     [self addShadow:_btnAdd];
     [self addShadow:_btnCancel];
     
-    
+    [_btnAdd addTarget:self action:@selector(onClickStoreAddToServer) forControlEvents:UIControlEventTouchUpInside];
     
     [_btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
     
@@ -170,6 +211,81 @@
 }
 
 
+-(void)enableAddNewStoreBtn
+{
+    if (_txtFieldStoreName.text.length>0&&_txtVwStoreAddress.text.length>0) {
+        _btnAdd.enabled = YES;
+        _btnAdd.alpha = 1;
+        _btnAdd.backgroundColor=[[UIColor darkGrayColor] colorWithAlphaComponent:1];
+    }
+    else{
+        _btnAdd.enabled = NO;
+        _btnAdd.alpha = 0.6;
+        _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
+    }
+}
+-(void)onClickStoreAddToServer
+{
+    
+    
+    if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *str=[defaults valueForKey:@"BasicAuth"];
+    
+    
+    [httpClient setDefaultHeader:@"Authorization" value:str];
+    
+    //{"storeName":"OPPO Tirumalgherry","address":"Via Rest API","latitude":100.00,"longitude":100.00,"proximityRadius":200}
+    
+    NSDictionary * json = @{@"storeName":_txtFieldStoreName.text,
+                            @"address":_txtVwStoreAddress.text,
+                            @"latitude":strForCurLatitude,
+                            @"longitude":strForCurLongitude,
+                           };
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
+                                                            path:@"/rest/s1/ft/stores"
+                                                      parameters:json];
+    
+    //====================================================RESPONSE
+    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        [DejalBezelActivityView removeView];
+        NSLog(@"Add Store Successfully==%@",JSON);
+        
+        if ([[JSON objectForKey:@"productStoreId"] integerValue]>0) {
+        _vwForStoreAdd.hidden = YES;
+        _backBtn.hidden=NO;
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        }
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+        
+    }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
+    }
+}
 -(void)onClickCancel{
     //    [[NSNotificationCenter defaultCenter] postNotificationName:@"CloseView" object:self];
     
@@ -224,6 +340,10 @@
             _lblForLatLon.text=[NSString stringWithFormat:@"Lat: %f | Lon: %f",[strForCurLatitude floatValue],[strForCurLongitude floatValue]];
             
             _txtVwStoreAddress.text=[[getAddress objectAtIndex:0]objectAtIndex:0];
+            
+            if (_txtFieldStoreName.text.length>0) {
+                [self enableAddNewStoreBtn];
+            }
         }
     }
 }
@@ -253,17 +373,118 @@
     strForCurLatitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.latitude];
     strForCurLongitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
 }
+#pragma mark - Get Store's
+
+
+-(void)getStores{
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *str=[defaults valueForKey:@"BasicAuth"];
+    
+    
+    [httpClient setDefaultHeader:@"Authorization" value:str];
+    
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:@"/rest/s1/ft/stores/user/list"
+                                                      parameters:nil];
+    
+    //====================================================RESPONSE
+    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        [DejalBezelActivityView removeView];
+        
+        NSLog(@"Store List==%@",JSON);
+        
+        arrayForStoreList=[JSON objectForKey:@"userStores"];
+        
+        [_tableVwForStore reloadData];
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+    
+}
+
+
+
 #pragma mark - Add Store
 
 -(void)onClickAddStore:(UIButton*)btn{
     [[MKSharedClass shareManager] setValueForStoreEditVC:1];
-    [self goToStorePopup];
+    [self goToStorePopup:0];
     
     //    NSLog(@"On Click Add Store");
 }
 
-#pragma mark - Add Promoter
+#pragma mark - Get Promoters
 
+
+-(void)getPromoters{
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *str=[defaults valueForKey:@"BasicAuth"];
+    
+    
+    [httpClient setDefaultHeader:@"Authorization" value:str];
+    
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:@"/rest/s1/ft/request/promoter/list?pageIndex=0&pageSize=10"
+                                                      parameters:nil];
+    
+    //====================================================RESPONSE
+    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        [DejalBezelActivityView removeView];
+        
+        NSLog(@"Promoters List==%@",[[[JSON objectForKey:@"requestList"] objectAtIndex:0] objectForKey:@"requestJson"]);
+        
+        }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+    
+}
+
+
+#pragma mark - Add Promoter
 
 -(void)multiSelect:(MultiSelectSegmentedControl *)multiSelectSegmentedControl didChangeValue:(BOOL)selected atIndex:(NSUInteger)index {
     
@@ -344,6 +565,7 @@
     _backBtn.hidden = NO;
 }
 
+#pragma mark - Open Camera
 
 -(void)openCamera:(UIButton*)sender{
     if (sender.tag == 100) {
@@ -355,42 +577,42 @@
     }
     
     
-    //    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-    //    {
-    //        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-    //        imagePickerController.delegate = self;
-    //        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
-    //
-    //        [self presentViewController:imagePickerController animated:YES completion:^{
-    //
-    //        }];
-    //    }
+        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+        {
+            UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+            imagePickerController.delegate = self;
+            imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
+    
+            [self presentViewController:imagePickerController animated:YES completion:^{
+    
+            }];
+        }
     
 }
 
 #pragma mark - ImagePickerDelegate Methods
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-    //    if([info valueForKey:UIImagePickerControllerOriginalImage]==nil)
-    //    {
-    //        ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
-    //        [assetLibrary assetForURL:[info valueForKey:UIImagePickerControllerReferenceURL] resultBlock:^(ALAsset *asset)
-    //         {
-    //             ALAssetRepresentation *rep = [asset defaultRepresentation];
-    //             Byte *buffer = (Byte*)malloc(rep.size);
-    //             NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
-    //             NSData *data = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];//
-    //             UIImage *img=[UIImage imageWithData:data];
-    ////             [self setImage:img];
-    //         } failureBlock:^(NSError *err) {
-    //             NSLog(@"Error: %@",[err localizedDescription]);
-    //         }];
-    //    }
-    //    else
-    //    {
-    ////        [self setImage:[info valueForKey:UIImagePickerControllerOriginalImage]];
-    //    }
-    //    [picker dismissViewControllerAnimated:YES completion:nil];
+        if([info valueForKey:UIImagePickerControllerOriginalImage]==nil)
+        {
+            ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
+            [assetLibrary assetForURL:[info valueForKey:UIImagePickerControllerReferenceURL] resultBlock:^(ALAsset *asset)
+             {
+                 ALAssetRepresentation *rep = [asset defaultRepresentation];
+                 Byte *buffer = (Byte*)malloc(rep.size);
+                 NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
+                 NSData *data = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];//
+                 UIImage *img=[UIImage imageWithData:data];
+    //             [self setImage:img];
+             } failureBlock:^(NSError *err) {
+                 NSLog(@"Error: %@",[err localizedDescription]);
+             }];
+        }
+        else
+        {
+    //        [self setImage:[info valueForKey:UIImagePickerControllerOriginalImage]];
+        }
+        [picker dismissViewControllerAnimated:YES completion:nil];
 }
 #pragma mark - Leave Rqst
 
@@ -456,14 +678,13 @@
         return cellLeave;
     }
     
-    
     if (cell == nil){
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     if (tableView == _tableVwForStore){
-        cell.textLabel.text=[arrayForStoreList objectAtIndex:indexPath.row];
+        cell.textLabel.text=[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"storeName"];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     else if (tableView == _tableVwForPromoters){
@@ -487,7 +708,7 @@
             [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
         
         }else if (indexPath.row ==0){
-        
+            [self getStores];
             _vwForStore.hidden =NO;
             _backBtn.hidden = NO;
             _tableVwForStore.delegate = self;
@@ -495,6 +716,7 @@
             [_tableVwForStore reloadData];
         
         }else if (indexPath.row ==1){
+            [self getPromoters];
             _vwForPromoters.hidden =NO;
             _backBtn.hidden = NO;
             _tableVwForPromoters.delegate = self;
@@ -510,12 +732,12 @@
         
     }else if (tableView == _tableVwForStore){
         [[MKSharedClass shareManager] setValueForStoreEditVC:0];
-        [self goToStorePopup];
+        [self goToStorePopup:indexPath.row];
     }
 }
 
 
--(void)goToStorePopup{
+-(void)goToStorePopup:(NSInteger)indexValue{
     //    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     //    UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"AddStoreVC"];
     //
@@ -531,7 +753,7 @@
     //        [self presentViewController:popupViewController animated:NO completion:nil];
     //    }
     
-    [self setUpForAddStore];
+    [self setUpForAddStore:indexValue];
     _vwForStoreAdd.hidden = NO;
     
 }

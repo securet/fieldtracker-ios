@@ -18,6 +18,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    
+    
+    _txtFieldForEmail.text=@"anand@securet.in";
+    _txtFieldForPassword.text=@"test@1234";
     [self addPadding:_txtFieldForEmail];
     [self addPadding:_txtFieldForPassword];
     
@@ -42,7 +46,7 @@
     txtField.leftViewMode = UITextFieldViewModeAlways;
     txtField.layer.cornerRadius=5;
 
-    UIImageView *imgVw=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 35, 35)];
+    UIImageView *imgVw=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     
     if (txtField == _txtFieldForEmail){
             imgVw.image=[UIImage imageNamed:@"email"];
@@ -77,8 +81,102 @@
 }
 
 - (IBAction)onClickLogin:(UIButton *)sender{
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
-    [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
+
+    
+    if (_txtFieldForEmail.text.length>0 && _txtFieldForPassword.text.length>0) {
+        [self login];
+    }
+    else{
+        
+        if (_txtFieldForEmail.text.length <= 0) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
+        else if (_txtFieldForPassword.text.length <= 0){
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Password" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
+    }
+}
+
+-(void)login{
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    
+   NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *str=[NSString stringWithFormat:@"%@:%@",_txtFieldForEmail.text,_txtFieldForPassword.text];
+    
+    NSString *auth_String;
+    
+    NSData *nsdata = [str
+                      dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString *base64Encoded = [nsdata base64EncodedStringWithOptions:0];
+    
+    auth_String=[NSString stringWithFormat:@"Basic %@",base64Encoded];
+    
+    [defaults setObject:auth_String forKey:@"BasicAuth"];
+    [httpClient setDefaultHeader:@"Authorization" value:auth_String];
+    
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:@"/rest/s1/ft/user"
+                                                      parameters:nil];
+    
+    //====================================================RESPONSE
+    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        [DejalBezelActivityView removeView];
+        
+        NSMutableDictionary *prunedDictionary = [NSMutableDictionary dictionary];
+        for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys])
+        {
+            if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
+                [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+        }
+        
+        [defaults setObject:prunedDictionary forKey:@"UserData"];
+        [defaults synchronize];
+        
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
+            [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                    [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+
+}
+
+
+
+- (NSString*)encodeStringTo64:(NSString*)fromString
+{
+    NSData *plainData = [fromString dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64String;
+    if ([plainData respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
+        base64String = [plainData base64EncodedStringWithOptions:kNilOptions];  // iOS 7+
+    } else {
+        base64String = [plainData base64Encoding];                              // pre iOS7
+    }
+    
+    return base64String;
 }
 @end

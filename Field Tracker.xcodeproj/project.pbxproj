@@ -8,6 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		67E8DE5516D9FE7DEEE109DD /* Pods_OppoAttendanceTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		7F0DC2C31E10E70700BCEC49 /* MKIndividualHistoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2C21E10E70700BCEC49 /* MKIndividualHistoryCell.m */; };
+		7F0DC2D81E10FA2500BCEC49 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2C61E10FA2500BCEC49 /* AFHTTPClient.m */; };
+		7F0DC2D91E10FA2500BCEC49 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2C81E10FA2500BCEC49 /* AFHTTPRequestOperation.m */; };
+		7F0DC2DA1E10FA2500BCEC49 /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2CA1E10FA2500BCEC49 /* AFImageRequestOperation.m */; };
+		7F0DC2DB1E10FA2500BCEC49 /* AFJSONRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2CC1E10FA2500BCEC49 /* AFJSONRequestOperation.m */; };
+		7F0DC2DC1E10FA2500BCEC49 /* AFNetworkActivityIndicatorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2CE1E10FA2500BCEC49 /* AFNetworkActivityIndicatorManager.m */; };
+		7F0DC2DD1E10FA2500BCEC49 /* AFPropertyListRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2D11E10FA2500BCEC49 /* AFPropertyListRequestOperation.m */; };
+		7F0DC2DE1E10FA2500BCEC49 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2D31E10FA2500BCEC49 /* AFURLConnectionOperation.m */; };
+		7F0DC2DF1E10FA2500BCEC49 /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2D51E10FA2500BCEC49 /* AFXMLRequestOperation.m */; };
+		7F0DC2E01E10FA2500BCEC49 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2D71E10FA2500BCEC49 /* UIImageView+AFNetworking.m */; };
+		7F57E0BF1E112583009D11F5 /* DejalActivityView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F57E0BE1E112583009D11F5 /* DejalActivityView.m */; };
 		7FA239A71E0A939300D293D5 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54A81E09338200A930C7 /* KeyboardManager.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		7FA239AD1E0AB44F00D293D5 /* MKCustomCellForLeave.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA239AC1E0AB44F00D293D5 /* MKCustomCellForLeave.m */; };
 		7FDB2AC71E0B8AA1002E3117 /* BIZPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FDB2ABA1E0B8AA1002E3117 /* BIZPopupViewController.m */; };
@@ -71,6 +82,29 @@
 /* Begin PBXFileReference section */
 		2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.release.xcconfig"; sourceTree = "<group>"; };
 		489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.debug.xcconfig"; sourceTree = "<group>"; };
+		7F0DC2C11E10E70600BCEC49 /* MKIndividualHistoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKIndividualHistoryCell.h; sourceTree = "<group>"; };
+		7F0DC2C21E10E70700BCEC49 /* MKIndividualHistoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKIndividualHistoryCell.m; sourceTree = "<group>"; };
+		7F0DC2C51E10FA2500BCEC49 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
+		7F0DC2C61E10FA2500BCEC49 /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
+		7F0DC2C71E10FA2500BCEC49 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
+		7F0DC2C81E10FA2500BCEC49 /* AFHTTPRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPRequestOperation.m; sourceTree = "<group>"; };
+		7F0DC2C91E10FA2500BCEC49 /* AFImageRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFImageRequestOperation.h; sourceTree = "<group>"; };
+		7F0DC2CA1E10FA2500BCEC49 /* AFImageRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFImageRequestOperation.m; sourceTree = "<group>"; };
+		7F0DC2CB1E10FA2500BCEC49 /* AFJSONRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFJSONRequestOperation.h; sourceTree = "<group>"; };
+		7F0DC2CC1E10FA2500BCEC49 /* AFJSONRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFJSONRequestOperation.m; sourceTree = "<group>"; };
+		7F0DC2CD1E10FA2500BCEC49 /* AFNetworkActivityIndicatorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkActivityIndicatorManager.h; sourceTree = "<group>"; };
+		7F0DC2CE1E10FA2500BCEC49 /* AFNetworkActivityIndicatorManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkActivityIndicatorManager.m; sourceTree = "<group>"; };
+		7F0DC2CF1E10FA2500BCEC49 /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworking.h; sourceTree = "<group>"; };
+		7F0DC2D01E10FA2500BCEC49 /* AFPropertyListRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFPropertyListRequestOperation.h; sourceTree = "<group>"; };
+		7F0DC2D11E10FA2500BCEC49 /* AFPropertyListRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFPropertyListRequestOperation.m; sourceTree = "<group>"; };
+		7F0DC2D21E10FA2500BCEC49 /* AFURLConnectionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLConnectionOperation.h; sourceTree = "<group>"; };
+		7F0DC2D31E10FA2500BCEC49 /* AFURLConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLConnectionOperation.m; sourceTree = "<group>"; };
+		7F0DC2D41E10FA2500BCEC49 /* AFXMLRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFXMLRequestOperation.h; sourceTree = "<group>"; };
+		7F0DC2D51E10FA2500BCEC49 /* AFXMLRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFXMLRequestOperation.m; sourceTree = "<group>"; };
+		7F0DC2D61E10FA2500BCEC49 /* UIImageView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+AFNetworking.h"; sourceTree = "<group>"; };
+		7F0DC2D71E10FA2500BCEC49 /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
+		7F57E0BD1E112583009D11F5 /* DejalActivityView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DejalActivityView.h; sourceTree = "<group>"; };
+		7F57E0BE1E112583009D11F5 /* DejalActivityView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DejalActivityView.m; sourceTree = "<group>"; };
 		7FA239AB1E0AB44F00D293D5 /* MKCustomCellForLeave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCustomCellForLeave.h; sourceTree = "<group>"; };
 		7FA239AC1E0AB44F00D293D5 /* MKCustomCellForLeave.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCustomCellForLeave.m; sourceTree = "<group>"; };
 		7FDB2ABA1E0B8AA1002E3117 /* BIZPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BIZPopupViewController.m; sourceTree = "<group>"; };
@@ -98,7 +132,7 @@
 		7FEA254B1E0CF81A000397D0 /* HSDatePickerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HSDatePickerViewController.xib; sourceTree = "<group>"; };
 		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OppoAttendanceTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FFB546D1E092EBC00A930C7 /* Field Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Field Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FFB54711E092EBC00A930C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7FFB54731E092EBC00A930C7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7FFB54741E092EBC00A930C7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -108,10 +142,10 @@
 		7FFB547C1E092EBC00A930C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7FFB547F1E092EBC00A930C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7FFB54811E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7FFB54861E092EBC00A930C7 /* OppoAttendanceTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OppoAttendanceTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FFB54861E092EBC00A930C7 /* Field Tracker.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Field Tracker.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FFB548A1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OppoAttendanceTrackerTests.m; sourceTree = "<group>"; };
 		7FFB548C1E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7FFB54911E092EBC00A930C7 /* OppoAttendanceTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OppoAttendanceTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FFB54911E092EBC00A930C7 /* Field Tracker.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Field Tracker.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OppoAttendanceTrackerUITests.m; sourceTree = "<group>"; };
 		7FFB54971E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7FFB54A41E092F7700A930C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -192,6 +226,41 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		7F0DC2C41E10F9F400BCEC49 /* Restkit */ = {
+			isa = PBXGroup;
+			children = (
+				7F0DC2C51E10FA2500BCEC49 /* AFHTTPClient.h */,
+				7F0DC2C61E10FA2500BCEC49 /* AFHTTPClient.m */,
+				7F0DC2C71E10FA2500BCEC49 /* AFHTTPRequestOperation.h */,
+				7F0DC2C81E10FA2500BCEC49 /* AFHTTPRequestOperation.m */,
+				7F0DC2C91E10FA2500BCEC49 /* AFImageRequestOperation.h */,
+				7F0DC2CA1E10FA2500BCEC49 /* AFImageRequestOperation.m */,
+				7F0DC2CB1E10FA2500BCEC49 /* AFJSONRequestOperation.h */,
+				7F0DC2CC1E10FA2500BCEC49 /* AFJSONRequestOperation.m */,
+				7F0DC2CD1E10FA2500BCEC49 /* AFNetworkActivityIndicatorManager.h */,
+				7F0DC2CE1E10FA2500BCEC49 /* AFNetworkActivityIndicatorManager.m */,
+				7F0DC2CF1E10FA2500BCEC49 /* AFNetworking.h */,
+				7F0DC2D01E10FA2500BCEC49 /* AFPropertyListRequestOperation.h */,
+				7F0DC2D11E10FA2500BCEC49 /* AFPropertyListRequestOperation.m */,
+				7F0DC2D21E10FA2500BCEC49 /* AFURLConnectionOperation.h */,
+				7F0DC2D31E10FA2500BCEC49 /* AFURLConnectionOperation.m */,
+				7F0DC2D41E10FA2500BCEC49 /* AFXMLRequestOperation.h */,
+				7F0DC2D51E10FA2500BCEC49 /* AFXMLRequestOperation.m */,
+				7F0DC2D61E10FA2500BCEC49 /* UIImageView+AFNetworking.h */,
+				7F0DC2D71E10FA2500BCEC49 /* UIImageView+AFNetworking.m */,
+			);
+			name = Restkit;
+			sourceTree = "<group>";
+		};
+		7F57E0C01E112589009D11F5 /* Activity Indicator */ = {
+			isa = PBXGroup;
+			children = (
+				7F57E0BD1E112583009D11F5 /* DejalActivityView.h */,
+				7F57E0BE1E112583009D11F5 /* DejalActivityView.m */,
+			);
+			name = "Activity Indicator";
+			sourceTree = "<group>";
+		};
 		7FA239AA1E0AB41F00D293D5 /* Custom  Cell For Leave */ = {
 			isa = PBXGroup;
 			children = (
@@ -242,6 +311,8 @@
 		7FDB2AE11E0BEC3B002E3117 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				7F57E0C01E112589009D11F5 /* Activity Indicator */,
+				7F0DC2C41E10F9F400BCEC49 /* Restkit */,
 				7FEA25481E0CF561000397D0 /* Calendar */,
 				7FDB2AE21E0BEC49002E3117 /* MultiSelectSegment */,
 			);
@@ -289,9 +360,9 @@
 		7FFB546E1E092EBC00A930C7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */,
-				7FFB54861E092EBC00A930C7 /* OppoAttendanceTrackerTests.xctest */,
-				7FFB54911E092EBC00A930C7 /* OppoAttendanceTrackerUITests.xctest */,
+				7FFB546D1E092EBC00A930C7 /* Field Tracker.app */,
+				7FFB54861E092EBC00A930C7 /* Field Tracker.xctest */,
+				7FFB54911E092EBC00A930C7 /* Field Tracker.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -484,6 +555,8 @@
 			children = (
 				7FFB54E81E0963E300A930C7 /* MKHistoryCustomCell.h */,
 				7FFB54E91E0963E300A930C7 /* MKHistoryCustomCell.m */,
+				7F0DC2C11E10E70600BCEC49 /* MKIndividualHistoryCell.h */,
+				7F0DC2C21E10E70700BCEC49 /* MKIndividualHistoryCell.m */,
 			);
 			name = CutsomCell;
 			sourceTree = "<group>";
@@ -491,9 +564,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7FFB546C1E092EBC00A930C7 /* OppoAttendanceTracker */ = {
+		7FFB546C1E092EBC00A930C7 /* Field Tracker */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7FFB549A1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTracker" */;
+			buildConfigurationList = 7FFB549A1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "Field Tracker" */;
 			buildPhases = (
 				77BC17008FEAE24919B4B81F /* [CP] Check Pods Manifest.lock */,
 				7FFB54691E092EBC00A930C7 /* Sources */,
@@ -506,14 +579,14 @@
 			);
 			dependencies = (
 			);
-			name = OppoAttendanceTracker;
+			name = "Field Tracker";
 			productName = OppoAttendanceTracker;
-			productReference = 7FFB546D1E092EBC00A930C7 /* OppoAttendanceTracker.app */;
+			productReference = 7FFB546D1E092EBC00A930C7 /* Field Tracker.app */;
 			productType = "com.apple.product-type.application";
 		};
-		7FFB54851E092EBC00A930C7 /* OppoAttendanceTrackerTests */ = {
+		7FFB54851E092EBC00A930C7 /* Field TrackerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7FFB549D1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTrackerTests" */;
+			buildConfigurationList = 7FFB549D1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "Field TrackerTests" */;
 			buildPhases = (
 				7FFB54821E092EBC00A930C7 /* Sources */,
 				7FFB54831E092EBC00A930C7 /* Frameworks */,
@@ -524,14 +597,14 @@
 			dependencies = (
 				7FFB54881E092EBC00A930C7 /* PBXTargetDependency */,
 			);
-			name = OppoAttendanceTrackerTests;
+			name = "Field TrackerTests";
 			productName = OppoAttendanceTrackerTests;
-			productReference = 7FFB54861E092EBC00A930C7 /* OppoAttendanceTrackerTests.xctest */;
+			productReference = 7FFB54861E092EBC00A930C7 /* Field Tracker.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		7FFB54901E092EBC00A930C7 /* OppoAttendanceTrackerUITests */ = {
+		7FFB54901E092EBC00A930C7 /* Field TrackerUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7FFB54A01E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTrackerUITests" */;
+			buildConfigurationList = 7FFB54A01E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "Field TrackerUITests" */;
 			buildPhases = (
 				7FFB548D1E092EBC00A930C7 /* Sources */,
 				7FFB548E1E092EBC00A930C7 /* Frameworks */,
@@ -542,9 +615,9 @@
 			dependencies = (
 				7FFB54931E092EBC00A930C7 /* PBXTargetDependency */,
 			);
-			name = OppoAttendanceTrackerUITests;
+			name = "Field TrackerUITests";
 			productName = OppoAttendanceTrackerUITests;
-			productReference = 7FFB54911E092EBC00A930C7 /* OppoAttendanceTrackerUITests.xctest */;
+			productReference = 7FFB54911E092EBC00A930C7 /* Field Tracker.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -570,7 +643,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7FFB54681E092EBC00A930C7 /* Build configuration list for PBXProject "OppoAttendanceTracker" */;
+			buildConfigurationList = 7FFB54681E092EBC00A930C7 /* Build configuration list for PBXProject "Field Tracker" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -583,9 +656,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7FFB546C1E092EBC00A930C7 /* OppoAttendanceTracker */,
-				7FFB54851E092EBC00A930C7 /* OppoAttendanceTrackerTests */,
-				7FFB54901E092EBC00A930C7 /* OppoAttendanceTrackerUITests */,
+				7FFB546C1E092EBC00A930C7 /* Field Tracker */,
+				7FFB54851E092EBC00A930C7 /* Field TrackerTests */,
+				7FFB54901E092EBC00A930C7 /* Field TrackerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -675,26 +748,37 @@
 			buildActionMask = 2147483647;
 			files = (
 				7FFB54CB1E0933B400A930C7 /* IQNSArray+Sort.m in Sources */,
+				7F0DC2E01E10FA2500BCEC49 /* UIImageView+AFNetworking.m in Sources */,
 				7FFB54EA1E0963E300A930C7 /* MKHistoryCustomCell.m in Sources */,
+				7F0DC2DD1E10FA2500BCEC49 /* AFPropertyListRequestOperation.m in Sources */,
 				7FFB54D31E0933B400A930C7 /* IQTitleBarButtonItem.m in Sources */,
+				7F0DC2DA1E10FA2500BCEC49 /* AFImageRequestOperation.m in Sources */,
 				7FFB54DA1E0938FB00A930C7 /* MKHomeVC.m in Sources */,
 				7FFB54CF1E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m in Sources */,
 				7FDB2ACC1E0B8AA1002E3117 /* UIViewController+BIZChildViewController.m in Sources */,
 				7FDB2AC91E0B8AA1002E3117 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				7FA239AD1E0AB44F00D293D5 /* MKCustomCellForLeave.m in Sources */,
+				7F0DC2DF1E10FA2500BCEC49 /* AFXMLRequestOperation.m in Sources */,
 				7FDB2AE51E0BEC65002E3117 /* MultiSelectSegmentedControl.m in Sources */,
 				7FFB54D51E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m in Sources */,
+				7F57E0BF1E112583009D11F5 /* DejalActivityView.m in Sources */,
 				7FFB54D21E0933B400A930C7 /* IQBarButtonItem.m in Sources */,
 				7FFB54D01E0933B400A930C7 /* IQSegmentedNextPrevious.m in Sources */,
 				7FEA254C1E0CF81A000397D0 /* HSDatePickerViewController.m in Sources */,
+				7F0DC2DB1E10FA2500BCEC49 /* AFJSONRequestOperation.m in Sources */,
 				7FFB54D11E0933B400A930C7 /* IQTextView.m in Sources */,
 				7FFB54CE1E0933B400A930C7 /* IQKeyboardManager.m in Sources */,
 				7FDB2AC71E0B8AA1002E3117 /* BIZPopupViewController.m in Sources */,
+				7F0DC2DE1E10FA2500BCEC49 /* AFURLConnectionOperation.m in Sources */,
 				7FDB2ACB1E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
+				7F0DC2DC1E10FA2500BCEC49 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				7FFB54781E092EBC00A930C7 /* ViewController.m in Sources */,
 				7FDB2AC81E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.m in Sources */,
 				7FDB2AD51E0B9FBB002E3117 /* MKSharedClass.m in Sources */,
+				7F0DC2D91E10FA2500BCEC49 /* AFHTTPRequestOperation.m in Sources */,
 				7FFB54751E092EBC00A930C7 /* AppDelegate.m in Sources */,
+				7F0DC2C31E10E70700BCEC49 /* MKIndividualHistoryCell.m in Sources */,
+				7F0DC2D81E10FA2500BCEC49 /* AFHTTPClient.m in Sources */,
 				7FDB2AD01E0B8F5E002E3117 /* MKAddStoreVC.m in Sources */,
 				7FFB54DF1E093C1200A930C7 /* MKHistoryVC.m in Sources */,
 				7FFB54D41E0933B400A930C7 /* IQToolbar.m in Sources */,
@@ -727,12 +811,12 @@
 /* Begin PBXTargetDependency section */
 		7FFB54881E092EBC00A930C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7FFB546C1E092EBC00A930C7 /* OppoAttendanceTracker */;
+			target = 7FFB546C1E092EBC00A930C7 /* Field Tracker */;
 			targetProxy = 7FFB54871E092EBC00A930C7 /* PBXContainerItemProxy */;
 		};
 		7FFB54931E092EBC00A930C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7FFB546C1E092EBC00A930C7 /* OppoAttendanceTracker */;
+			target = 7FFB546C1E092EBC00A930C7 /* Field Tracker */;
 			targetProxy = 7FFB54921E092EBC00A930C7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -859,7 +943,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTracker;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Field Tracker";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -883,7 +967,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTracker;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Field Tracker";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -896,8 +980,8 @@
 				INFOPLIST_FILE = OppoAttendanceTrackerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTrackerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OppoAttendanceTracker.app/OppoAttendanceTracker";
+				PRODUCT_NAME = "Field Tracker";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Field Tracker.app/Field Tracker";
 			};
 			name = Debug;
 		};
@@ -908,8 +992,8 @@
 				INFOPLIST_FILE = OppoAttendanceTrackerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTrackerTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OppoAttendanceTracker.app/OppoAttendanceTracker";
+				PRODUCT_NAME = "Field Tracker";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Field Tracker.app/Field Tracker";
 			};
 			name = Release;
 		};
@@ -919,7 +1003,7 @@
 				INFOPLIST_FILE = OppoAttendanceTrackerUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTrackerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Field Tracker";
 				TEST_TARGET_NAME = OppoAttendanceTracker;
 			};
 			name = Debug;
@@ -930,7 +1014,7 @@
 				INFOPLIST_FILE = OppoAttendanceTrackerUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTrackerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Field Tracker";
 				TEST_TARGET_NAME = OppoAttendanceTracker;
 			};
 			name = Release;
@@ -938,7 +1022,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7FFB54681E092EBC00A930C7 /* Build configuration list for PBXProject "OppoAttendanceTracker" */ = {
+		7FFB54681E092EBC00A930C7 /* Build configuration list for PBXProject "Field Tracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7FFB54981E092EBD00A930C7 /* Debug */,
@@ -947,7 +1031,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7FFB549A1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTracker" */ = {
+		7FFB549A1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "Field Tracker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7FFB549B1E092EBD00A930C7 /* Debug */,
@@ -956,7 +1040,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7FFB549D1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTrackerTests" */ = {
+		7FFB549D1E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "Field TrackerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7FFB549E1E092EBD00A930C7 /* Debug */,
@@ -965,7 +1049,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7FFB54A01E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "OppoAttendanceTrackerUITests" */ = {
+		7FFB54A01E092EBD00A930C7 /* Build configuration list for PBXNativeTarget "Field TrackerUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7FFB54A11E092EBD00A930C7 /* Debug */,

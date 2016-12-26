@@ -12,6 +12,7 @@
 {
     IBOutlet GMSMapView *mapView;
     NSString *strForCurLatitude,*strForCurLongitude;
+    NSMutableDictionary *dictForStoreDetails;
 }
 @end
 
@@ -21,8 +22,13 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    _lblUserName.text=[NSString stringWithFormat:@"Test"];
-    _lblUserName.numberOfLines = 2;
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+    NSLog(@"%@",dict);
+    _lblFName.text=[dict valueForKey:@"firstName"];
+    _lblLName.text=[dict valueForKey:@"lastName"];
+    
+    
     
     _bottomVw.layer.cornerRadius = 10;
     _bottomVw.layer.masksToBounds = YES;
@@ -63,13 +69,79 @@
     
     
     markerCar.map = mapView;
+    _lblStoreName.text=@"";
+    [self getStoreDetails];
 }
 
+-(void)getStoreDetails{
+    
+    dictForStoreDetails=[[NSMutableDictionary alloc] init];
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *auth_String=[defaults valueForKey:@"BasicAuth"];
+    
+
+    [httpClient setDefaultHeader:@"Authorization" value:auth_String];
+     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+    
+    
+    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[dict valueForKey:@"partyId"]];
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:urlPath
+                                                      parameters:nil];
+    
+    //====================================================RESPONSE
+//    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+//        [DejalBezelActivityView removeView];
+        
+        NSLog(@"Store Details==%@",JSON);
+        
+        dictForStoreDetails=[JSON mutableCopy];
+        
+        _lblStoreName.text=[dictForStoreDetails valueForKey:@"storeName"];
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+
+}
 
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = YES;
     self.navigationItem.hidesBackButton = YES;
     [self.navigationItem setHidesBackButton:YES];
+    
+    
+    NSDate *now = [NSDate date];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"hh:mm a";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+    
+    _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
+    
+    _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
 }
 
 
