@@ -317,7 +317,7 @@
 				7FDB2AE21E0BEC49002E3117 /* MultiSelectSegment */,
 			);
 			name = Helper;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		7FDB2AE21E0BEC49002E3117 /* MultiSelectSegment */ = {
 			isa = PBXGroup;
