@@ -133,7 +133,7 @@
 		7FEA25491E0CF81A000397D0 /* HSDatePickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSDatePickerViewController.m; sourceTree = "<group>"; };
 		7FEA254A1E0CF81A000397D0 /* HSDatePickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSDatePickerViewController.h; sourceTree = "<group>"; };
 		7FEA254B1E0CF81A000397D0 /* HSDatePickerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HSDatePickerViewController.xib; sourceTree = "<group>"; };
-		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7FFB546D1E092EBC00A930C7 /* Field Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Field Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FFB54711E092EBC00A930C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -152,7 +152,7 @@
 		7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OppoAttendanceTrackerUITests.m; sourceTree = "<group>"; };
 		7FFB54971E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7FFB54A41E092F7700A930C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		7FFB54A81E09338200A930C7 /* KeyboardManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KeyboardManager.framework; sourceTree = "<group>"; };
+		7FFB54A81E09338200A930C7 /* KeyboardManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KeyboardManager.framework; path = ../KeyboardManager.framework; sourceTree = "<group>"; };
 		7FFB54AC1E0933B400A930C7 /* IQNSArray+Sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQNSArray+Sort.h"; sourceTree = "<group>"; };
 		7FFB54AD1E0933B400A930C7 /* IQNSArray+Sort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IQNSArray+Sort.m"; sourceTree = "<group>"; };
 		7FFB54AE1E0933B400A930C7 /* IQUIView+Hierarchy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IQUIView+Hierarchy.h"; sourceTree = "<group>"; };
@@ -318,6 +318,7 @@
 				7FDB2AD41E0B9FBB002E3117 /* MKSharedClass.m */,
 			);
 			name = GlobalClass;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		7FDB2AE11E0BEC3B002E3117 /* Helper */ = {
@@ -353,14 +354,6 @@
 		7FFB54641E092EBC00A930C7 = {
 			isa = PBXGroup;
 			children = (
-				7FDB2AE11E0BEC3B002E3117 /* Helper */,
-				7FDB2AD21E0B9F97002E3117 /* GlobalClass */,
-				7FECDA501E0A460F000E923F /* Podfile */,
-				7FFB54E41E0951F400A930C7 /* Frameworks */,
-				7FFB54D71E0938D500A930C7 /* View */,
-				7FFB54AA1E0933B400A930C7 /* IQKeyBoardManager */,
-				7FFB54A81E09338200A930C7 /* KeyboardManager.framework */,
-				7FFB54A31E092F4800A930C7 /* ImageAssets */,
 				7FFB546F1E092EBC00A930C7 /* OppoAttendanceTracker */,
 				7FFB54891E092EBC00A930C7 /* OppoAttendanceTrackerTests */,
 				7FFB54941E092EBC00A930C7 /* OppoAttendanceTrackerUITests */,
@@ -382,6 +375,14 @@
 		7FFB546F1E092EBC00A930C7 /* OppoAttendanceTracker */ = {
 			isa = PBXGroup;
 			children = (
+				7FDB2AE11E0BEC3B002E3117 /* Helper */,
+				7FDB2AD21E0B9F97002E3117 /* GlobalClass */,
+				7FECDA501E0A460F000E923F /* Podfile */,
+				7FFB54E41E0951F400A930C7 /* Frameworks */,
+				7FFB54AA1E0933B400A930C7 /* IQKeyBoardManager */,
+				7FFB54A81E09338200A930C7 /* KeyboardManager.framework */,
+				7FFB54A31E092F4800A930C7 /* ImageAssets */,
+				7FFB54D71E0938D500A930C7 /* View */,
 				7F04BA391E121C2600679905 /* Geo fence */,
 				7FFB54731E092EBC00A930C7 /* AppDelegate.h */,
 				7FFB54741E092EBC00A930C7 /* AppDelegate.m */,
@@ -429,6 +430,7 @@
 				7FFB54A41E092F7700A930C7 /* Images.xcassets */,
 			);
 			name = ImageAssets;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		7FFB54AA1E0933B400A930C7 /* IQKeyBoardManager */ = {
@@ -446,7 +448,8 @@
 				7FFB54C81E0933B400A930C7 /* KeyboardManager.h */,
 				7FFB54C91E0933B400A930C7 /* Resources */,
 			);
-			path = IQKeyBoardManager;
+			name = IQKeyBoardManager;
+			path = ../IQKeyBoardManager;
 			sourceTree = "<group>";
 		};
 		7FFB54AB1E0933B400A930C7 /* Categories */ = {
@@ -522,6 +525,7 @@
 				7FDB2AD11E0B9065002E3117 /* Add Edit Store */,
 			);
 			name = View;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		7FFB54DB1E093BE500A930C7 /* Attendance */ = {
@@ -561,6 +565,7 @@
 				EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */,
 			);
 			name = Frameworks;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		7FFB54E71E0963C000A930C7 /* CutsomCell */ = {
