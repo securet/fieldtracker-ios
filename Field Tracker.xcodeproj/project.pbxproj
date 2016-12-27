@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		67E8DE5516D9FE7DEEE109DD /* Pods_OppoAttendanceTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		7F04BA3C1E121C5300679905 /* MKGetLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA3B1E121C5300679905 /* MKGetLocation.m */; };
 		7F0DC2C31E10E70700BCEC49 /* MKIndividualHistoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2C21E10E70700BCEC49 /* MKIndividualHistoryCell.m */; };
 		7F0DC2D81E10FA2500BCEC49 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2C61E10FA2500BCEC49 /* AFHTTPClient.m */; };
 		7F0DC2D91E10FA2500BCEC49 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0DC2C81E10FA2500BCEC49 /* AFHTTPRequestOperation.m */; };
@@ -82,6 +83,8 @@
 /* Begin PBXFileReference section */
 		2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.release.xcconfig"; sourceTree = "<group>"; };
 		489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.debug.xcconfig"; sourceTree = "<group>"; };
+		7F04BA3A1E121C5300679905 /* MKGetLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKGetLocation.h; sourceTree = "<group>"; };
+		7F04BA3B1E121C5300679905 /* MKGetLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKGetLocation.m; sourceTree = "<group>"; };
 		7F0DC2C11E10E70600BCEC49 /* MKIndividualHistoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKIndividualHistoryCell.h; sourceTree = "<group>"; };
 		7F0DC2C21E10E70700BCEC49 /* MKIndividualHistoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKIndividualHistoryCell.m; sourceTree = "<group>"; };
 		7F0DC2C51E10FA2500BCEC49 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
@@ -224,6 +227,15 @@
 				2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		7F04BA391E121C2600679905 /* Geo fence */ = {
+			isa = PBXGroup;
+			children = (
+				7F04BA3A1E121C5300679905 /* MKGetLocation.h */,
+				7F04BA3B1E121C5300679905 /* MKGetLocation.m */,
+			);
+			name = "Geo fence";
 			sourceTree = "<group>";
 		};
 		7F0DC2C41E10F9F400BCEC49 /* Restkit */ = {
@@ -370,6 +382,7 @@
 		7FFB546F1E092EBC00A930C7 /* OppoAttendanceTracker */ = {
 			isa = PBXGroup;
 			children = (
+				7F04BA391E121C2600679905 /* Geo fence */,
 				7FFB54731E092EBC00A930C7 /* AppDelegate.h */,
 				7FFB54741E092EBC00A930C7 /* AppDelegate.m */,
 				7FFB54761E092EBC00A930C7 /* ViewController.h */,
@@ -771,6 +784,7 @@
 				7FDB2AC71E0B8AA1002E3117 /* BIZPopupViewController.m in Sources */,
 				7F0DC2DE1E10FA2500BCEC49 /* AFURLConnectionOperation.m in Sources */,
 				7FDB2ACB1E0B8AA1002E3117 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
+				7F04BA3C1E121C5300679905 /* MKGetLocation.m in Sources */,
 				7F0DC2DC1E10FA2500BCEC49 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				7FFB54781E092EBC00A930C7 /* ViewController.m in Sources */,
 				7FDB2AC81E0B8AA1002E3117 /* TPKeyboardAvoidingCollectionView.m in Sources */,
