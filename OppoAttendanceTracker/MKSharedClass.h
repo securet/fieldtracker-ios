@@ -14,4 +14,5 @@
 
 @property NSInteger valueForStoreEditVC;// To Check Store Edit Or Add 0 - Edit/ 1 - Add
 
+@property NSDictionary *dictForStoreSelected;
 @end

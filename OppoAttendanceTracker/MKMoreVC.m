@@ -15,6 +15,12 @@
     NSMutableArray *arrayForPromoters;
     NSString *strForCurLatitude,*strForCurLongitude;
     BOOL isStartOrEndDate;
+    NSInteger indexValueOfPromoterEdit;
+    UIImage *imgToSend;
+    NSString *stringForImagePurpose;
+    NSString *strUserPhotoPath;
+    NSString *strAadharIDPath;
+    NSString *strAddressProofPath;
 }
 @end
 
@@ -23,8 +29,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
-
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
@@ -38,7 +42,7 @@
     
     arrayForStoreList=[[NSMutableArray alloc] init];
     
-    arrayForPromoters=[[NSMutableArray alloc] initWithObjects:@"Anand",@"Vikram",@"Pawan",@"Vijay",@"Pramod", nil];
+    arrayForPromoters=[[NSMutableArray alloc] init];
     
     _tableVw.delegate = self;
     _tableVw.dataSource = self;
@@ -76,15 +80,25 @@
     [self addShadow:_btnAddPromoter];
     [self addShadow:_btnLeaveRqst];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
 }
 
+
+-(void)storeSelected
+{
+    NSDictionary *dict=[[NSMutableDictionary alloc] init];
+    dict=[[MKSharedClass shareManager] dictForStoreSelected];
+    NSLog(@"Selected Store Details===%@",dict);
+    
+    _txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
+    _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
+}
 
 -(void)addShadow:(UIButton*)btn{
     btn.layer.shadowColor = [UIColor lightGrayColor].CGColor;
     btn.layer.shadowOffset = CGSizeMake(1, 1);
     btn.layer.shadowOpacity = 1;
     btn.layer.shadowRadius = 1.0;
-    
 }
 
 
@@ -108,8 +122,29 @@
 }
 
 
-#pragma mark - TextField
-
+#pragma mark - TextField Delegate
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if (textField == _txtFieldStoreName) {
+        [self enableAddNewStoreBtn];
+    }else if (textField == _txtFieldStoreAsgnmntPromoter){
+        
+    }
+}
+-(void)textFieldDidBeginEditing:(UITextField *)textField{
+    
+    if (textField == _txtFieldStoreAsgnmntPromoter){
+        
+    }
+    
+}
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    
+    if (textField == _txtFieldStoreAsgnmntPromoter || textField == _txtFieldSEAsgnmntPromoter){
+        return NO;
+    }
+    return YES;
+}
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
     if ([textField isFirstResponder]){
         if ([[[textField textInputMode] primaryLanguage] isEqualToString:@"emoji"] || ![[textField textInputMode] primaryLanguage]){
@@ -145,13 +180,7 @@
 }
 
 
-#pragma mark - TextField Delegate
--(void)textFieldDidEndEditing:(UITextField *)textField
-{
-    if (textField == _txtFieldStoreName) {
-        [self enableAddNewStoreBtn];
-    }
-}
+
 #pragma mark - Add StoreView
 
 
@@ -180,11 +209,14 @@
         _btnAdd.backgroundColor=[[UIColor blueColor] colorWithAlphaComponent:0.6];
         _btnAdd.enabled = YES;
         _btnAdd.alpha = 1.0;
-
+        
         _txtVwStoreAddress.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"address"];
         _txtFieldStoreName.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"storeName"];
         
         _lblForLatLon.text=[NSString stringWithFormat:@"Lat: %@ | Lon: %@",[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"],[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"]];
+        strForCurLatitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"];
+        strForCurLongitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"];
+        _btnAdd.tag=indexValue;
     }
     
     [self textFieldEdit:_txtFieldStoreName];
@@ -203,7 +235,7 @@
     [self addShadow:_btnAdd];
     [self addShadow:_btnCancel];
     
-    [_btnAdd addTarget:self action:@selector(onClickStoreAddToServer) forControlEvents:UIControlEventTouchUpInside];
+    [_btnAdd addTarget:self action:@selector(onClickStoreAddToServer:) forControlEvents:UIControlEventTouchUpInside];
     
     [_btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
     
@@ -213,23 +245,22 @@
 
 -(void)enableAddNewStoreBtn
 {
-    if (_txtFieldStoreName.text.length>0&&_txtVwStoreAddress.text.length>0) {
-        _btnAdd.enabled = YES;
-        _btnAdd.alpha = 1;
-        _btnAdd.backgroundColor=[[UIColor darkGrayColor] colorWithAlphaComponent:1];
-    }
-    else{
-        _btnAdd.enabled = NO;
-        _btnAdd.alpha = 0.6;
-        _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
-    }
-}
--(void)onClickStoreAddToServer
-{
-    
     
     if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
-    
+        if (_txtFieldStoreName.text.length>0&&_txtVwStoreAddress.text.length>0) {
+            _btnAdd.enabled = YES;
+            _btnAdd.alpha = 1;
+            _btnAdd.backgroundColor=[[UIColor darkGrayColor] colorWithAlphaComponent:1];
+        }
+        else{
+            _btnAdd.enabled = NO;
+            _btnAdd.alpha = 0.6;
+            _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
+        }
+    }
+}
+-(void)onClickStoreAddToServer:(UIButton*)sender
+{
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
     
@@ -248,11 +279,25 @@
                             @"address":_txtVwStoreAddress.text,
                             @"latitude":strForCurLatitude,
                             @"longitude":strForCurLongitude,
-                           };
+                            };
     
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
-                                                            path:@"/rest/s1/ft/stores"
-                                                      parameters:json];
+    NSMutableURLRequest *request;
+    
+    
+    
+    if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
+        request = [httpClient requestWithMethod:@"POST"
+                                           path:@"/rest/s1/ft/stores"
+                                     parameters:json];
+        
+    }
+    else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
+        
+        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[[arrayForStoreList objectAtIndex:sender.tag] valueForKey:@"productStoreId"]];
+        request = [httpClient requestWithMethod:@"PUT"
+                                           path:strPath
+                                     parameters:json];
+    }
     
     //====================================================RESPONSE
     [DejalBezelActivityView activityViewForView:self.view];
@@ -269,11 +314,16 @@
         [DejalBezelActivityView removeView];
         NSLog(@"Add Store Successfully==%@",JSON);
         
-        if ([[JSON objectForKey:@"productStoreId"] integerValue]>0) {
         _vwForStoreAdd.hidden = YES;
         _backBtn.hidden=NO;
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
+        
+        if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
+            if ([[JSON objectForKey:@"productStoreId"] integerValue]>0) {
+                //                _vwForStoreAdd.hidden = YES;
+                //                _backBtn.hidden=NO;
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
         }
     }
      //==================================================ERROR
@@ -282,9 +332,8 @@
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
-        
-    }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
-    }
+    
+    
 }
 -(void)onClickCancel{
     //    [[NSNotificationCenter defaultCenter] postNotificationName:@"CloseView" object:self];
@@ -471,9 +520,11 @@
         
         [DejalBezelActivityView removeView];
         
-        NSLog(@"Promoters List==%@",[[[JSON objectForKey:@"requestList"] objectAtIndex:0] objectForKey:@"requestJson"]);
+        //        NSLog(@"Promoters List==%@",[[[JSON objectForKey:@"requestList"] objectAtIndex:0] objectForKey:@"requestJson"]);
+        arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
         
-        }
+        [_tableVwForPromoters reloadData];
+    }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                          [DejalBezelActivityView removeView];
@@ -501,12 +552,30 @@
 -(void)onClickAddPromoter:(UIButton*)btn{
     //    NSLog(@"On Click Add Promoter");
     
+    [self promoterDetails:YES];
+}
+
+-(void)promoterDetails:(BOOL)isAddOrEdit{
+    
     _segmentControl.delegate = self;
     [_btnCancelPromoterAdd addTarget:self action:@selector(onClickCancelOfAddPromoter) forControlEvents:UIControlEventTouchUpInside];
     _vwForPromoterAdd.hidden = NO;
     _backBtn.hidden = YES;
+    
+    if (!isAddOrEdit) {
+        NSString *jsonString = [[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestJson"];
+        NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        
+        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
+        
+        _txtFieldFNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"];
+        _txtFieldLNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"];
+        _txtFieldEmailPromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"emailId"];
+        _txtFieldPhonePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"phone"];
+        _txtVwAddressPromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"address"];
+    }
 }
-
 
 -(void)addPromoterViewSetup{
     [self textFieldEdit:_txtFieldFNamePromoter];
@@ -568,51 +637,141 @@
 #pragma mark - Open Camera
 
 -(void)openCamera:(UIButton*)sender{
+    
     if (sender.tag == 100) {
-        
+        stringForImagePurpose=@"userPhoto";
     }else if (sender.tag == 200){
-        
+        stringForImagePurpose=@"aadharId";
     }else if (sender.tag == 300){
-        
+        stringForImagePurpose=@"addressProof";
     }
-    
-    
-        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-        {
-            UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-            imagePickerController.delegate = self;
-            imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
-    
-            [self presentViewController:imagePickerController animated:YES completion:^{
-    
-            }];
-        }
+    //userPhoto aadharId addressProof
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+    {
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+        imagePickerController.delegate = self;
+        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
+        [self presentViewController:imagePickerController animated:YES completion:^{
+            
+        }];
+    }
     
 }
 
 #pragma mark - ImagePickerDelegate Methods
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-        if([info valueForKey:UIImagePickerControllerOriginalImage]==nil)
-        {
-            ALAssetsLibrary *assetLibrary=[[ALAssetsLibrary alloc] init];
-            [assetLibrary assetForURL:[info valueForKey:UIImagePickerControllerReferenceURL] resultBlock:^(ALAsset *asset)
-             {
-                 ALAssetRepresentation *rep = [asset defaultRepresentation];
-                 Byte *buffer = (Byte*)malloc(rep.size);
-                 NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
-                 NSData *data = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];//
-                 UIImage *img=[UIImage imageWithData:data];
-    //             [self setImage:img];
-             } failureBlock:^(NSError *err) {
-                 NSLog(@"Error: %@",[err localizedDescription]);
-             }];
-        }
-        else
-        {
-    //        [self setImage:[info valueForKey:UIImagePickerControllerOriginalImage]];
-        }
-        [picker dismissViewControllerAnimated:YES completion:nil];
+    if([info valueForKey:UIImagePickerControllerOriginalImage]==nil)
+    {
+    }
+    else
+    {
+        imgToSend=[info valueForKey:UIImagePickerControllerOriginalImage];
+        [self postImageDataToServer];
+        //        [self setImage:[info valueForKey:UIImagePickerControllerOriginalImage]];
+    }
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+-(void)postImageDataToServer
+{
+    
+    [DejalBezelActivityView activityViewForView:self.view];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+                   {
+                       
+                       // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
+                           NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
+                       [_params setObject:stringForImagePurpose forKey:@"purpose"];
+                       
+                       // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
+                       NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
+                       
+                       // string constant for the post parameter 'file'. My server uses this name: `file`. Your's may differ
+                       NSString* FileParamConstant = @"snapshotFile";
+                       
+                       // the server url to which the image (or the media) is uploaded. Use your server url here
+                       NSURL* requestURL = [NSURL URLWithString:@"http://ft.allsmart.in/apps/ft/Requests/uploadImage"];
+                       
+                       // create request
+                       NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+                       [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+                       [request setHTTPShouldHandleCookies:NO];
+                       [request setTimeoutInterval:30];
+                       [request setHTTPMethod:@"POST"];
+                       
+                       // set Content-Type in HTTP header
+                       NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", BoundaryConstant];
+                       [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+                       
+                       NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+                       NSString *str=[defaults valueForKey:@"BasicAuth"];
+                       [request setValue:str forHTTPHeaderField:@"Authorization"];
+                       
+                       
+                       // post body
+                       NSMutableData *body = [NSMutableData data];
+                       
+                       // add params (all params are strings)
+                       for (NSString *param in _params) {
+                           [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                           [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
+                           [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
+                       }
+                       
+                       
+                       // add image data
+                       NSData *imageData = UIImageJPEGRepresentation(imgToSend, 0.5);
+                       if (imageData) {
+                           [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                           [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"snapshotFile.png\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                           [body appendData:[@"Content-Type: pplication/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+                           [body appendData:imageData];
+                           [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+                       }
+                       
+                       [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
+                       
+                       // setting the body of the post to the reqeust
+                       [request setHTTPBody:body];
+                       
+                       // set the content-length
+                       NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
+                       [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+                       
+                       // set URL
+                       [request setURL:requestURL];
+                       
+                       dispatch_async(dispatch_get_main_queue(), ^
+                                      {
+                                          [request setHTTPBody:body];
+                                          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+                                          NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+                                          NSError *serializeError = nil;
+                                          
+                                          if (returnData){
+                                              NSDictionary *jsonData = [NSJSONSerialization
+                                                                        JSONObjectWithData:returnData
+                                                                        options:NSJSONReadingMutableContainers
+                                                                        error:&serializeError];
+                                            NSLog(@"print response after image post : %@",jsonData);
+                                              //userPhoto aadharId addressProof
+                                              if ([stringForImagePurpose isEqualToString:@"userPhoto"]) {
+                                                  strUserPhotoPath=[jsonData valueForKey:@"savedFilename"];
+                                              }else if ([stringForImagePurpose isEqualToString:@"aadharId"]){
+                                                  strAadharIDPath=[jsonData valueForKey:@"savedFilename"];
+                                              }else if ([stringForImagePurpose isEqualToString:@"addressProof"]){
+                                                  strAddressProofPath=[jsonData valueForKey:@"savedFilename"];
+                                              }
+                                          }
+                                          [DejalBezelActivityView removeView];
+                                      });
+                       
+                       
+                   });
+    
 }
 #pragma mark - Leave Rqst
 
@@ -669,7 +828,7 @@
     
     if (tableView == _tableVwForLeaveRqst){
         MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
-    
+        
         if (cellLeave == nil) {
             cellLeave=[[MKCustomCellForLeave alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
         }
@@ -688,7 +847,13 @@
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     else if (tableView == _tableVwForPromoters){
-        cell.textLabel.text=[arrayForPromoters objectAtIndex:indexPath.row];
+        NSString *jsonString = [[arrayForPromoters objectAtIndex:indexPath.row] objectForKey:@"requestJson"];
+        NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+        id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        
+        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
+        
+        cell.textLabel.text=[NSString stringWithFormat:@"%@ %@",[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"],[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"]];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     else if (tableView == _tableVw){
@@ -702,11 +867,11 @@
     
     if (tableView == _tableVw){
         if (indexPath.row == 4){
-        
+            
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
             [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
-        
+            
         }else if (indexPath.row ==0){
             [self getStores];
             _vwForStore.hidden =NO;
@@ -714,7 +879,7 @@
             _tableVwForStore.delegate = self;
             _tableVwForStore.dataSource = self;
             [_tableVwForStore reloadData];
-        
+            
         }else if (indexPath.row ==1){
             [self getPromoters];
             _vwForPromoters.hidden =NO;
@@ -733,6 +898,11 @@
     }else if (tableView == _tableVwForStore){
         [[MKSharedClass shareManager] setValueForStoreEditVC:0];
         [self goToStorePopup:indexPath.row];
+    }
+    else if (tableView == _tableVwForPromoters){
+        indexValueOfPromoterEdit=indexPath.row;
+        [self promoterDetails:NO];
+        
     }
 }
 
@@ -864,5 +1034,26 @@
     HSDatePickerViewController *hsdpvc = [HSDatePickerViewController new];
     hsdpvc.delegate = self;
     [self presentViewController:hsdpvc animated:YES completion:nil];
+}
+#pragma mark - Popup Store List
+- (IBAction)onClickStorAssignment:(UIButton *)sender {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKStoreListPopupVC"];
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+    {
+        BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-100, self.view.frame.size.height/2+100)];
+        [self presentViewController:popupViewController animated:NO completion:nil];
+    }
+    else
+    {
+        
+        BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-50, self.view.frame.size.height-100)];
+        [self presentViewController:popupViewController animated:NO completion:nil];
+    }
+    
+}
+
+- (IBAction)onClickSEAssignment:(UIButton *)sender {
 }
 @end

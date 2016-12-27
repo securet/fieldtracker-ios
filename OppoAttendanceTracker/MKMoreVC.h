@@ -106,5 +106,7 @@
 - (IBAction)onClickLeaveEndDate:(UIButton *)sender;
 
 
+- (IBAction)onClickStorAssignment:(UIButton *)sender;
 
+- (IBAction)onClickSEAssignment:(UIButton *)sender;
 @end

@@ -11,7 +11,7 @@
 @implementation MKSharedClass
 
 @synthesize valueForStoreEditVC;
-
+@synthesize dictForStoreSelected;
 
 static MKSharedClass *instance = nil;
 

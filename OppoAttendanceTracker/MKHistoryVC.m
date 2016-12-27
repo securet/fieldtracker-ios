@@ -48,6 +48,8 @@
     
     _vwForIndividualItem.hidden = YES;
     _backBtn.hidden = YES;
+    
+    [self getHistory];
 }
 
 
@@ -74,7 +76,7 @@
     if (tableView == _tableVwForIndividual) {
         return 6;
     }
-    return 3;
+    return arrayForTableData.count;
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -140,6 +142,32 @@
         cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    
+    
+    NSString *strDate=[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
+
+    NSRange range = [strDate rangeOfString:@"T"];
+    
+    strDate=[strDate substringToIndex:NSMaxRange(range)-1];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-mm-dd"];
+    NSDate *date = [dateFormatter dateFromString:strDate];
+    
+    
+    
+    NSDateFormatter *dateFormatter2 = [[NSDateFormatter alloc] init];
+    [dateFormatter2 setDateFormat:@"dd-mm-yyyy"];
+    NSString *newDateString = [dateFormatter2 stringFromDate:date];
+    
+   
+    
+    
+cell.lblDate.text=newDateString;
+    
+    
+    
     return cell;
 }
 
@@ -153,7 +181,54 @@
 
     }
 }
+#pragma mark - Get History
 
+-(void)getHistory
+{
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *str=[defaults valueForKey:@"BasicAuth"];
+    
+    
+    [httpClient setDefaultHeader:@"Authorization" value:str];
+    
+    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=anand@securet.in&pageIndex=0&pageSize=10"];
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:strPath
+                                                      parameters:nil];
+    
+    //====================================================RESPONSE
+    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        [DejalBezelActivityView removeView];
+        
+        NSLog(@"Store List==%@",JSON);
+        arrayForTableData=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
+        [_tableVw reloadData];
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+
+}
 
 #pragma mark -
 
