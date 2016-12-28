@@ -82,9 +82,15 @@
 
 - (IBAction)onClickLogin:(UIButton *)sender{
 
-    
     if (_txtFieldForEmail.text.length>0 && _txtFieldForPassword.text.length>0) {
-        [self login];
+        
+        if ([self isValidEmail:_txtFieldForEmail.text]) {
+            [self login];
+        }else{
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+            _txtFieldForEmail.text=@"";
+        }
     }
     else{
         
@@ -97,6 +103,16 @@
             [alert show];
         }
     }
+}
+
+-(BOOL)isValidEmail:(NSString *)checkString
+{
+    BOOL stricterFilter = NO;
+    NSString *stricterFilterString = @"^[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$";
+    NSString *laxString = @"^.+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2}[A-Za-z]*$";
+    NSString *emailRegex = stricterFilter ? stricterFilterString : laxString;
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    return [emailTest evaluateWithObject:checkString];
 }
 
 -(void)login{
@@ -159,7 +175,13 @@
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                     [DejalBezelActivityView removeView];
-                                         NSLog(@"Error %@",[error description]);
+                                         NSLog(@"%i====Error %@",[operation.response statusCode],[error description]);
+                                         
+                                         if([operation.response statusCode] == 401)
+                                         {
+                                             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Not account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                             [alert show];
+                                         }
                                      }];
     [operation start];
 

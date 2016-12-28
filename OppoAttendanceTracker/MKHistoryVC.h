@@ -21,6 +21,18 @@
 @property (strong, nonatomic) IBOutlet UIView *vwForIndividualItem;
 @property (strong, nonatomic) IBOutlet UIButton *backBtn;
 
+
+
+
+@property (strong, nonatomic) IBOutlet UILabel *lblEntryDate;
+@property (strong, nonatomic) IBOutlet UILabel *lblTimeIn;
+@property (strong, nonatomic) IBOutlet UILabel *lblTimeOut;
+@property (strong, nonatomic) IBOutlet UILabel *lblTotalTime;
+
+
 - (IBAction)onClickBackBtn:(UIButton *)sender;
+
+
+
 
 @end

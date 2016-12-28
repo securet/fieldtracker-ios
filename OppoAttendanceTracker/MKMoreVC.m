@@ -21,6 +21,7 @@
     NSString *strUserPhotoPath;
     NSString *strAadharIDPath;
     NSString *strAddressProofPath;
+    NSString *storeIDForPromoterAdd;
 }
 @end
 
@@ -29,19 +30,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",dict);
     _lblFName.text=[dict valueForKey:@"firstName"];
     _lblLName.text=[dict valueForKey:@"lastName"];
     
-    
     arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"Log Off", nil];
     
-    
     arrayForStoreList=[[NSMutableArray alloc] init];
-    
     arrayForPromoters=[[NSMutableArray alloc] init];
     
     _tableVw.delegate = self;
@@ -53,17 +50,14 @@
     _tableVwForPromoters.tableFooterView =[[UIView alloc] init];
     _tableVwForLeaveRqst.tableFooterView=[[UIView alloc] init];
     
-    
     _vwForPromoters.hidden = YES;
     _vwForStore.hidden = YES;
     _vwForLeaveRqst.hidden= YES;
     
     _backBtn.hidden = YES;
     
-    
     [_btnAddStore addTarget:self action:@selector(onClickAddStore:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
+
     [_btnAddPromoter addTarget:self action:@selector(onClickAddPromoter:) forControlEvents:UIControlEventTouchUpInside];
     
     [_btnLeaveRqst addTarget:self action:@selector(onClickLeaveRqst:) forControlEvents:UIControlEventTouchUpInside];
@@ -74,13 +68,13 @@
     
     [self addPromoterViewSetup];
     
-    
-    
     [self addShadow:_btnAddStore];
     [self addShadow:_btnAddPromoter];
     [self addShadow:_btnLeaveRqst];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
+    
+    [self getStores];
 }
 
 
@@ -92,6 +86,10 @@
     
     _txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
     _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
+    
+    storeIDForPromoterAdd=[dict valueForKey:@"productStoreId"];
+    
+    NSLog(@"Selected Store ID===%@",storeIDForPromoterAdd);
 }
 
 -(void)addShadow:(UIButton*)btn{
@@ -503,7 +501,7 @@
     
     
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:@"/rest/s1/ft/request/promoter/list?pageIndex=0&pageSize=10"
+                                                            path:@"/rest/s1/ft/request/promoter/list"
                                                       parameters:nil];
     
     //====================================================RESPONSE
@@ -559,10 +557,13 @@
     
     _segmentControl.delegate = self;
     [_btnCancelPromoterAdd addTarget:self action:@selector(onClickCancelOfAddPromoter) forControlEvents:UIControlEventTouchUpInside];
+    _btnAddPromoterConfirm.tag=isAddOrEdit;
+    [_btnAddPromoterConfirm addTarget:self action:@selector(addPromoter:) forControlEvents:UIControlEventTouchUpInside];
     _vwForPromoterAdd.hidden = NO;
     _backBtn.hidden = YES;
     
     if (!isAddOrEdit) {
+        [_btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
         NSString *jsonString = [[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestJson"];
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
@@ -574,7 +575,35 @@
         _txtFieldEmailPromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"emailId"];
         _txtFieldPhonePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"phone"];
         _txtVwAddressPromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"address"];
+        
+        NSString *productStoreId=[[json objectForKey:@"requestInfo"] objectForKey:@"productStoreId"];
+        
+        for (NSDictionary *dict in arrayForStoreList) {
+            if ([[dict valueForKey:@"productStoreId"] isEqualToString:productStoreId]) {
+                _txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
+            }
+            
+            _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
+            
+            
+            strAadharIDPath=[[json objectForKey:@"requestInfo"] objectForKey:@"aadharIdPath"];;
+            strUserPhotoPath=[[json objectForKey:@"requestInfo"] objectForKey:@"userPhoto"];;
+            strAddressProofPath=[[json objectForKey:@"requestInfo"] objectForKey:@"addressIdPath"];
+            storeIDForPromoterAdd=productStoreId;
+        }
+        
+    }else{
+        strAadharIDPath=@"";
+        strUserPhotoPath=@"";
+        strAddressProofPath=@"";
+        [_btnAddPromoterConfirm setTitle:@"Add" forState:UIControlStateNormal];
+        _txtFieldFNamePromoter.text=@"";
+        _txtFieldLNamePromoter.text=@"";
+        _txtFieldEmailPromoter.text=@"";
+        _txtFieldPhonePromoter.text=@"";
+        _txtVwAddressPromoter.text=@"Address";
     }
+    
 }
 
 -(void)addPromoterViewSetup{
@@ -633,7 +662,149 @@
     _vwForPromoterAdd.hidden = YES;
     _backBtn.hidden = NO;
 }
+-(void)addPromoter:(UIButton*)sender
+{
+    if (sender.tag == 1 || sender.tag == 0) {
+        
+        if (_txtFieldFNamePromoter.text.length>0&&_txtFieldLNamePromoter.text.length>0&&_txtFieldEmailPromoter.text.length>0&&_txtVwAddressPromoter.text.length>0&&_txtFieldStoreAsgnmntPromoter.text.length>0&& (![[_txtVwAddressPromoter text] isEqualToString:@"Address"])) {
+            
+       if ([self isValidEmail:_txtFieldEmailPromoter.text]) {
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        
+        NSString *str=[defaults valueForKey:@"BasicAuth"];
+        
+        
+        [httpClient setDefaultHeader:@"Authorization" value:str];
+        
+        //{"requestType":"RqtAddPromoter", "firstName":"James", "lastName":"Managalam","phone":"11111111","address":"eh hai address","emailId":"james@allsmart.in","productStoreId":"100000","statusId":"ReqSubmitted","requestTypeEnumId":"RqtAddPromoter","aadharIdPath":"/img/","userPhoto":"/img/","addressIdPath":"/img/"}
+        /*
+         
+         @"aadharIdPath":strAadharIDPath,
+         @"userPhoto":strUserPhotoPath,
+         @"addressIdPath":strAddressProofPath,
+         */
+        
+        if ([strAadharIDPath length]<=0||strAadharIDPath == nil) {
+            strAadharIDPath=@"/img/";
+        }
+        if ([strUserPhotoPath length]<=0||strUserPhotoPath == nil){
+            strUserPhotoPath=@"/img/";
+        }
+        if ([strAddressProofPath length]<=0||strAddressProofPath == nil){
+            strAddressProofPath=@"/img/";
+        }
+        
+        
+        NSMutableURLRequest *request;
+           if (sender.tag == 1){
+               
+               NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
+                                       @"firstName":_txtFieldFNamePromoter.text,
+                                       @"lastName":_txtFieldLNamePromoter.text,
+                                       @"phone":_txtFieldPhonePromoter.text,
+                                       @"address":_txtVwAddressPromoter.text,
+                                       @"emailId":_txtFieldEmailPromoter.text,
+                                       @"productStoreId":storeIDForPromoterAdd,
+                                       @"statusId":@"ReqSubmitted",
+                                       @"requestTypeEnumId":@"RqtAddPromoter",
+                                       @"aadharIdPath":strAadharIDPath,
+                                       @"userPhoto":strUserPhotoPath,
+                                       @"addressIdPath":strAddressProofPath,
+                                       @"description":@"Requesting new Promoter",
+                                       };
+               request = [httpClient requestWithMethod:@"POST"
+                                                  path:@"/rest/s1/ft/request/promoter"
+                                            parameters:json];
+           }else if (sender.tag == 0){
+               
+               NSString *rqstID=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestId"];
+               NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
+                                       @"firstName":_txtFieldFNamePromoter.text,
+                                       @"lastName":_txtFieldLNamePromoter.text,
+                                       @"phone":_txtFieldPhonePromoter.text,
+                                       @"address":_txtVwAddressPromoter.text,
+                                       @"emailId":_txtFieldEmailPromoter.text,
+                                       @"productStoreId":storeIDForPromoterAdd,
+                                       @"statusId":@"ReqSubmitted",
+                                       @"requestTypeEnumId":@"RqtAddPromoter",
+                                       @"aadharIdPath":strAadharIDPath,
+                                       @"userPhoto":strUserPhotoPath,
+                                       @"addressIdPath":strAddressProofPath,
+                                       @"description":@"Requesting new Promoter",
+                                       @"requestId":rqstID,
+                                       };
+               
+               NSString *strEditPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/%@", rqstID];
+               request = [httpClient requestWithMethod:@"PUT"
+                                                  path:strEditPath
+                                            parameters:json];
+           }
 
+                //====================================================RESPONSE
+        [DejalBezelActivityView activityViewForView:self.view];
+        
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            
+            [DejalBezelActivityView removeView];
+            NSLog(@"Add Store Successfully==%@",JSON);
+            
+            
+            _vwForPromoterAdd.hidden = YES;
+            _backBtn.hidden = NO;
+            
+            if (sender.tag == 1){
+            if ([JSON objectForKey:@"request"]) {
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
+            }else if (sender.tag == 0){
+                if ([JSON objectForKey:@"request"]) {
+                    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Edited Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [alert show];
+                }
+            }
+        }
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                         }];
+        [operation start];
+       }else{
+           UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+           [alert show];
+           _txtFieldEmailPromoter.text=@"";
+       }
+
+    }else{
+            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter All Details" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
+    }
+}
+
+-(BOOL)isValidEmail:(NSString *)checkString
+{
+    BOOL stricterFilter = NO;
+    NSString *stricterFilterString = @"^[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$";
+    NSString *laxString = @"^.+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2}[A-Za-z]*$";
+    NSString *emailRegex = stricterFilter ? stricterFilterString : laxString;
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    return [emailTest evaluateWithObject:checkString];
+}
 #pragma mark - Open Camera
 
 -(void)openCamera:(UIButton*)sender{
@@ -650,12 +821,21 @@
     {
         UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
         imagePickerController.delegate = self;
+        
         imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
+        
+        if (sender.tag == 100) {
+           imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+        }else if (sender.tag == 200){
+            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+        }else if (sender.tag == 300){
+            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+        }
+        
         [self presentViewController:imagePickerController animated:YES completion:^{
             
         }];
     }
-    
 }
 
 #pragma mark - ImagePickerDelegate Methods
