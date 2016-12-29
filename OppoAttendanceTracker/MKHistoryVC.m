@@ -14,6 +14,8 @@
 {
     NSMutableArray *arrayForTableData;
     NSMutableArray *arrayForStatusData;
+    NSInteger arrayCountToCheck;
+    NSInteger pageNumber;
 
 }
 @end
@@ -36,20 +38,58 @@
     _tableVw.tableFooterView = [[UIView alloc] init];
     _tableVw.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    
+    arrayForTableData=[[NSMutableArray alloc] init];
     
     _tableVwForIndividual.delegate = self;
     _tableVwForIndividual.dataSource = self;
     _tableVwForIndividual.tableFooterView = [[UIView alloc] init];
     _tableVwForIndividual.separatorStyle = UITableViewCellSeparatorStyleNone;
-
-    
-    
     
     _vwForIndividualItem.hidden = YES;
     _backBtn.hidden = YES;
     
-    [self getHistory];
+    pageNumber=0;
+    [_tableVw addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
+    
+//    [self getHistory];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
+    
+    [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
+}
+
+
+-(void)checkingInLocation:(NSNotification*)notification{
+    
+    NSDictionary *userInfo = notification.userInfo;
+    NSLog(@"Notification In History==%@",userInfo);
+    
+//    NSDictionary *dict=[userIn];
+    
+    if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
+        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        _lblForStoreLocation.textColor=[UIColor whiteColor];
+    }else{
+        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+//        _lblForStoreLocation.text=@"Off site";
+        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+    }
+    
+    _lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
+}
+
+-(void)changeLocationStatus:(NSDictionary*)dictInfo{
+    
+    if ([[dictInfo valueForKey:@"LocationStatus"] integerValue]==1) {
+        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        _lblForStoreLocation.textColor=[UIColor whiteColor];
+    }else{
+        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+        //        _lblForStoreLocation.text=@"Off site";
+        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+    }
+    
+    _lblForStoreLocation.text=[dictInfo valueForKey:@"StoreName"];
 }
 
 
@@ -68,7 +108,37 @@
     _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
     
     _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
+    
+    if (arrayForTableData.count<=0) {
+        arrayForTableData=[[NSMutableArray alloc] init];
+        pageNumber=0;
+        [self getHistory];
+    }
+    
+     [_tableVw reloadData];
 }
+
+- (void)refreshFooter
+{
+    if(arrayCountToCheck >= 10)
+    {
+        pageNumber++;
+        
+        [self getHistory];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableVw reloadData];
+            [self.tableVw footerEndRefreshing];
+            //        [self.tableVw removeFooter];
+        });
+    }
+    else
+    {
+        [self.tableVw footerEndRefreshing];
+        [self.tableVw headerEndRefreshing];
+    }
+}
+
 #pragma mark- UITableView
 //-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //{
@@ -333,15 +403,16 @@
         
 //        arrayForStatusData=[[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"];
         
-        
         for (NSDictionary *dict in [[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"]) {
             [arrayForStatusData addObject:[dict valueForKey:@"fromDate"]];
             [arrayForStatusData addObject:[dict valueForKey:@"thruDate"]];
         }
         
-        
         NSLog(@"Status Array====%@",arrayForStatusData);
         [_tableVwForIndividual reloadData];
+        
+        [_tableVwForIndividual setContentOffset:CGPointZero animated:NO];
+        
         ///Date Parsing
         NSString *strDate=[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
         NSRange range = [strDate rangeOfString:@"T"];
@@ -354,10 +425,19 @@
         _lblEntryDate.text=newDateString;
         //////
         
-        newDateString = [self getTime:[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedStartDate"]];
+//        newDateString = [self getTime:[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedStartDate"]];
+        newDateString = [self getTime:[arrayForStatusData objectAtIndex:0]];
+      
         _lblTimeIn.text=[NSString stringWithFormat:@"Time In: %@",newDateString];
         
-        newDateString = [self getTime:[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"]];
+//        newDateString = [self getTime:[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"]];
+//
+        if (![[arrayForStatusData lastObject] isKindOfClass:[NSNull class]]) {
+                    newDateString = [self getTime:[arrayForStatusData lastObject]];
+        }else{
+                    newDateString = @"--";
+        }
+
         _lblTimeOut.text=[NSString stringWithFormat:@"Time Out: %@",newDateString];
         ////
         
@@ -373,7 +453,6 @@
         startViewedString = [startViewedString stringByReplacingOccurrencesOfString:@"+" withString:@" +"];
         //    NSLog(@"Start Date===%@",startViewedString);
         
-        
         [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss zzz"];
         
         NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
@@ -387,8 +466,12 @@
         //    NSLog(@"Time: %@", timeString);
         
         _lblTotalTime.text=timeString;
-
         
+        if (![[arrayForStatusData lastObject] isKindOfClass:[NSNull class]]) {
+            
+        }else{
+                    _lblTotalTime.text = @"--";
+        }
     }
 }
 
@@ -404,18 +487,27 @@
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
     
     NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    
+
     [httpClient setDefaultHeader:@"Authorization" value:str];
+
     
-    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=anand@securet.in"];
+    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+    NSLog(@"%@",[dict valueForKey:@"username"]);
+
     
+    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=%i&pageSize=10",[dict valueForKey:@"username"],pageNumber];
+    
+    NSLog(@"String Path for Get History===%@",strPath);
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:strPath
                                                       parameters:nil];
     
     //====================================================RESPONSE
-    [DejalBezelActivityView activityViewForView:self.view];
+    
+    if (pageNumber==0) {
+           [DejalBezelActivityView activityViewForView:self.view];
+    }
+
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     
@@ -426,10 +518,18 @@
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
         
-        [DejalBezelActivityView removeView];
+        if (pageNumber==0) {
+            [DejalBezelActivityView removeView];
+        }
         
-        NSLog(@"Store List==%@",JSON);
-        arrayForTableData=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
+//        arrayForTableData=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
+        NSMutableArray *array=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
+        for (NSDictionary *dict in array) {
+            [arrayForTableData addObject:dict];
+        }
+        
+        arrayCountToCheck=[[JSON objectForKey:@"userTimeLog"] count];
+        
         [_tableVw reloadData];
     }
      //==================================================ERROR

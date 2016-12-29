@@ -13,15 +13,26 @@
     NSMutableArray *arrayForTableData;
     NSMutableArray *arrayForStoreList;
     NSMutableArray *arrayForPromoters;
+    
     NSString *strForCurLatitude,*strForCurLongitude;
+    
     BOOL isStartOrEndDate;
+    
     NSInteger indexValueOfPromoterEdit;
+    
     UIImage *imgToSend;
+    
     NSString *stringForImagePurpose;
+    
     NSString *strUserPhotoPath;
     NSString *strAadharIDPath;
     NSString *strAddressProofPath;
+    
     NSString *storeIDForPromoterAdd;
+    
+    NSInteger arrayCountToCheck;
+    NSInteger pageNumber;
+    
 }
 @end
 
@@ -75,9 +86,75 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
     
     [self getStores];
+    
+    
+    pageNumber=0;
+    //rgb(84,138,176)
+//    UIColor *color=[UIColor colorWithRed:(84/255.0) green:(138/255.0) blue:(176/255.0) alpha:1.0];
+    
+    [_tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
+   
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
+
+    [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
+
 }
 
 
+-(void)checkingInLocation:(NSNotification*)notification{
+    
+    NSDictionary *userInfo = notification.userInfo;
+    NSLog(@"Notification In History==%@",userInfo);
+    
+    //    NSDictionary *dict=[userIn];
+    
+    if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
+        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        _lblForStoreLocation.textColor=[UIColor whiteColor];
+    }else{
+        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+        //        _lblForStoreLocation.text=@"Off site";
+        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+    }
+    
+    _lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
+}
+
+-(void)changeLocationStatus:(NSDictionary*)dictInfo{
+    
+    if ([[dictInfo valueForKey:@"LocationStatus"] integerValue]==1) {
+        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        _lblForStoreLocation.textColor=[UIColor whiteColor];
+    }else{
+        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+        //        _lblForStoreLocation.text=@"Off site";
+        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+    }
+    
+    _lblForStoreLocation.text=[dictInfo valueForKey:@"StoreName"];
+}
+
+- (void)refreshFooter
+{
+    if(arrayCountToCheck >= 10)
+    {
+        
+        pageNumber++;
+        
+        [self getPromoters];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [_tableVwForPromoters reloadData];
+            [_tableVwForPromoters footerEndRefreshing];
+            //        [self.tableVw removeFooter];
+        });
+    }
+    else
+    {
+        [_tableVwForPromoters footerEndRefreshing];
+        [_tableVwForPromoters headerEndRefreshing];
+    }
+}
 -(void)storeSelected
 {
     NSDictionary *dict=[[NSMutableDictionary alloc] init];
@@ -499,13 +576,18 @@
     
     [httpClient setDefaultHeader:@"Authorization" value:str];
     
+    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/list?pageIndex=%i&pageSize=10",pageNumber];
+    NSLog(@"String Path for Get Promoters==%@",strPath);
     
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:@"/rest/s1/ft/request/promoter/list"
+                                                            path:strPath
                                                       parameters:nil];
     
     //====================================================RESPONSE
-    [DejalBezelActivityView activityViewForView:self.view];
+    
+    if (pageNumber==0) {
+        [DejalBezelActivityView activityViewForView:self.view];
+    }
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     
@@ -516,10 +598,19 @@
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
         
-        [DejalBezelActivityView removeView];
+        if (pageNumber==0) {
+            [DejalBezelActivityView removeView];
+        }
         
-        //        NSLog(@"Promoters List==%@",[[[JSON objectForKey:@"requestList"] objectAtIndex:0] objectForKey:@"requestJson"]);
-        arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
+        NSMutableArray *array=[[JSON objectForKey:@"requestList"] mutableCopy];
+        
+//        arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
+        
+        for (NSDictionary *dict in array) {
+            [arrayForPromoters addObject:dict];
+        }
+        
+        arrayCountToCheck=[[JSON objectForKey:@"requestList"] count];
         
         [_tableVwForPromoters reloadData];
     }
@@ -568,7 +659,7 @@
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         
-        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
+//        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
         
         _txtFieldFNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"];
         _txtFieldLNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"];
@@ -603,7 +694,6 @@
         _txtFieldPhonePromoter.text=@"";
         _txtVwAddressPromoter.text=@"Address";
     }
-    
 }
 
 -(void)addPromoterViewSetup{
@@ -613,7 +703,6 @@
     [self textFieldEdit:_txtFieldPhonePromoter];
     [self textFieldEdit:_txtFieldSEAsgnmntPromoter];
     [self textFieldEdit:_txtFieldStoreAsgnmntPromoter];
-    
     
     _txtVwAddressPromoter.text=@"Address";
     _txtVwAddressPromoter.layer.cornerRadius = 5;
@@ -679,12 +768,10 @@
         
         NSString *str=[defaults valueForKey:@"BasicAuth"];
         
-        
         [httpClient setDefaultHeader:@"Authorization" value:str];
         
         //{"requestType":"RqtAddPromoter", "firstName":"James", "lastName":"Managalam","phone":"11111111","address":"eh hai address","emailId":"james@allsmart.in","productStoreId":"100000","statusId":"ReqSubmitted","requestTypeEnumId":"RqtAddPromoter","aadharIdPath":"/img/","userPhoto":"/img/","addressIdPath":"/img/"}
         /*
-         
          @"aadharIdPath":strAadharIDPath,
          @"userPhoto":strUserPhotoPath,
          @"addressIdPath":strAddressProofPath,
@@ -700,10 +787,9 @@
             strAddressProofPath=@"/img/";
         }
         
-        
         NSMutableURLRequest *request;
+           
            if (sender.tag == 1){
-               
                NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
                                        @"firstName":_txtFieldFNamePromoter.text,
                                        @"lastName":_txtFieldLNamePromoter.text,
@@ -826,6 +912,16 @@
         
         if (sender.tag == 100) {
            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+            
+            UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
+            [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
+            UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
+            [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
+            [emptyBlackButton setEnabled:YES];
+            [cameraOverlayView addSubview:emptyBlackButton];
+            imagePickerController.allowsEditing = YES;
+            imagePickerController.showsCameraControls = YES;
+            imagePickerController.cameraOverlayView = cameraOverlayView;
         }else if (sender.tag == 200){
             imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
         }else if (sender.tag == 300){
@@ -873,7 +969,8 @@
                        NSString* FileParamConstant = @"snapshotFile";
                        
                        // the server url to which the image (or the media) is uploaded. Use your server url here
-                       NSURL* requestURL = [NSURL URLWithString:@"http://ft.allsmart.in/apps/ft/Requests/uploadImage"];
+                       NSString *stringURL=[NSString stringWithFormat:@"%@/apps/ft/Requests/uploadImage",APPDELEGATE.Base_URL];
+                       NSURL* requestURL = [NSURL URLWithString:stringURL];
                        
                        // create request
                        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -1031,7 +1128,7 @@
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         
-        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
+//        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
         
         cell.textLabel.text=[NSString stringWithFormat:@"%@ %@",[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"],[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"]];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -1047,6 +1144,11 @@
     
     if (tableView == _tableVw){
         if (indexPath.row == 4){
+            
+            
+             NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            
+            [defaults setObject:@"0" forKey:@"Is_Login"];
             
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];

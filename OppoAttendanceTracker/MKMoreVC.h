@@ -50,6 +50,9 @@
 
 - (IBAction)onClickBackBtn:(UIButton *)sender;
 
+@property (weak, nonatomic) IBOutlet UIImageView *imgVwForLocationIcon;
+@property (weak, nonatomic) IBOutlet UILabel *lblForStoreLocation;
+
 
 #pragma mark - IBOutlets For Add/Edit Store
 

@@ -12,6 +12,8 @@
 
 @synthesize valueForStoreEditVC;
 @synthesize dictForStoreSelected;
+@synthesize dictForCheckInLoctn;
+
 
 static MKSharedClass *instance = nil;
 

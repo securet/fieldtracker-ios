@@ -36,6 +36,7 @@
 		7F04BA991E12239600679905 /* MKCustomCellForLeave.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA981E12239600679905 /* MKCustomCellForLeave.m */; };
 		7F04BA9D1E12568500679905 /* MKStoreListPopupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA9C1E12568500679905 /* MKStoreListPopupVC.m */; };
 		7F04BAA11E128B1F00679905 /* MKSharedClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BAA01E128B1F00679905 /* MKSharedClass.m */; };
+		7F8CE5FE1E14F0030067D0F8 /* UIScrollView+DXRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F8CE5FD1E14F0030067D0F8 /* UIScrollView+DXRefresh.m */; };
 		7FA239A71E0A939300D293D5 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54A81E09338200A930C7 /* KeyboardManager.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
@@ -140,6 +141,8 @@
 		7F04BA9C1E12568500679905 /* MKStoreListPopupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStoreListPopupVC.m; sourceTree = "<group>"; };
 		7F04BA9F1E128B1F00679905 /* MKSharedClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKSharedClass.h; sourceTree = "<group>"; };
 		7F04BAA01E128B1F00679905 /* MKSharedClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKSharedClass.m; sourceTree = "<group>"; };
+		7F8CE5FC1E14F0030067D0F8 /* UIScrollView+DXRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+DXRefresh.h"; sourceTree = "<group>"; };
+		7F8CE5FD1E14F0030067D0F8 /* UIScrollView+DXRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DXRefresh.m"; sourceTree = "<group>"; };
 		7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -232,6 +235,7 @@
 		7F04BA3D1E121FF200679905 /* Helper Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				7F8CE5FB1E14EFD10067D0F8 /* Footer Refresh */,
 				7F04BA691E12218F00679905 /* Popup View */,
 				7F04BA651E12210200679905 /* MultiSelectSegment */,
 				7F04BA5F1E1220E100679905 /* Calendar */,
@@ -401,6 +405,15 @@
 				7F04BAA01E128B1F00679905 /* MKSharedClass.m */,
 			);
 			name = "Shared Class";
+			sourceTree = "<group>";
+		};
+		7F8CE5FB1E14EFD10067D0F8 /* Footer Refresh */ = {
+			isa = PBXGroup;
+			children = (
+				7F8CE5FC1E14F0030067D0F8 /* UIScrollView+DXRefresh.h */,
+				7F8CE5FD1E14F0030067D0F8 /* UIScrollView+DXRefresh.m */,
+			);
+			name = "Footer Refresh";
 			sourceTree = "<group>";
 		};
 		7FFB54641E092EBC00A930C7 = {
@@ -786,6 +799,7 @@
 				7F04BA591E1220CC00679905 /* AFJSONRequestOperation.m in Sources */,
 				7FFB54781E092EBC00A930C7 /* ViewController.m in Sources */,
 				7F04BA561E1220CC00679905 /* AFHTTPClient.m in Sources */,
+				7F8CE5FE1E14F0030067D0F8 /* UIScrollView+DXRefresh.m in Sources */,
 				7F04BA5E1E1220CC00679905 /* UIImageView+AFNetworking.m in Sources */,
 				7FFB54751E092EBC00A930C7 /* AppDelegate.m in Sources */,
 				7FFB54D41E0933B400A930C7 /* IQToolbar.m in Sources */,

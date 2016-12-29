@@ -7,7 +7,7 @@
 //
 
 #import "MKStoreListPopupVC.h"
-
+#import "IQKeyboardManager.h"
 @interface MKStoreListPopupVC ()
 {
     NSMutableArray *arrayForStoreList;
@@ -27,8 +27,6 @@
     _tableVw.tableFooterView=[[UIView alloc] init];
     [self getStores];
     
-    
-    
     self.searchBar.searchBarStyle       = UISearchBarStyleMinimal;
     self.searchBar.tintColor            = [UIColor blackColor];
     self.searchBar.barTintColor         = [UIColor blackColor];
@@ -37,6 +35,9 @@
     self.searchBar.backgroundColor=[UIColor lightGrayColor];
     
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor blackColor]];
+    
+    
+    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar

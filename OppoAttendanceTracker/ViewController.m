@@ -165,6 +165,7 @@
                 [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
         }
         
+        [defaults setObject:@"1" forKey:@"Is_Login"];
         [defaults setObject:prunedDictionary forKey:@"UserData"];
         [defaults synchronize];
         

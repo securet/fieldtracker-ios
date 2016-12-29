@@ -20,4 +20,5 @@
 #import "HSDatePickerViewController.h"
 #import "AFNetworking.h"
 #import "DejalActivityView.h"
+#import "UIScrollView+DXRefresh.h"
 #endif

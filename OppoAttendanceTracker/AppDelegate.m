@@ -14,12 +14,7 @@
 
 
 
-#define IS_IPAD (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-#define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
-#define IS_IPHONE_5 (IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 568.0f)
-#define IS_IPHONE_6 (IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 667.0f)
-#define IS_IPHONE_6P (IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 736.0f)
-#define IS_IPHONE_4 (IS_IPHONE && [[UIScreen mainScreen] bounds].size.height < 568.0f)
+
 
 
 
@@ -52,8 +47,21 @@
     //  }
 #endif
     
-
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
+   
+
+    NSInteger is_Login=[[defaults valueForKey:@"Is_Login"] integerValue];
+    
+    if (is_Login == 1) {
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//        UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
+//        [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
+        
+         self.window.rootViewController =[self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
+    }else{
+        
+    }
     
     return YES;
 }

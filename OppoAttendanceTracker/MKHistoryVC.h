@@ -21,14 +21,14 @@
 @property (strong, nonatomic) IBOutlet UIView *vwForIndividualItem;
 @property (strong, nonatomic) IBOutlet UIButton *backBtn;
 
-
-
-
 @property (strong, nonatomic) IBOutlet UILabel *lblEntryDate;
 @property (strong, nonatomic) IBOutlet UILabel *lblTimeIn;
 @property (strong, nonatomic) IBOutlet UILabel *lblTimeOut;
 @property (strong, nonatomic) IBOutlet UILabel *lblTotalTime;
 
+
+@property (weak, nonatomic) IBOutlet UIImageView *imgVwForLocationIcon;
+@property (weak, nonatomic) IBOutlet UILabel *lblForStoreLocation;
 
 - (IBAction)onClickBackBtn:(UIButton *)sender;
 
