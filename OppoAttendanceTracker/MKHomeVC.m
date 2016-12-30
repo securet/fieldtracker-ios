@@ -15,7 +15,6 @@
     NSMutableDictionary *dictForStoreDetails;
     UIImage *imgToSend;
     NSString *imgPathToSend;
-    
     BOOL boolValueForInLocationOrNot;
 }
 @end
@@ -33,14 +32,11 @@
     _lblLName.text=[dict valueForKey:@"lastName"];
     
     
-    
     _bottomVw.layer.cornerRadius = 10;
     _bottomVw.layer.masksToBounds = YES;
     
     [self updateLocationManagerr];
     
-    
-  
     CLLocationCoordinate2D coordinate = [self getLocation];
     
     strForCurLatitude = [NSString stringWithFormat:@"%f", coordinate.latitude];
@@ -84,66 +80,6 @@
     }
 }
 
--(void)getStoreDetails{
-    
-    dictForStoreDetails=[[NSMutableDictionary alloc] init];
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-
-    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
-    
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    httpClient.parameterEncoding = AFFormURLParameterEncoding;
-    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *auth_String=[defaults valueForKey:@"BasicAuth"];
-    
-
-    [httpClient setDefaultHeader:@"Authorization" value:auth_String];
-     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    
-    
-    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[dict valueForKey:@"partyId"]];
-    
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:urlPath
-                                                      parameters:nil];
-    
-    //====================================================RESPONSE
-//    [DejalBezelActivityView activityViewForView:self.view];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
-    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-        
-    }];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSError *error = nil;
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        
-//        [DejalBezelActivityView removeView];
-        
-        NSLog(@"Store Details==%@",JSON);
-        
-        dictForStoreDetails=[JSON mutableCopy];
-        
-        _lblStoreName.text=[dictForStoreDetails valueForKey:@"storeName"];
-        
-        
-        
-        
-        
-        [self checkLocation];
-        
-        
-    }
-     //==================================================ERROR
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//                                         [DejalBezelActivityView removeView];
-                                         NSLog(@"Error %@",[error description]);
-                                     }];
-    [operation start];
-}
-
 -(void)viewWillAppear:(BOOL)animated{
     self.navigationController.navigationBarHidden = YES;
     self.navigationItem.hidesBackButton = YES;
@@ -159,15 +95,158 @@
     _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
     
     _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
+    
+    if (![APPDELEGATE connected]) {
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    
+    [self checkStatus];
+    
+//    NSLog(@"Image Data===%@",[self getImageData]);
+    NSLog(@"Time Line Data===%lu",(unsigned long)[[self getTimeLineData] count]);
 }
 
+-(void)checkStatus{
+    NSString *statusData=[self getStatus];
+    
+    if ([statusData length]<=0) {
+        NSLog(@"No data found");
+        _lblTimeInStatus.text=@"Time In";
+    }else if([statusData isEqualToString:@"TimeIn"]){
+        //TimeIn
+        _lblTimeInStatus.text=@"Time Out";
+    }else if([statusData isEqualToString:@"TimeOut"]){
+        //TimeIn
+        _lblTimeInStatus.text=@"Time In";
+    }
+}
+
+-(NSMutableArray*)getImageData{
+    NSError *error=nil;
+    
+    NSMutableArray *arrayOfData=[[NSMutableArray alloc] init];
+
+    self.timeLineStatusEntity=[NSEntityDescription entityForName:@"ImageData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
+    NSFetchRequest * fr = [[NSFetchRequest alloc]init];
+    [fr setEntity:self.timeLineStatusEntity];
+    NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
+    
+    for (NSManagedObject * fetRec  in result) {
+        NSMutableDictionary *dict=[[NSMutableDictionary alloc] init];
+        //success userimage
+        [dict setValue:[fetRec valueForKey:@"success"] forKey:@"success"];
+        [dict setValue:[fetRec valueForKey:@"userimage"] forKey:@"userimage"];
+        [arrayOfData addObject:dict];
+    }
+    
+    return arrayOfData;
+}
+
+-(NSString*)getStatus{
+    NSError *error=nil;
+    
+    NSString *statusData;
+    
+    self.timeLineStatusEntity=[NSEntityDescription entityForName:@"TimelineStatus" inManagedObjectContext:APPDELEGATE.managedObjectContext];
+    NSFetchRequest * fr = [[NSFetchRequest alloc]init];
+    [fr setEntity:self.timeLineStatusEntity];
+    NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
+    
+    for (NSManagedObject * fetRec  in result) {
+        statusData=[fetRec valueForKey:@"status"];
+    }
+    return statusData;
+}
+
+-(NSMutableArray*)getTimeLineData{
+    
+    NSError *error=nil;
+
+    NSMutableArray *arrayOfData=[[NSMutableArray alloc] init];
+    
+    
+    
+    self.timeLineDataEntity=[NSEntityDescription entityForName:@"TimeLineData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
+    NSFetchRequest * fr = [[NSFetchRequest alloc]init];
+    [fr setEntity:self.timeLineDataEntity];
+    NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
+    
+    for (NSManagedObject * fetRec  in result) {
+        NSMutableDictionary *dict=[[NSMutableDictionary alloc] init];
+//actiontype clockdate comments latitude longitude productstoreid actionimage username issend
+        [dict setValue:[fetRec valueForKey:@"username"] forKey:@"username"];
+        [dict setValue:[fetRec valueForKey:@"actiontype"] forKey:@"actiontype"];
+        [dict setValue:[fetRec valueForKey:@"clockdate"] forKey:@"clockdate"];
+        [dict setValue:[fetRec valueForKey:@"comments"] forKey:@"comments"];
+        [dict setValue:[fetRec valueForKey:@"latitude"] forKey:@"latitude"];
+        [dict setValue:[fetRec valueForKey:@"longitude"] forKey:@"longitude"];
+        [dict setValue:[fetRec valueForKey:@"productstoreid"] forKey:@"productstoreid"];
+        [dict setValue:[fetRec valueForKey:@"actionimage"] forKey:@"actionimage"];
+        [dict setValue:[fetRec valueForKey:@"issend"] forKey:@"issend"];
+        [arrayOfData addObject:dict];
+    }
+    
+    return arrayOfData;
+}
+
+-(void)getStoreDetails{
+    
+    dictForStoreDetails=[[NSMutableDictionary alloc] init];
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *auth_String=[defaults valueForKey:@"BasicAuth"];
+    
+    
+    [httpClient setDefaultHeader:@"Authorization" value:auth_String];
+    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+    
+    
+    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[dict valueForKey:@"partyId"]];
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:urlPath
+                                                      parameters:nil];
+    
+    //====================================================RESPONSE
+    //    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        //        [DejalBezelActivityView removeView];
+        
+        NSLog(@"Store Details==%@",JSON);
+        
+        dictForStoreDetails=[JSON mutableCopy];
+        
+        _lblStoreName.text=[dictForStoreDetails valueForKey:@"storeName"];
+        
+        [self checkLocation];
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         //                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+}
 
 #pragma mark - LocationManagaer
 
-
-
 //#pragma mark - Location Manager - Region Task Methods
-
 
 - (void)checkLocation{
     
@@ -182,6 +261,7 @@
     CLLocationDistance distance = [location distanceFromLocation:locationManager.location];
         
         if (distance <= 100 && distance >= 0){
+            
             NSLog(@"You are within 100 meters (actually %.0f meters) of Store", distance);
             _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
             _lblForStoreLocation.text=[dictForStoreDetails valueForKey:@"storeName"];
@@ -189,7 +269,9 @@
             [dictToSendLctnStatus setObject:@"1" forKey:@"LocationStatus"];
             storeName=[dictForStoreDetails valueForKey:@"storeName"];
             boolValueForInLocationOrNot = YES;
+        
         }else{
+        
             NSLog(@"You are not within 100 meters (actually %.0f meters) of Store", distance);
             _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
             _lblForStoreLocation.text=@"Off site";
@@ -208,17 +290,36 @@
     [[MKSharedClass shareManager] setDictForCheckInLoctn:dictToSendLctnStatus];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"LocationChecking" object:self userInfo:dictToSendLctnStatus];
+    
+    NSString *statusData=[self getStatus];
+    
+    if ([statusData length]<=0) {
+        NSLog(@"Need to Time In");
+    }else if([statusData isEqualToString:@"TimeIn"]){
+        NSLog(@"Need to Time Out");
+        
+//        NSMutableDictionary *dictToSend=[self getTimeLineData];
+        
+//        NSLog(@"====%@",dictToSend);
+        if (boolValueForInLocationOrNot == YES) {
+            
+        }else if (boolValueForInLocationOrNot == NO){
+            
+        }
+    }else if([statusData isEqualToString:@"TimeOut"]){
+        NSLog(@"Need to Time In");
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
     NSLog(@"Entered Region - %@", region.identifier);
-//    [self showRegionAlert:@"Entering Region" forRegion:region.identifier];
+    [self showRegionAlert:@"Entering Region" forRegion:region.identifier];
     [self checkLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
     NSLog(@"Exited Region - %@", region.identifier);
-//    [self showRegionAlert:@"Exiting Region" forRegion:region.identifier];
+    [self showRegionAlert:@"Exiting Region" forRegion:region.identifier];
     [self checkLocation];
 }
 
@@ -234,6 +335,7 @@
                                             otherButtonTitles:nil];
     [message show];
 }
+
 -(CLLocationCoordinate2D) getLocation{
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
@@ -244,47 +346,27 @@
     CLLocationCoordinate2D coordinate = [location coordinate];
     return coordinate;
 }
+
 -(void)updateLocationManagerr{
     [locationManager startUpdatingLocation];
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate=self;
     locationManager.desiredAccuracy=kCLLocationAccuracyBest;
     locationManager.distanceFilter=kCLDistanceFilterNone;
-    
-#ifdef __IPHONE_8_0
-    //  if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-    // Use one or the other, not both. Depending on what you put in info.plist
-    //[self.locationManager requestWhenInUseAuthorization];
+//#ifdef __IPHONE_8_0
     [locationManager requestAlwaysAuthorization];
-    //  }
-#endif
-    
+//#endif
     [locationManager startUpdatingLocation];
-    
-//    NSMutableArray *geofences = [NSMutableArray array];
-//    for(NSDictionary *regionDict in _regionArray) {
-//        CLRegion *region = [self mapDictionaryToRegion:regionDict];
-//        [geofences addObject:region];
-//    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation{
+    
     strForCurLatitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.latitude];
     strForCurLongitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
     
-    
-//    CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
-//    CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
-//    CLLocationCoordinate2D centerCoordinate = CLLocationCoordinate2DMake(latitude, longitude);
-//    
-//    CLCircularRegion *region = [[CLCircularRegion alloc] initWithCenter:centerCoordinate
-//                                                                 radius:50
-//                                                             identifier:@"Store"];
-//    
-//    [locationManager startMonitoringForRegion:(CLRegion *)region];
-    
+//    [self showingCurrentLocation];
     [self checkLocation];
 }
 
@@ -320,7 +402,11 @@
 */
 
 - (IBAction)onClickMyLocation:(UIButton *)sender {
-    
+    [self showingCurrentLocation];
+}
+
+
+-(void)showingCurrentLocation{
     [mapView clear];
     
     if ([CLLocationManager locationServicesEnabled]){
@@ -339,10 +425,10 @@
         geoFenceCircle.strokeColor = [UIColor blueColor];
         geoFenceCircle.map = mapView; // Add it to the map.
         
-//        GMSMarker *markerCar = [GMSMarker markerWithPosition:coordinate];
-//        markerCar.appearAnimation = YES;
-//        markerCar.icon = [UIImage imageNamed:@"location_marker"];//pin_car_driver
-//        markerCar.map = mapView;
+        //        GMSMarker *markerCar = [GMSMarker markerWithPosition:coordinate];
+        //        markerCar.appearAnimation = YES;
+        //        markerCar.icon = [UIImage imageNamed:@"location_marker"];//pin_car_driver
+        //        markerCar.map = mapView;
         
         GMSMarker *markerCar = [[GMSMarker alloc] init];
         markerCar.icon=[UIImage imageNamed:@"location_marker"];
@@ -359,6 +445,7 @@
         UIAlertView *alertLocation=[[UIAlertView alloc]initWithTitle:@"" message:@"Please Enable Location Access" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertLocation show];
     }
+
 }
 
 - (IBAction)onClickTimeIn:(UIButton *)sender {
@@ -372,16 +459,155 @@
 }
 
 - (IBAction)onClickPhotoConfirmBtn:(UIButton *)sender {
+    
     _vwForImgPreview.hidden = YES;
-    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Confirm Time In" message:[NSString stringWithFormat:@"You are currently at %@",[dictForStoreDetails valueForKey:@"storeName"]] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
+
+    
+    NSString *statusData=[self getStatus];
+    
+    NSString *strMsg;
+    
+    if ([statusData length]<=0) {
+        strMsg=@"Confirm Time In";
+    }else if([statusData isEqualToString:@"TimeIn"]){
+        strMsg=@"Confirm Time Out";
+    }else if([statusData isEqualToString:@"TimeOut"]){
+       strMsg=@"Confirm Time In";
+    }
+    
+    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:strMsg message:[NSString stringWithFormat:@"You are currently at %@",[dictForStoreDetails valueForKey:@"storeName"]] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
     [alert show];
+    
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    NSLog(@"Clicked Button Index===%i",buttonIndex);
+//    NSLog(@"Clicked Button Index===%i",buttonIndex);
     if (buttonIndex == 1) {
-        [self postImageDataToServer];
+//        if ([APPDELEGATE connected]) {
+//            [self postImageDataToServer];
+//        }else{
+//            [self saveImageData:@"0"];
+//        }
+        [self saveDataIntoLocal];
+        
+        [self getTimeLineData];
+        
+//        NSLog(@"Time Line Data===%@",[self getTimeLineData]);
     }
+}
+/// Save Image If Network is not available
+-(void)saveImageData:(NSString*)status{
+    
+     NSError *error = nil;
+    self.timeLineStatusEntity = [NSEntityDescription entityForName:@"ImageData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
+    error=nil;
+    NSManagedObject * imageManagedObject = [[NSManagedObject alloc]initWithEntity:self.timeLineStatusEntity insertIntoManagedObjectContext:APPDELEGATE.managedObjectContext];
+     //success userimage
+    [imageManagedObject setValue:status forKey:@"success"];
+    
+    if ([status isEqualToString:@"0"]) {
+    ///Converting Image To string and saving
+        NSString *imgData=[UIImagePNGRepresentation(imgToSend) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+         [imageManagedObject setValue:imgData forKey:@"userimage"];
+    
+    }else{
+        [imageManagedObject setValue:@"success" forKey:@"userimage"];
+    }
+    
+    [imageManagedObject.managedObjectContext save:&error];
+    
+    [self saveDataIntoLocal];
+}
+
+-(void)saveDataIntoLocal{
+    
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    
+    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+    
+    NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
+    
+    NSString *userName=[dict valueForKey:@"username"];
+    NSString *productStoreId=[dictForStoreDetails valueForKey:@"productStoreId"];
+    
+    NSDate *now = [NSDate date];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+    
+    NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+    
+    NSString *actionType;
+    NSString *comments;
+    
+    NSString *statusData=[self getStatus];
+    
+    if ([statusData length]<=0) {
+        comments=@"Time In";
+        actionType=@"clockIn";
+    }else if([statusData isEqualToString:@"TimeIn"]){
+        comments=@"Time Out";
+        actionType=@"clockOut";
+    }else if([statusData isEqualToString:@"TimeOut"]){
+        comments=@"Time In";
+        actionType=@"clockIn";
+    }
+    
+      NSString *imgData=[UIImagePNGRepresentation(imgToSend) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    NSDictionary * json = @{@"username":userName,
+                            @"clockDate":strCurrentTime,
+                            @"workEffortTypeEnumId":@"WetAvailable",
+                            @"purposeEnumId":@"WepAttendance",
+                            @"comments":comments,
+                            @"productStoreId":productStoreId,
+                            @"actionType":actionType,
+                            @"actionImage":imgData,
+                            @"latitude":strForCurLatitude,
+                            @"longitude":strForCurLongitude,
+                            @"issend":@"0",
+                            };
+    
+    
+    
+  //  actiontype clockdate comments latitude longitude productstoreid actionimage username
+    
+    NSError *error = nil;
+    self.timeLineDataEntity = [NSEntityDescription entityForName:@"TimeLineData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
+    error=nil;
+    NSManagedObject * timelineManagedObject = [[NSManagedObject alloc]initWithEntity:self.timeLineDataEntity insertIntoManagedObjectContext:APPDELEGATE.managedObjectContext];
+    //success userimage
+    [timelineManagedObject setValue:[json valueForKey:@"actionType"] forKey:@"actiontype"];
+    [timelineManagedObject setValue:[json valueForKey:@"clockDate"] forKey:@"clockdate"];
+    [timelineManagedObject setValue:[json valueForKey:@"comments"] forKey:@"comments"];
+    [timelineManagedObject setValue:[json valueForKey:@"latitude"] forKey:@"latitude"];
+    [timelineManagedObject setValue:[json valueForKey:@"longitude"] forKey:@"longitude"];
+    [timelineManagedObject setValue:[json valueForKey:@"productStoreId"] forKey:@"productstoreid"];
+    [timelineManagedObject setValue:[json valueForKey:@"actionImage"] forKey:@"actionimage"];
+    [timelineManagedObject setValue:[json valueForKey:@"username"] forKey:@"username"];
+    [timelineManagedObject setValue:[json valueForKey:@"issend"] forKey:@"issend"];
+    [timelineManagedObject.managedObjectContext save:&error];
+    
+    
+    
+    self.timeLineStatusEntity = [NSEntityDescription entityForName:@"TimelineStatus" inManagedObjectContext:APPDELEGATE.managedObjectContext];
+    error=nil;
+    NSManagedObject * karthikManagedObject = [[NSManagedObject alloc]initWithEntity:self.timeLineStatusEntity insertIntoManagedObjectContext:APPDELEGATE.managedObjectContext];
+    
+    if ([statusData length]<=0) {
+        [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeIn"] forKey:@"status"];
+    }else if([statusData isEqualToString:@"TimeIn"]){
+        [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeOut"] forKey:@"status"];
+    }else if([statusData isEqualToString:@"TimeOut"]){
+        [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeIn"] forKey:@"status"];
+    }
+    
+    [karthikManagedObject.managedObjectContext save:&error];
+    
+    [self checkStatus];
 }
 
 - (IBAction)onClickRetakePhotoBtn:(UIButton *)sender {
@@ -442,7 +668,7 @@
                        
                        // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
                        NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
-                       [_params setObject:@"Time_In" forKey:@"purpose"];
+                       [_params setObject:@"Time_Line" forKey:@"purpose"];
                        
                        // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
                        NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
@@ -520,14 +746,15 @@
                                               
                                               if ([jsonData objectForKey:@"savedFilename"]){
                                                   imgPathToSend=[jsonData valueForKey:@"savedFilename"];
+                                                  [self timeLineUpdating];
                                               }
                                           }
                                           [DejalBezelActivityView removeView];
                                       });
                    });
 }
-
--(void)loginAndLogout
+#pragma mark - Time Line Update
+-(void)timeLineUpdating
 {
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
@@ -539,28 +766,62 @@
     NSString *str=[defaults valueForKey:@"BasicAuth"];
     
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    NSLog(@"%@",[dict valueForKey:@"username"]);
+    
+    NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
+    
+    NSString *userName=[dict valueForKey:@"username"];
+    NSString *productStoreId=[dictForStoreDetails valueForKey:@"productStoreId"];
+    
+    NSDate *now = [NSDate date];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+
+    NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+    
     
     [httpClient setDefaultHeader:@"Authorization" value:str];
     
     //{"username":"anand@securet.in","clockDate":"2016-12-10 18:40:00","workEffortTypeEnumId":"WetAvailable","purposeEnumId":"WepAttendance","comments":"Clocking out now from ameerpet","productStoreId":"100051","actionType":"clockOut",'actionImage":"test.jpg","latitude":"15.00","longitude":"19.00"}
     
-    NSDictionary * json = @{@"username":@"",
-                            @"clockDate":@"",
+    // messages = "Successfully Clocked In!\n";
+    //messages = "Successfully Clocked out!\n";
+    
+    NSString *actionType;
+    NSString *comments;
+    
+    NSString *statusData=[self getStatus];
+    
+    if ([statusData length]<=0) {
+        comments=@"Time In";
+        actionType=@"clockIn";
+    }else if([statusData isEqualToString:@"TimeIn"]){
+        comments=@"Time Out";
+        actionType=@"clockOut";
+    }else if([statusData isEqualToString:@"TimeOut"]){
+        comments=@"Time In";
+        actionType=@"clockIn";
+    }
+    
+    NSDictionary * json = @{@"username":userName,
+                            @"clockDate":strCurrentTime,
                             @"workEffortTypeEnumId":@"WetAvailable",
                             @"purposeEnumId":@"WepAttendance",
-                            @"comments":@"WepAttendance",
-
+                            @"comments":comments,
+                            @"productStoreId":productStoreId,
+                            @"actionType":actionType,
+                            @"actionImage":imgPathToSend,
+                            @"latitude":strForCurLatitude,
+                            @"longitude":strForCurLongitude,
                             };
     
-    NSMutableURLRequest *request;
+    NSLog(@"Time Line Data To Send====%@",json);
     
-    
-    
-            request = [httpClient requestWithMethod:@"POST"
-                                           path:@"/rest/s1/ft/stores"
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST"
+                                           path:@"/rest/s1/ft/attendance/log"
                                      parameters:json];
-        
     
     //====================================================RESPONSE
     [DejalBezelActivityView activityViewForView:self.view];
@@ -577,6 +838,20 @@
         [DejalBezelActivityView removeView];
         NSLog(@"Add Store Successfully==%@",JSON);
         
+        
+//        self.timeLineStatusEntity = [NSEntityDescription entityForName:@"TimelineStatus" inManagedObjectContext:APPDELEGATE.managedObjectContext];
+//        error=nil;
+//        NSManagedObject * karthikManagedObject = [[NSManagedObject alloc]initWithEntity:self.timeLineStatusEntity insertIntoManagedObjectContext:APPDELEGATE.managedObjectContext];
+//        
+//        if ([[JSON valueForKey:@"messages"] containsString:@"Clocked In"]) {
+//            [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeIn"] forKey:@"status"];
+//        }else if ([[JSON valueForKey:@"messages"] containsString:@"Clocked out"]){
+//            [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeOut"] forKey:@"status"];
+//        }
+//        
+//        [karthikManagedObject.managedObjectContext save:&error];
+        imgPathToSend=@"";
+        [self checkStatus];
         
     }
      //==================================================ERROR

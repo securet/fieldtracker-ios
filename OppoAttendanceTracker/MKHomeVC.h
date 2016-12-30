@@ -39,9 +39,14 @@
 @property (weak, nonatomic) IBOutlet UIImageView *imgVwForLocationIcon;
 @property (weak, nonatomic) IBOutlet UILabel *lblForStoreLocation;
 
+@property (strong, nonatomic) IBOutlet UILabel *lblTimeInStatus;
+
 - (IBAction)onClickMyLocation:(UIButton *)sender;
 - (IBAction)onClickTimeIn:(UIButton *)sender;
 - (IBAction)onClickPhotoConfirmBtn:(UIButton *)sender;
 - (IBAction)onClickRetakePhotoBtn:(UIButton *)sender;
+
+@property NSEntityDescription *timeLineStatusEntity;
+@property NSEntityDescription *timeLineDataEntity;
 
 @end

@@ -26,11 +26,28 @@
     [self addPadding:_txtFieldForPassword];
     
     _btnLogin.layer.cornerRadius = 5;
+    
+    
+    
+    
+
+    
+    if (![APPDELEGATE connected]) {
+        
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [self.navigationItem setHidesBackButton:YES];
     self.navigationController.navigationBarHidden = YES;
+    
+    
+    
+    
+
+    
 }
 
 #pragma mark - AddPadding
@@ -85,7 +102,13 @@
     if (_txtFieldForEmail.text.length>0 && _txtFieldForPassword.text.length>0) {
         
         if ([self isValidEmail:_txtFieldForEmail.text]) {
-            [self login];
+            
+            if ([APPDELEGATE connected]) {
+                [self login];
+            }else{
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
         }else{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
