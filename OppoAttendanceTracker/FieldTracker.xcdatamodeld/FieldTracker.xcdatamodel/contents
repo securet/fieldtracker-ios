@@ -17,10 +17,11 @@
     </entity>
     <entity name="TimelineStatus" syncable="YES">
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="TimeLineData" positionX="-54" positionY="0" width="128" height="180"/>
-        <element name="TimelineStatus" positionX="-63" positionY="-18" width="128" height="60"/>
         <element name="ImageData" positionX="-36" positionY="72" width="128" height="75"/>
+        <element name="TimeLineData" positionX="-54" positionY="0" width="128" height="180"/>
+        <element name="TimelineStatus" positionX="-63" positionY="-18" width="128" height="75"/>
     </elements>
 </model>

@@ -12,7 +12,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <GoogleMaps/GoogleMaps.h>
 
-@interface MKHomeVC : UIViewController<CLLocationManagerDelegate,GMSMapViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIAlertViewDelegate>
+@interface MKHomeVC : UIViewController<CLLocationManagerDelegate,GMSMapViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIAlertViewDelegate,UITableViewDelegate,UITableViewDataSource>
 {
     CLLocationManager *locationManager;
 }
@@ -41,6 +41,13 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *lblTimeInStatus;
 
+
+
+@property (strong, nonatomic) IBOutlet UIView *vwForTimer;
+@property (strong, nonatomic) IBOutlet UITableView *tableVwForTimeline;
+@property (strong, nonatomic) IBOutlet UILabel *lblForTimer;
+
+@property (weak, nonatomic) IBOutlet UIImageView *imgVwForTimeline;
 - (IBAction)onClickMyLocation:(UIButton *)sender;
 - (IBAction)onClickTimeIn:(UIButton *)sender;
 - (IBAction)onClickPhotoConfirmBtn:(UIButton *)sender;
@@ -48,5 +55,6 @@
 
 @property NSEntityDescription *timeLineStatusEntity;
 @property NSEntityDescription *timeLineDataEntity;
+- (IBAction)onClickTimeline:(UIButton *)sender;
 
 @end

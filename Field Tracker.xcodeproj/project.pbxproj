@@ -689,6 +689,11 @@
 					7FFB546C1E092EBC00A930C7 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = S3ATU3GSN7;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					7FFB54851E092EBC00A930C7 = {
 						CreatedOnToolsVersion = 7.3.1;

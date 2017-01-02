@@ -16,7 +16,6 @@
     NSMutableArray *arrayForStatusData;
     NSInteger arrayCountToCheck;
     NSInteger pageNumber;
-    
 }
 @end
 
