@@ -8,6 +8,7 @@
 
 #import "MKMoreVC.h"
 #import "MKCustomCellForLeave.h"
+#import <AVFoundation/AVFoundation.h>
 @interface MKMoreVC ()<HSDatePickerViewControllerDelegate>
 {
     NSMutableArray *arrayForTableData;
@@ -32,6 +33,10 @@
     
     NSInteger arrayCountToCheck;
     NSInteger pageNumber;
+    
+    AVCaptureSession *captureSession;
+    AVCaptureVideoPreviewLayer *videoPreviewLayer;
+    AVCaptureStillImageOutput *stillImageOutput;
     
 }
 @end
@@ -76,6 +81,12 @@
     _vwForStoreAdd.hidden = YES;
     _vwForPromoterAdd.hidden = YES;
     _vwForLeaveRqstAdd.hidden = YES;
+    _vwForCamera.hidden = YES;
+    
+    _cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
+    _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
+    _cameraBtn.layer.masksToBounds = YES;
+    
     
     [self addPromoterViewSetup];
     
@@ -100,6 +111,31 @@
 
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    
+    [self updateLocationManagerr];
+    self.navigationController.navigationBarHidden = YES;
+    self.navigationItem.hidesBackButton = YES;
+    [self.navigationItem setHidesBackButton:YES];
+    
+    NSDate *now = [NSDate date];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"hh:mm a";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+    
+    _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
+    
+    _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
+    
+    if (![APPDELEGATE connected]) {
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
+#pragma mark - 
 
 -(void)checkingInLocation:(NSNotification*)notification{
     
@@ -177,29 +213,7 @@
 }
 
 
--(void)viewWillAppear:(BOOL)animated{
-    
-    [self updateLocationManagerr];
-    self.navigationController.navigationBarHidden = YES;
-    self.navigationItem.hidesBackButton = YES;
-    [self.navigationItem setHidesBackButton:YES];
-    
-    NSDate *now = [NSDate date];
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"hh:mm a";
-    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
-    
-    _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    
-    _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
-    
-    if (![APPDELEGATE connected]) {
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert show];
-    }
-}
+
 
 
 #pragma mark - TextField Delegate
@@ -908,35 +922,138 @@
         stringForImagePurpose=@"addressProof";
     }
     //userPhoto aadharId addressProof
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-    {
-        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-        imagePickerController.delegate = self;
-        
-        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
-        
+//    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+//    {
+//        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+//        imagePickerController.delegate = self;
+//        
+//        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
+    
         if (sender.tag == 100) {
-           imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-            
-            UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
-            [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
-            UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
-            [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
-            [emptyBlackButton setEnabled:YES];
-            [cameraOverlayView addSubview:emptyBlackButton];
-            imagePickerController.allowsEditing = YES;
-            imagePickerController.showsCameraControls = YES;
-            imagePickerController.cameraOverlayView = cameraOverlayView;
+//           imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+//
+//            UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
+//            [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
+//            UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
+//            [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
+//            [emptyBlackButton setEnabled:YES];
+//            [cameraOverlayView addSubview:emptyBlackButton];
+//            imagePickerController.allowsEditing = YES;
+//            imagePickerController.showsCameraControls = YES;
+//            imagePickerController.cameraOverlayView = cameraOverlayView;
         }else if (sender.tag == 200){
-            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+//            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
         }else if (sender.tag == 300){
-            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+//            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
         }
         
-        [self presentViewController:imagePickerController animated:YES completion:^{
-            
-        }];
+//        [self presentViewController:imagePickerController animated:YES completion:^{
+//            
+//        }];
+//    }
+    
+    
+    NSError *error;
+    
+    AVCaptureDevice *captureDevice ;
+    
+    
+    if (sender.tag == 100) {
+        captureDevice   = [self frontFacingCamera];
+    }else if (sender.tag == 200 || sender.tag == 300){
+        captureDevice = [self rearFacingCamera];
     }
+    
+    
+    
+    
+    AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
+    
+    if (!input)
+    {
+        NSLog(@"%@", [error localizedDescription]);
+    }
+    
+    // Initialize the captureSession object.
+    captureSession = [[AVCaptureSession alloc] init];
+    // Set the input device on the capture session.
+    [captureSession addInput:input];
+    
+    // Setup the still image file output
+    AVCaptureStillImageOutput *newStillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+    NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                    AVVideoCodecJPEG, AVVideoCodecKey,
+                                    nil];
+    [newStillImageOutput setOutputSettings:outputSettings];
+    
+    if ([captureSession canAddOutput:newStillImageOutput]) {
+        [captureSession addOutput:newStillImageOutput];
+    }
+    //    [self setStillImageOutput:newStillImageOutput];
+    stillImageOutput = newStillImageOutput;
+    videoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
+    [videoPreviewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    [videoPreviewLayer setFrame:_previewCamera.layer.bounds];
+    [_previewCamera.layer addSublayer:videoPreviewLayer];
+    [captureSession startRunning];
+    self.tabBarController.tabBar.hidden =YES;
+    _vwForCamera.hidden = NO;
+    _backBtn.hidden = NO;
+}
+
+- (AVCaptureDevice *)frontFacingCamera
+{
+    return [self cameraWithPosition:AVCaptureDevicePositionFront];
+}
+
+- (AVCaptureDevice *)rearFacingCamera
+{
+    return [self cameraWithPosition:AVCaptureDevicePositionBack];
+}
+
+- (AVCaptureDevice *) cameraWithPosition:(AVCaptureDevicePosition) position
+{
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for (AVCaptureDevice *device in devices) {
+        if ([device position] == position) {
+            return device;
+        }
+    }
+    return nil;
+}
+
+- (IBAction)onClickCamera:(UIButton *)sender {
+    
+    AVCaptureConnection *videoConnection = nil;
+    
+    for (AVCaptureConnection *connection in [stillImageOutput connections])
+    {
+        for (AVCaptureInputPort *port in [connection inputPorts])
+        {
+            if ([[port mediaType] isEqual:AVMediaTypeVideo] )
+            {
+                videoConnection = connection;
+                break;
+            }
+        }
+        if (videoConnection)
+        {
+            break;
+        }
+    }
+    
+    NSLog(@"About to request a capture from: %@", stillImageOutput);
+    [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
+     {
+         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+         UIImage *image = [[UIImage alloc] initWithData:imageData];
+         imgToSend=image;
+         _vwForCamera.hidden = YES;
+         _backBtn.hidden = YES;
+         [self postImageDataToServer];
+     }];
+    
+    self.tabBarController.tabBar.hidden =NO;
 }
 
 #pragma mark - ImagePickerDelegate Methods
@@ -1296,17 +1413,29 @@
  */
 
 - (IBAction)onClickBackBtn:(UIButton *)sender{
+    
+    _backBtn.hidden = YES;
+    
     if (![_vwForStore isHidden]){
         _vwForStore.hidden= YES;
     }
     else if (![_vwForPromoters isHidden]){
-        _vwForPromoters.hidden= YES;
+        
+        if (![_vwForCamera isHidden]){
+//            _backBtn.hidden = NO;
+            _vwForCamera.hidden = YES;
+        }else{
+         _vwForPromoters.hidden= YES;
+        }
     }
     else if (![_vwForLeaveRqst isHidden]){
         _vwForLeaveRqst.hidden =YES;
+    }else if (![_vwForCamera isHidden]){
+        _vwForCamera.hidden = YES;
     }
-    _backBtn.hidden = YES;
 }
+
+
 - (IBAction)onClickLeaveStartDate:(UIButton *)sender{
     isStartOrEndDate = YES;
     self.tabBarController.tabBar.hidden =YES;

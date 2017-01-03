@@ -105,6 +105,17 @@
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveType;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveReason;
 
+
+
+
+
+#pragma mark - Camera View
+
+@property (strong, nonatomic) IBOutlet UIView *vwForCamera;
+@property (strong, nonatomic) IBOutlet UIView *previewCamera;
+@property (strong, nonatomic) IBOutlet UIButton *cameraBtn;
+- (IBAction)onClickCamera:(UIButton *)sender;
+
 - (IBAction)onClickLeaveStartDate:(UIButton *)sender;
 - (IBAction)onClickLeaveEndDate:(UIButton *)sender;
 

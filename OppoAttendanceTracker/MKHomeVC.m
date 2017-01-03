@@ -9,6 +9,7 @@
 #import "MKHomeVC.h"
 #import <GoogleMaps/GoogleMaps.h>
 #import "MKIndividualHistoryCell.h"
+#import <AVFoundation/AVFoundation.h>
 @interface MKHomeVC ()
 {
     IBOutlet GMSMapView *mapView;
@@ -19,6 +20,9 @@
     BOOL boolValueForInLocationOrNot;
     NSTimer *timerForShiftTime;
     NSMutableArray *arrayForStatusData;
+    AVCaptureSession *captureSession;
+    AVCaptureVideoPreviewLayer *videoPreviewLayer;
+    AVCaptureStillImageOutput *stillImageOutput;
 }
 @end
 
@@ -62,18 +66,13 @@
     
     
     GMSMarker *markerCar = [[GMSMarker alloc] init];
-    
     markerCar.icon=[UIImage imageNamed:@"location_marker"];
-    
     [CATransaction begin];
     [CATransaction setAnimationDuration:2.0];
     markerCar.position =  coordinate;
     [CATransaction commit];
-    
-    
     markerCar.map = mapView;
     _lblStoreName.text=@"";
-    
     
     _vwForImgPreview.hidden = YES;
     
@@ -82,9 +81,15 @@
         _widthOfImgPrvw.constant = 200;
     }
     
-    
     _vwForTimer.hidden = YES;
     _tableVwForTimeline.hidden = YES;
+    _vwForCamera.hidden = YES;
+    _backBtn.hidden = YES;
+    
+    
+    _cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
+    _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
+    _cameraBtn.layer.masksToBounds = YES;
     
     _tableVwForTimeline.separatorStyle = UITableViewCellSeparatorStyleNone;
     _tableVwForTimeline.tableFooterView = [[UIView alloc] init];
@@ -202,6 +207,7 @@
 
 
 
+
 -(void)getStoreDetails{
     
     dictForStoreDetails=[[NSMutableDictionary alloc] init];
@@ -256,70 +262,65 @@
     [operation start];
 }
 #pragma mark _ UITableView
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-           return arrayForStatusData.count;
-   
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return arrayForStatusData.count;
+    
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
+    MKIndividualHistoryCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    if (cell == nil) {
+        cell=[[MKIndividualHistoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
-        MKIndividualHistoryCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
-        if (cell == nil) {
-            cell=[[MKIndividualHistoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        }
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
-        /*
-         ////Image Names
-         dot_login
-         dot_inlocation
-         dot_outlocation
-         dot_timeout
-         */
-        if (indexPath.row==0) {
-            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_login"];
-            cell.lblForStatus.text=@"Time In";
-            cell.centerConstraint.constant = 0;
-            cell.imgVwForTopVerticalLine.hidden=YES;
-            cell.imgVwForBtmVerticalLine.hidden=NO;
+    /*
+     ////Image Names
+     dot_login
+     dot_inlocation
+     dot_outlocation
+     dot_timeout
+     */
+    if (indexPath.row==0) {
+        cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_login"];
+        cell.lblForStatus.text=@"Time In";
+        cell.centerConstraint.constant = 0;
+        cell.imgVwForTopVerticalLine.hidden=YES;
+        cell.imgVwForBtmVerticalLine.hidden=NO;
+    }else{
+        if (indexPath.row % 2 == 0) {
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_inlocation"];
+            cell.lblForStatus.text=@"In location";
+            cell.centerConstraint.constant = -5;
         }else{
-            if (indexPath.row % 2 == 0) {
-                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_inlocation"];
-                cell.lblForStatus.text=@"In location";
-                cell.centerConstraint.constant = -5;
-            }else{
-                cell.centerConstraint.constant = 5;
-                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_outlocation"];
-                cell.lblForStatus.text=@"Out of location";
-            }
-            
-            cell.imgVwForTopVerticalLine.hidden=NO;
-            cell.imgVwForBtmVerticalLine.hidden=NO;
+            cell.centerConstraint.constant = 5;
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_outlocation"];
+            cell.lblForStatus.text=@"Out of location";
         }
-        
-        if (indexPath.row==arrayForStatusData.count-1){
-            cell.centerConstraint.constant = 0;
-            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
-            cell.lblForStatus.text=@"Time Out";
-            cell.imgVwForTopVerticalLine.hidden=NO;
-            cell.imgVwForBtmVerticalLine.hidden=YES;
-        }
-        
-        cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
-        
-        if (![[arrayForStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
-            cell.lblForTime.text= [self getTime:[arrayForStatusData objectAtIndex:indexPath.row]];
-        }else{
-            cell.lblForTime.text=@"";
-            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
-            cell.lblForStatus.text=@"";
-            cell.imgVwForLine.backgroundColor=[UIColor clearColor];
-        }
-        
-        return cell;
-   
+        cell.imgVwForTopVerticalLine.hidden=NO;
+        cell.imgVwForBtmVerticalLine.hidden=NO;
+    }
+    
+    if (indexPath.row==arrayForStatusData.count-1){
+        cell.centerConstraint.constant = 0;
+        cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
+        cell.lblForStatus.text=@"Time Out";
+        cell.imgVwForTopVerticalLine.hidden=NO;
+        cell.imgVwForBtmVerticalLine.hidden=YES;
+    }
+    
+    cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
+    
+    if (![[arrayForStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
+        cell.lblForTime.text= [self getTime:[arrayForStatusData objectAtIndex:indexPath.row]];
+    }else{
+        cell.lblForTime.text=@"";
+        cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+        cell.lblForStatus.text=@"";
+        cell.imgVwForLine.backgroundColor=[UIColor clearColor];
+    }
+    return cell;
 }
 
 -(NSString*)getTime:(NSString*)strDate
@@ -360,7 +361,7 @@
     
     if (distance <= 100 && distance >= 0){
         
-        NSLog(@"You are within 100 meters (actually %.0f meters) of Store", distance);
+        //        NSLog(@"You are within 100 meters (actually %.0f meters) of Store", distance);
         _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
         _lblForStoreLocation.text=[dictForStoreDetails valueForKey:@"storeName"];
         _lblForStoreLocation.textColor=[UIColor whiteColor];
@@ -370,7 +371,7 @@
         
     }else{
         
-        NSLog(@"You are not within 100 meters (actually %.0f meters) of Store", distance);
+        //        NSLog(@"You are not within 100 meters (actually %.0f meters) of Store", distance);
         _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
         _lblForStoreLocation.text=@"Off site";
         _lblForStoreLocation.textColor=[UIColor darkGrayColor];
@@ -391,21 +392,36 @@
     
     NSDictionary *statusData=[self getStatus];
     
+    
+    
+    NSMutableArray *arrayForTimeLine=[self getTimeLineData];
+    
+    NSDictionary *dictForBeforelast=[[NSDictionary alloc] init];
+    
+    if ([arrayForTimeLine count]>1) {
+        dictForBeforelast=[arrayForTimeLine objectAtIndex:[arrayForTimeLine count]-2];
+    }
+    
+    //     NSDictionary *timeLineData=[arrayForTimeLine lastObject];
+    
+    
     if ([[statusData valueForKey:@"status"] length]<=0) {
-        NSLog(@"Need to Time In");
+        
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
-        NSLog(@"Need to Time Out");
         
-        //        NSMutableDictionary *dictToSend=[self getTimeLineData];
-        
-        //        NSLog(@"====%@",dictToSend);
-        if (boolValueForInLocationOrNot == YES) {
-            
-        }else if (boolValueForInLocationOrNot == NO){
-            
+        if ([arrayForTimeLine count]>1) {
+            if (boolValueForInLocationOrNot && [[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"OutLocation"]) {
+                [self saveDataIntoLocal:YES];
+                
+            }else if (!boolValueForInLocationOrNot && ([[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"Time In"] || [[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"InLocation"])){
+                [self saveDataIntoLocal:YES];
+            }
+        }else if ([arrayForTimeLine count] ==1){
+            [self saveDataIntoLocal:YES];
         }
+        
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
-        NSLog(@"Need to Time In");
+        
     }
 }
 
@@ -499,6 +515,8 @@
  }
  */
 
+
+
 - (IBAction)onClickMyLocation:(UIButton *)sender {
     [self showingCurrentLocation];
 }
@@ -581,7 +599,7 @@
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     
     if (buttonIndex == 1) {
-        [self saveDataIntoLocal];
+        [self saveDataIntoLocal:NO];
         [self getTimeLineData];
     }
 }
@@ -612,34 +630,142 @@
 }
 
 -(void)openCamera{
-    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-    imagePickerController.delegate = self;
+    //    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    //    imagePickerController.delegate = self;
+    //
+    //    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
+    //        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
+    //        imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+    //
+    //        UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
+    //        [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
+    //        UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
+    //        [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
+    //        [emptyBlackButton setEnabled:YES];
+    //        [cameraOverlayView addSubview:emptyBlackButton];
+    //
+    //        imagePickerController.allowsEditing = YES;
+    //        imagePickerController.showsCameraControls = YES;
+    //        imagePickerController.delegate = self;
+    //
+    //        imagePickerController.cameraOverlayView = cameraOverlayView;
+    //    }
+    //    else{
+    //        imagePickerController.sourceType =UIImagePickerControllerSourceTypePhotoLibrary;
+    //    }
+    //
+    //    [self presentViewController:imagePickerController animated:YES completion:^{
+    //
+    //    }];
     
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
-        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
-        imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-        
-        UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
-        [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
-        UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
-        [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
-        [emptyBlackButton setEnabled:YES];
-        [cameraOverlayView addSubview:emptyBlackButton];
-        
-        imagePickerController.allowsEditing = YES;
-        imagePickerController.showsCameraControls = YES;
-        imagePickerController.delegate = self;
-        
-        imagePickerController.cameraOverlayView = cameraOverlayView;
-    }
-    else{
-        imagePickerController.sourceType =UIImagePickerControllerSourceTypePhotoLibrary;
+    
+    NSError *error;
+    
+    AVCaptureDevice *captureDevice = [self frontFacingCamera];
+    AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
+    
+    if (!input)
+    {
+        NSLog(@"%@", [error localizedDescription]);
     }
     
-    [self presentViewController:imagePickerController animated:YES completion:^{
-        
-    }];
+    // Initialize the captureSession object.
+    captureSession = [[AVCaptureSession alloc] init];
+    // Set the input device on the capture session.
+    [captureSession addInput:input];
+    
+    // Setup the still image file output
+    AVCaptureStillImageOutput *newStillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+    NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                    AVVideoCodecJPEG, AVVideoCodecKey,
+                                    nil];
+    [newStillImageOutput setOutputSettings:outputSettings];
+    
+    if ([captureSession canAddOutput:newStillImageOutput]) {
+        [captureSession addOutput:newStillImageOutput];
+    }
+    
+    //    [self setStillImageOutput:newStillImageOutput];
+    stillImageOutput = newStillImageOutput;
+    videoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
+    [videoPreviewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+    [videoPreviewLayer setFrame:_previewCamera.layer.bounds];
+    [_previewCamera.layer addSublayer:videoPreviewLayer];
+    [captureSession startRunning];
+    
+    self.tabBarController.tabBar.hidden =YES;
+    
+    _vwForCamera.hidden = NO;
+    _backBtn.hidden = NO;
 }
+
+
+- (AVCaptureDevice *) frontFacingCamera
+{
+    return [self cameraWithPosition:AVCaptureDevicePositionFront];
+}
+- (AVCaptureDevice *) cameraWithPosition:(AVCaptureDevicePosition) position
+{
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for (AVCaptureDevice *device in devices) {
+        if ([device position] == position) {
+            return device;
+        }
+    }
+    return nil;
+}
+
+- (IBAction)onClickCamera:(UIButton *)sender {
+    
+    AVCaptureConnection *videoConnection = nil;
+    
+    for (AVCaptureConnection *connection in [stillImageOutput connections])
+    {
+        for (AVCaptureInputPort *port in [connection inputPorts])
+        {
+            if ([[port mediaType] isEqual:AVMediaTypeVideo] )
+            {
+                videoConnection = connection;
+                break;
+            }
+        }
+        if (videoConnection)
+        {
+            break;
+        }
+    }
+    
+    NSLog(@"About to request a capture from: %@", stillImageOutput);
+    [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
+     {
+         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+         UIImage *image = [[UIImage alloc] initWithData:imageData];
+         imgToSend=image;
+         _vwForImgPreview.hidden = NO;
+         _imgVwForPhotoPreview.image=imgToSend;
+         _vwForCamera.hidden = YES;
+     }];
+    
+    self.tabBarController.tabBar.hidden =NO;
+    
+}
+
+- (IBAction)onClickBackBtn:(UIButton *)sender {
+    
+    _backBtn.hidden = YES;
+    
+    if (![_vwForCamera isHidden]) {
+        if (![_vwForImgPreview isHidden]) {
+            _backBtn.hidden = NO;
+        }
+        _vwForCamera.hidden = YES;
+    }else if (![_vwForImgPreview isHidden]){
+        _vwForImgPreview.hidden = YES;
+        imgToSend=nil;
+    }
+    self.tabBarController.tabBar.hidden =NO;
+}
+
 #pragma mark - ImagePickerDelegate Methods
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
@@ -785,7 +911,7 @@
         // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
         NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
         
-        // string constant for the post parameter 'file'. My server uses this name: `file`. Your's may differ
+        // string constant for the post parameter 'snapshotFile'. My server uses this name: `snapshotFile`. Your's may differ
         NSString* FileParamConstant = @"snapshotFile";
         
         // the server url to which the image (or the media) is uploaded. Use your server url here
@@ -819,15 +945,10 @@
             [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
         }
         
-        
         // add image data
-        
-        
-        
         NSString *base64Encoded = [dictToSend valueForKey:@"actionimage"];
         
         NSData *imageData = [[NSData alloc] initWithBase64EncodedString:base64Encoded options:NSDataBase64DecodingIgnoreUnknownCharacters];
-        
         
         if (imageData) {
             [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -864,7 +985,7 @@
                             NSLog(@"Request error occurred: %@", requestError);
                         }
                         //if communication was successful
-                        
+                        NSLog(@"Response code %i", [HTTPResponse statusCode]);
                         NSInteger success = 1;
                         NSError *serializeError = nil;
                         NSDictionary *jsonData = [NSJSONSerialization
@@ -890,12 +1011,9 @@
 }
 #pragma mark - Database Handling
 
--(void)saveDataIntoLocal{
-    
-    
+-(void)saveDataIntoLocal:(BOOL)fromInLoctnOrOutLoctn{
     
     NSError *error = nil;
-    
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
@@ -924,21 +1042,32 @@
         comments=@"Time In";
         actionType=@"clockIn";
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
-        comments=@"Time Out";
-        actionType=@"clockOut";
+        
+        if (fromInLoctnOrOutLoctn) {
+            
+            if (boolValueForInLocationOrNot) {
+                comments=@"InLocation";
+                actionType=@"clockIn";
+            }else{
+                comments=@"OutLocation";
+                actionType=@"clockOut";
+            }
+            
+        }else{
+            comments=@"Time Out";
+            actionType=@"clockOut";
+        }
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
         comments=@"Time In";
         actionType=@"clockIn";
     }
     
-    
     NSString *imgData;
-    if (imgToSend == nil) {
+    if (imgToSend == nil || imgPathToSend == nil) {
         imgData=@"img";
     }else{
         imgData=[UIImagePNGRepresentation(imgToSend) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     }
-    
     
     NSDictionary * json = @{@"username":userName,
                             @"clockDate":strCurrentTime,
@@ -954,8 +1083,10 @@
                             };
     
     
-    //  actiontype clockdate comments latitude longitude productstoreid actionimage username
     
+    //    NSLog(@"Saved Data====%@",json);
+    
+    //  actiontype clockdate comments latitude longitude productstoreid actionimage username
     
     self.timeLineDataEntity = [NSEntityDescription entityForName:@"TimeLineData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
     error=nil;
@@ -982,10 +1113,29 @@
     
     if ([[dictData valueForKey:@"status"] length]<=0) {
         [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeIn"] forKey:@"status"];
+        [karthikManagedObject setValue:[NSString stringWithFormat:@"Time In"] forKey:@"comments"];
+        
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
-        [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeOut"] forKey:@"status"];
+        
+        if (([[dictData valueForKey:@"comments"] isEqualToString:@"Time In"] || [[dictData valueForKey:@"comments"] isEqualToString:@"Time Out"]) && fromInLoctnOrOutLoctn) {
+            
+            if (boolValueForInLocationOrNot) {
+                [karthikManagedObject setValue:[NSString stringWithFormat:@"Time In"] forKey:@"comments"];
+            }else{
+                [karthikManagedObject setValue:[NSString stringWithFormat:@"Time Out"] forKey:@"comments"];
+            }
+            
+            [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeIn"] forKey:@"status"];
+            
+        }else{
+            
+            [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeOut"] forKey:@"status"];
+        }
+        
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
+        
         [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeIn"] forKey:@"status"];
+        [karthikManagedObject setValue:[NSString stringWithFormat:@"Time In"] forKey:@"comments"];
     }
     
     [karthikManagedObject setValue:strCurrentTime forKey:@"time"];
@@ -1018,13 +1168,22 @@
         statusData=[fetRec valueForKey:@"status"];
         [dict setValue:statusData forKey:@"status"];
         
+        statusData=[fetRec valueForKey:@"comments"];
+        [dict setValue:statusData forKey:@"comments"];
+        
+        
         statusData=[fetRec valueForKey:@"time"];
         [dict setValue:statusData forKey:@"time"];
     }
     
     
-    NSLog(@"Status Data====%@",dict);
-    
+    //    NSLog(@"Status Data====%@",dict);
+    if ([dict valueForKey:@"status"]) {
+        if ([[dict valueForKey:@"status"] isEqualToString:@"TimeOut"]) {
+            timerForShiftTime=nil;
+            [timerForShiftTime invalidate];
+        }
+    }
     
     return dict;
 }
@@ -1096,17 +1255,19 @@
     if ([[statusData valueForKey:@"status"] length]<=0) {
         _lblTimeInStatus.text=@"Time In";
         _vwForTimer.hidden=YES;
+        timerForShiftTime=nil;
         [timerForShiftTime invalidate];
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
         _lblTimeInStatus.text=@"Time Out";
         _vwForTimer.hidden=NO;
         
-        NSLog(@"Last Time Updated==%@",[statusData valueForKey:@"time"]);
+        //        NSLog(@"Last Time Updated==%@",[statusData valueForKey:@"time"]);
         [self getTimerForTimeIn:[statusData valueForKey:@"time"]];
         
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
         _lblTimeInStatus.text=@"Time In";
         _vwForTimer.hidden=YES;
+        timerForShiftTime=nil;
         [timerForShiftTime invalidate];
     }
 }
@@ -1127,7 +1288,7 @@
     
     NSString *lastViewedString;
     lastViewedString=time;
-
+    
     NSInteger   hoursBetweenDates = 0;
     
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
@@ -1150,10 +1311,10 @@
     }
     
     NSString *timeString = [NSString stringWithFormat:@"%02d:%02d:%02d", hour, min, sec];
-
+    
     _lblForTimer.text=timeString;
     _lblForTimer.textAlignment= NSTextAlignmentCenter;
-//    NSLog(@"Time Started==%@",timeString);
+    //    NSLog(@"Time Started==%@",timeString);
 }
 
 #pragma mark - Time Line Update
@@ -1331,7 +1492,7 @@
     //====================================================RESPONSE
     
     
-        [DejalBezelActivityView activityViewForView:self.view];
+    [DejalBezelActivityView activityViewForView:self.view];
     
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
@@ -1343,9 +1504,9 @@
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
         
-       
-            [DejalBezelActivityView removeView];
-       
+        
+        [DejalBezelActivityView removeView];
+        
         
         //        arrayForTableData=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
         NSMutableArray *array=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
@@ -1359,7 +1520,7 @@
             [arrayForStatusData addObject:[dict valueForKey:@"fromDate"]];
             [arrayForStatusData addObject:[dict valueForKey:@"thruDate"]];
         }
-
+        
         _tableVwForTimeline.delegate= self;
         _tableVwForTimeline.dataSource = self;
         [_tableVwForTimeline reloadData];
