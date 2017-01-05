@@ -160,7 +160,7 @@
         
         [DejalBezelActivityView removeView];
         
-        NSLog(@"Store List==%@",JSON);
+//        NSLog(@"Store List==%@",JSON);
         
        
         arrayForStoreList=[JSON objectForKey:@"userStores"];

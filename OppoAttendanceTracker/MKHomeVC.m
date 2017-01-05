@@ -51,18 +51,11 @@
     
     GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:[strForCurLatitude doubleValue] longitude:[strForCurLongitude doubleValue] zoom:15];
     [mapView setCamera:camera];
-    //    mapView.myLocationEnabled = YES;
+   // mapView.myLocationEnabled = YES;
     mapView.delegate=self;
     
     
-    // Build a circle for the GMSMapView
-    GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
-    geoFenceCircle.radius = 150; // Meters
-    geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
-    geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.5];
-    geoFenceCircle.strokeWidth = 0.5;
-    geoFenceCircle.strokeColor = [UIColor blueColor];
-    geoFenceCircle.map = mapView; // Add it to the map.
+
     
     
     GMSMarker *markerCar = [[GMSMarker alloc] init];
@@ -72,6 +65,7 @@
     markerCar.position =  coordinate;
     [CATransaction commit];
     markerCar.map = mapView;
+    
     _lblStoreName.text=@"";
     
     _vwForImgPreview.hidden = YES;
@@ -127,30 +121,10 @@
 
 - (void)startTimedTask
 {
-    timerForShiftTime= [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkStatus) userInfo:nil repeats:YES];
+    timerForShiftTime= [NSTimer scheduledTimerWithTimeInterval:5.0 target:self selector:@selector(checkStatus) userInfo:nil repeats:YES];
 }
 
-- (void)performBackgroundTask
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        
-        if ([APPDELEGATE connected]) {
-            
-            NSMutableArray *arrayForData=[[NSMutableArray alloc] init];
-            arrayForData=[self getTimeLineData];
-            for (NSDictionary *dict in arrayForData) {
-                if ([[dict valueForKey:@"issend"] integerValue] == 0) {
-                    [self postData:dict withIndex:[arrayForData indexOfObject:dict]];
-                }
-            }
-        }
-        
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-        });
-    });
-}
+
 
 
 -(void)startBackgroundTask{
@@ -205,9 +179,6 @@
  return arrayOfData;
  }*/
 
-
-
-
 -(void)getStoreDetails{
     
     dictForStoreDetails=[[NSMutableDictionary alloc] init];
@@ -251,6 +222,30 @@
         dictForStoreDetails=[JSON mutableCopy];
         
         _lblStoreName.text=[dictForStoreDetails valueForKey:@"storeName"];
+        
+        CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
+        CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
+        
+        CLLocationCoordinate2D coordinate;
+        coordinate.latitude = latitude;
+        coordinate.longitude = longitude;
+        
+        // Build a circle for the GMSMapView
+        GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
+        geoFenceCircle.radius = 150; // Meters
+        geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
+        geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.5];
+        geoFenceCircle.strokeWidth = 0.5;
+        geoFenceCircle.strokeColor = [UIColor blueColor];
+        geoFenceCircle.map = mapView; // Add it to the map.
+
+//            GMSMarker *markerCar = [[GMSMarker alloc] init];
+//            markerCar.icon=[UIImage imageNamed:@"location_marker"];
+//            [CATransaction begin];
+//            [CATransaction setAnimationDuration:2.0];
+//            markerCar.position =  coordinate;
+//            [CATransaction commit];
+//            markerCar.map = mapView;
         
         [self checkLocation];
     }
@@ -359,6 +354,7 @@
     NSString *storeName=[dictForStoreDetails valueForKey:@"storeName"];
     CLLocationDistance distance = [location distanceFromLocation:locationManager.location];
     
+   
     if (distance <= 100 && distance >= 0){
         
         //        NSLog(@"You are within 100 meters (actually %.0f meters) of Store", distance);
@@ -385,6 +381,14 @@
     }
     
     [dictToSendLctnStatus setObject:storeName forKey:@"StoreName"];
+    
+    if ([dictForStoreDetails valueForKey:@"address"]) {
+        [dictToSendLctnStatus setObject:[dictForStoreDetails valueForKey:@"address"] forKey:@"StoreAddress"];
+    }else{
+        [dictToSendLctnStatus setObject:@"NA" forKey:@"StoreAddress"];
+    }
+    
+    
     
     [[MKSharedClass shareManager] setDictForCheckInLoctn:dictToSendLctnStatus];
     
@@ -531,21 +535,8 @@
         coordinate.longitude=[strForCurLongitude doubleValue];
         GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:coordinate zoom:15];
         [mapView animateWithCameraUpdate:updatedCamera];
-        
-        
-        GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
-        geoFenceCircle.radius = 150; // Meters
-        geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
-        geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.5];
-        geoFenceCircle.strokeWidth = 0.5;
-        geoFenceCircle.strokeColor = [UIColor blueColor];
-        geoFenceCircle.map = mapView; // Add it to the map.
-        
-        //        GMSMarker *markerCar = [GMSMarker markerWithPosition:coordinate];
-        //        markerCar.appearAnimation = YES;
-        //        markerCar.icon = [UIImage imageNamed:@"location_marker"];//pin_car_driver
-        //        markerCar.map = mapView;
-        
+        //mapView.myLocationEnabled = YES;
+      
         GMSMarker *markerCar = [[GMSMarker alloc] init];
         markerCar.icon=[UIImage imageNamed:@"location_marker"];
         
@@ -553,14 +544,32 @@
         [CATransaction setAnimationDuration:5.0];
         markerCar.position =  coordinate;
         [CATransaction commit];
-        
-        
         markerCar.map = mapView;
+        
+        
+        CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
+        CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
+        
+//        CLLocationCoordinate2D coordinate;
+        coordinate.latitude = latitude;
+        coordinate.longitude = longitude;
+        
+        // Build a circle for the GMSMapView
+        GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
+        geoFenceCircle.radius = 150; // Meters
+        geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
+        geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
+        geoFenceCircle.strokeWidth = 1.5;
+        geoFenceCircle.strokeColor = [UIColor blueColor];
+        geoFenceCircle.map = mapView; // Add it to
+        
         
     }else{
         UIAlertView *alertLocation=[[UIAlertView alloc]initWithTitle:@"" message:@"Please Enable Location Access" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertLocation show];
     }
+    
+    [self checkLocation];
     
 }
 
@@ -577,7 +586,7 @@
 - (IBAction)onClickPhotoConfirmBtn:(UIButton *)sender {
     
     _vwForImgPreview.hidden = YES;
-    
+    _backBtn.hidden = YES;
     
     NSDictionary *statusData=[self getStatus];
     
@@ -1197,6 +1206,8 @@
     self.timeLineDataEntity=[NSEntityDescription entityForName:@"TimeLineData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
     NSFetchRequest * fr = [[NSFetchRequest alloc]init];
     [fr setEntity:self.timeLineDataEntity];
+    
+    
     NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
     
     for (NSManagedObject * fetRec  in result) {
@@ -1531,7 +1542,6 @@
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
-    
 }
 
 

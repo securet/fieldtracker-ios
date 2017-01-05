@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		67E8DE5516D9FE7DEEE109DD /* Pods_OppoAttendanceTracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		27FC09E77673E9E0B1BDDD97 /* Pods_Field_Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D605FA6ED061FED5593E10 /* Pods_Field_Tracker.framework */; };
 		7F04BA411E12203200679905 /* DejalActivityView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA401E12203200679905 /* DejalActivityView.m */; };
 		7F04BA561E1220CC00679905 /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA441E1220CC00679905 /* AFHTTPClient.m */; };
 		7F04BA571E1220CC00679905 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA461E1220CC00679905 /* AFHTTPRequestOperation.m */; };
@@ -37,6 +37,7 @@
 		7F04BA9D1E12568500679905 /* MKStoreListPopupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA9C1E12568500679905 /* MKStoreListPopupVC.m */; };
 		7F04BAA11E128B1F00679905 /* MKSharedClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BAA01E128B1F00679905 /* MKSharedClass.m */; };
 		7F8CE5FE1E14F0030067D0F8 /* UIScrollView+DXRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F8CE5FD1E14F0030067D0F8 /* UIScrollView+DXRefresh.m */; };
+		7F9FC6CF1E1E3277005767F6 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */; };
 		7FA239A71E0A939300D293D5 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54A81E09338200A930C7 /* KeyboardManager.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		7FA481D01E161F1200345BCE /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA481CF1E161F1200345BCE /* Reachability.m */; };
 		7FA481D41E162EF200345BCE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA481D31E162EF200345BCE /* CoreData.framework */; };
@@ -86,7 +87,9 @@
 
 /* Begin PBXFileReference section */
 		2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.release.xcconfig"; sourceTree = "<group>"; };
+		36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.debug.xcconfig"; sourceTree = "<group>"; };
 		489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.debug.xcconfig"; sourceTree = "<group>"; };
+		5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.release.xcconfig"; sourceTree = "<group>"; };
 		7F04BA3F1E12203200679905 /* DejalActivityView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DejalActivityView.h; sourceTree = "<group>"; };
 		7F04BA401E12203200679905 /* DejalActivityView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DejalActivityView.m; sourceTree = "<group>"; };
 		7F04BA431E1220CC00679905 /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
@@ -146,6 +149,7 @@
 		7F04BAA01E128B1F00679905 /* MKSharedClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKSharedClass.m; sourceTree = "<group>"; };
 		7F8CE5FC1E14F0030067D0F8 /* UIScrollView+DXRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+DXRefresh.h"; sourceTree = "<group>"; };
 		7F8CE5FD1E14F0030067D0F8 /* UIScrollView+DXRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DXRefresh.m"; sourceTree = "<group>"; };
+		7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		7FA481CE1E161F1200345BCE /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		7FA481CF1E161F1200345BCE /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		7FA481D31E162EF200345BCE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -198,6 +202,7 @@
 		7FFB54C81E0933B400A930C7 /* KeyboardManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardManager.h; sourceTree = "<group>"; };
 		7FFB54CA1E0933B400A930C7 /* IQKeyboardManager.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IQKeyboardManager.bundle; sourceTree = "<group>"; };
 		7FFB54E51E09520C00A930C7 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		D2D605FA6ED061FED5593E10 /* Pods_Field_Tracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Field_Tracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC00213F96E9B87C3404DEAD /* Pods_OppoAttendanceTracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OppoAttendanceTracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -206,11 +211,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F9FC6CF1E1E3277005767F6 /* MessageUI.framework in Frameworks */,
 				7FA481D41E162EF200345BCE /* CoreData.framework in Frameworks */,
 				7FA239A71E0A939300D293D5 /* KeyboardManager.framework in Frameworks */,
 				7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */,
 				7FFB54E61E09520C00A930C7 /* MapKit.framework in Frameworks */,
-				67E8DE5516D9FE7DEEE109DD /* Pods_OppoAttendanceTracker.framework in Frameworks */,
+				27FC09E77673E9E0B1BDDD97 /* Pods_Field_Tracker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,11 +237,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4201B161AF5C4B6DB38A12E0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D2D605FA6ED061FED5593E10 /* Pods_Field_Tracker.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		6DD7983B09A6BAE248205E4C /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 				489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */,
 				2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */,
+				36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */,
+				5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -450,6 +466,7 @@
 				7FFB54941E092EBC00A930C7 /* OppoAttendanceTrackerUITests */,
 				7FFB546E1E092EBC00A930C7 /* Products */,
 				6DD7983B09A6BAE248205E4C /* Pods */,
+				4201B161AF5C4B6DB38A12E0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -609,6 +626,7 @@
 		7FFB54E41E0951F400A930C7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */,
 				7FA481D31E162EF200345BCE /* CoreData.framework */,
 				7FECDA521E0A4D1C000E923F /* CoreLocation.framework */,
 				7FFB54E51E09520C00A930C7 /* MapKit.framework */,
@@ -631,6 +649,7 @@
 				7FFB546B1E092EBC00A930C7 /* Resources */,
 				CE1202BF5C105D2AD172C434 /* [CP] Embed Pods Frameworks */,
 				39E2F3679B3581F501B62262 /* [CP] Copy Pods Resources */,
+				7F9FC6D01E1E4F32005767F6 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -768,7 +787,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		77BC17008FEAE24919B4B81F /* [CP] Check Pods Manifest.lock */ = {
@@ -786,6 +805,19 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		7F9FC6D01E1E4F32005767F6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" b9b3d36301f3599cd5a1a05642ae5689c558a52d 5fbca92929dca13946c21e23df5162adee46d785b8ccdf143c08d5771ec95981";
+		};
 		CE1202BF5C105D2AD172C434 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -798,7 +830,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -992,7 +1024,7 @@
 		};
 		7FFB549B1E092EBD00A930C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */;
+			baseConfigurationReference = 36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1007,7 +1039,7 @@
 				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager";
-				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTracker;
 				PRODUCT_NAME = "Field Tracker";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1016,7 +1048,7 @@
 		};
 		7FFB549C1E092EBD00A930C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */;
+			baseConfigurationReference = 5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1031,7 +1063,7 @@
 				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager";
-				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.OppoAttendanceTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTracker;
 				PRODUCT_NAME = "Field Tracker";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

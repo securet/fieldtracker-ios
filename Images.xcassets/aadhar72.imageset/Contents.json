@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "addressproof.png",
+      "filename" : "aadhar72.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "addressproof-2.png",
+      "filename" : "aadhar72-1.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "addressproof-1.png",
+      "filename" : "aadhar72-2.png",
       "scale" : "3x"
     }
   ],

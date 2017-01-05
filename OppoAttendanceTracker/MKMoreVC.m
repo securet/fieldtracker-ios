@@ -28,7 +28,6 @@
     NSString *strUserPhotoPath;
     NSString *strAadharIDPath;
     NSString *strAddressProofPath;
-    
     NSString *storeIDForPromoterAdd;
     
     NSInteger arrayCountToCheck;
@@ -37,7 +36,6 @@
     AVCaptureSession *captureSession;
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
     AVCaptureStillImageOutput *stillImageOutput;
-    
 }
 @end
 
@@ -52,7 +50,7 @@
     _lblFName.text=[dict valueForKey:@"firstName"];
     _lblLName.text=[dict valueForKey:@"lastName"];
     
-    arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"Log Off", nil];
+    arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
     
     arrayForStoreList=[[NSMutableArray alloc] init];
     arrayForPromoters=[[NSMutableArray alloc] init];
@@ -73,42 +71,39 @@
     _backBtn.hidden = YES;
     
     [_btnAddStore addTarget:self action:@selector(onClickAddStore:) forControlEvents:UIControlEventTouchUpInside];
-
     [_btnAddPromoter addTarget:self action:@selector(onClickAddPromoter:) forControlEvents:UIControlEventTouchUpInside];
-    
     [_btnLeaveRqst addTarget:self action:@selector(onClickLeaveRqst:) forControlEvents:UIControlEventTouchUpInside];
     
     _vwForStoreAdd.hidden = YES;
     _vwForPromoterAdd.hidden = YES;
     _vwForLeaveRqstAdd.hidden = YES;
     _vwForCamera.hidden = YES;
+    _vwForAccount.hidden = YES;
+    _vwForChangePwd.hidden = YES;
+    _vwForContact.hidden = YES;
     
     _cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
     _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
     _cameraBtn.layer.masksToBounds = YES;
     
     
-    [self addPromoterViewSetup];
-    
-    [self addShadow:_btnAddStore];
-    [self addShadow:_btnAddPromoter];
-    [self addShadow:_btnLeaveRqst];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
     
     [self getStores];
     
-    
     pageNumber=0;
     //rgb(84,138,176)
-//    UIColor *color=[UIColor colorWithRed:(84/255.0) green:(138/255.0) blue:(176/255.0) alpha:1.0];
+    //    UIColor *color=[UIColor colorWithRed:(84/255.0) green:(138/255.0) blue:(176/255.0) alpha:1.0];
     
     [_tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
-   
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
-
+    
     [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
-
+    
+    [self disableMyAccountEdit];
+    [self setupUIForAllViews];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -126,7 +121,6 @@
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    
     _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
     
     if (![APPDELEGATE connected]) {
@@ -135,7 +129,187 @@
     }
 }
 
-#pragma mark - 
+-(void)disableMyAccountEdit{
+    
+    if (IS_IPHONE_4) {
+        _heightConstraintForMyTextFieldAccount.constant = 30;
+        _textFieldMyName.font = [UIFont systemFontOfSize:15];
+        _textFieldMyNumber.font = [UIFont systemFontOfSize:15];
+        _textFieldMyEmail.font = [UIFont systemFontOfSize:15];
+        _textFieldMyStore.font = [UIFont systemFontOfSize:15];
+        _textVwMyAddress.font = [UIFont systemFontOfSize:15];
+    }
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+    //    NSLog(@"%@",dict);
+    //    _lblFName.text=[dict valueForKey:@"firstName"];
+    //    _lblLName.text=[dict valueForKey:@"lastName"];
+    
+    _textFieldMyName.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
+    
+    _textFieldMyNumber.text = [dict valueForKey:@"partyId"];
+    _textFieldMyEmail.text = [dict valueForKey:@"emailAddress"];
+    _textFieldMyStore.text = _lblForStoreLocation.text;
+    
+    _textFieldMyName.userInteractionEnabled = NO;
+    _textFieldMyNumber.userInteractionEnabled = NO;
+    _textFieldMyEmail.userInteractionEnabled = NO;
+    _textFieldMyStore.userInteractionEnabled = NO;
+    _textVwMyAddress.userInteractionEnabled = NO;
+}
+-(void)setupUIForAllViews{
+    // For Store View
+    [self textFieldEdit:_txtFieldStoreName];
+    
+    _txtVwStoreAddress.layer.cornerRadius = 5;
+    _txtVwStoreAddress.layer.masksToBounds = YES;
+    _txtVwStoreAddress.keyboardType=UIKeyboardTypeASCIICapable;
+    _txtVwStoreAddress.backgroundColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+    
+    _txtVwStoreAddress.autocorrectionType = UITextAutocorrectionTypeNo;
+    
+    _btnGetLocation.layer.cornerRadius = 5;
+    _btnGetLocation.layer.masksToBounds = YES;
+    
+    [self addShadow:_btnAdd];
+    [self addShadow:_btnCancel];
+    
+    [_btnAdd addTarget:self action:@selector(onClickStoreAddToServer:) forControlEvents:UIControlEventTouchUpInside];
+    [_btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
+    [_btnGetLocation addTarget:self action:@selector(getLocation) forControlEvents:UIControlEventTouchUpInside];
+    
+    //For Promoter View
+    
+    [self addPromoterViewSetup];
+    
+    [self addShadow:_btnAddStore];
+    [self addShadow:_btnAddPromoter];
+    [self addShadow:_btnLeaveRqst];
+    
+    //For Change Password
+    
+    [self textFieldEdit:_textFieldCurrentPwd];
+    [self textFieldEdit:_textFieldNewPwd];
+    [self textFieldEdit:_textFieldConfirmNewPwd];
+    [self addShadow:_btnChangePwd];
+    
+    _btnChangePwd.layer.cornerRadius = 5;
+    _btnChangePwd.layer.masksToBounds = YES;
+    
+    //Contact Support
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(emailIDTapped)];
+    tapGestureRecognizer.numberOfTapsRequired = 1;
+    [_lblForEmailContact addGestureRecognizer:tapGestureRecognizer];
+    _lblForEmailContact.userInteractionEnabled = YES;
+    
+    
+    UITapGestureRecognizer *tapGestureRecognizerForNum = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(phoneNumTapped)];
+    tapGestureRecognizerForNum.numberOfTapsRequired = 1;
+    [_lblForPhoneContact addGestureRecognizer:tapGestureRecognizerForNum];
+    _lblForPhoneContact.userInteractionEnabled = YES;
+    
+    
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
+    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"Email:  "
+                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
+    
+    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:_lblForEmailContact.text
+                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+                                                                                          NSBackgroundColorAttributeName: [UIColor clearColor]}]];
+//    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
+    _lblForEmailContact.attributedText = attributedString;
+    
+    
+    
+    
+    NSMutableAttributedString *attributedStringForNumber = [[NSMutableAttributedString alloc] init];
+    [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:@"Phone:  "
+                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
+    
+    [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:_lblForPhoneContact.text
+                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+                                                                                          NSBackgroundColorAttributeName: [UIColor clearColor]}]];
+    //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
+    _lblForPhoneContact.attributedText = attributedStringForNumber;
+    
+}
+
+#pragma mark - Contact Support
+
+-(void)emailIDTapped{
+    
+    NSString *string=[NSString stringWithFormat:@"%@",_lblForEmailContact.attributedText.string];
+    
+    
+    if ([self isValidEmail:[string substringFromIndex:8]])
+    {
+        //send mail
+        if ([MFMailComposeViewController canSendMail])
+        {
+            [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:[UIColor whiteColor]];
+            MFMailComposeViewController *controller = [[MFMailComposeViewController alloc] init];
+            controller.mailComposeDelegate = self;
+            [controller setSubject:@""];
+            NSArray *toRecipents = [NSArray arrayWithObjects:[string substringFromIndex:8],nil];
+            [controller setToRecipients:toRecipents];
+            NSString *message =@"";
+            [controller setMessageBody:message isHTML:YES];
+            [self presentViewController:controller animated:YES completion:NULL];
+        }
+        else
+        {
+            [[[UIAlertView alloc] initWithTitle:@"Your device is not configured for sending email"
+                                        message:@"Please configure your mail account in iphone's setting"
+                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+        }
+    }
+}
+-(void)phoneNumTapped{
+//    NSString *phNo = _lblForPhoneContact.text;
+    
+    NSString *string=[NSString stringWithFormat:@"%@",_lblForPhoneContact.attributedText.string];
+
+    
+    NSURL *phoneUrl = [NSURL URLWithString:[NSString  stringWithFormat:@"telprompt:%@",[string substringFromIndex:8]]];
+    
+    if ([[UIApplication sharedApplication] canOpenURL:phoneUrl]) {
+        [[UIApplication sharedApplication] openURL:phoneUrl];
+    } else
+    {
+    UIAlertView* calert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Call facility is not available!!!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [calert show];
+    }
+}
+#pragma mark - MFMailComposeDelegate
+
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            NSLog(@"Mail cancelled");
+            break;
+        case MFMailComposeResultSaved:
+            NSLog(@"Mail saved");
+            break;
+        case MFMailComposeResultSent:
+            NSLog(@"Mail sent");
+            break;
+        case MFMailComposeResultFailed:
+            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            break;
+        default:
+            break;
+    }
+    
+    // Close the Mail Interface
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
+#pragma mark -
 
 -(void)checkingInLocation:(NSNotification*)notification{
     
@@ -152,7 +326,7 @@
         //        _lblForStoreLocation.text=@"Off site";
         _lblForStoreLocation.textColor=[UIColor darkGrayColor];
     }
-    
+    _textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
     _lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
 }
 
@@ -191,15 +365,13 @@
         [_tableVwForPromoters headerEndRefreshing];
     }
 }
--(void)storeSelected
-{
+
+-(void)storeSelected{
     NSDictionary *dict=[[NSMutableDictionary alloc] init];
     dict=[[MKSharedClass shareManager] dictForStoreSelected];
     NSLog(@"Selected Store Details===%@",dict);
-    
     _txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
     _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
-    
     storeIDForPromoterAdd=[dict valueForKey:@"productStoreId"];
     
     NSLog(@"Selected Store ID===%@",storeIDForPromoterAdd);
@@ -212,25 +384,16 @@
     btn.layer.shadowRadius = 1.0;
 }
 
-
-
-
-
 #pragma mark - TextField Delegate
--(void)textFieldDidEndEditing:(UITextField *)textField
-{
+-(void)textFieldDidEndEditing:(UITextField *)textField{
     if (textField == _txtFieldStoreName) {
         [self enableAddNewStoreBtn];
     }else if (textField == _txtFieldStoreAsgnmntPromoter){
-        
     }
 }
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
-    
     if (textField == _txtFieldStoreAsgnmntPromoter){
-        
     }
-    
 }
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     
@@ -247,7 +410,19 @@
     }
     return YES;
 }
-
+-(void)textFieldEdit:(UITextField*)txtField{
+    txtField.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+    txtField.keyboardType=UIKeyboardTypeASCIICapable;
+    
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 20)];
+    txtField.leftView = paddingView;
+    txtField.leftViewMode = UITextFieldViewModeAlways;
+    txtField.layer.cornerRadius=5;
+    txtField.delegate=self;
+    txtField.autocorrectionType = UITextAutocorrectionTypeNo;
+    
+    [txtField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
+}
 #pragma mark - TextView Delegate
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
@@ -258,7 +433,6 @@
         textView.text=@"";
     }
 }
-
 
 -(void)textViewDidEndEditing:(UITextView *)textView
 {
@@ -273,12 +447,7 @@
     }
 }
 
-
-
 #pragma mark - Add StoreView
-
-
-
 
 -(void)setUpForAddStore:(NSInteger)indexValue{
     
@@ -297,7 +466,9 @@
         _btnAdd.alpha = 0.6;
         _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
         _txtFieldStoreName.text=@"";
+        
     }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
+        
         _lblForEditStore.text=@"Edit Store";
         [_btnAdd setTitle:@"Edit" forState:UIControlStateNormal];
         _btnAdd.backgroundColor=[[UIColor blueColor] colorWithAlphaComponent:0.6];
@@ -313,29 +484,7 @@
         _btnAdd.tag=indexValue;
     }
     
-    [self textFieldEdit:_txtFieldStoreName];
-    
-    _txtVwStoreAddress.layer.cornerRadius = 5;
-    _txtVwStoreAddress.layer.masksToBounds = YES;
-    _txtVwStoreAddress.keyboardType=UIKeyboardTypeASCIICapable;
-    _txtVwStoreAddress.backgroundColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
-    
-    
-    _txtVwStoreAddress.autocorrectionType = UITextAutocorrectionTypeNo;
-    
-    _btnGetLocation.layer.cornerRadius = 5;
-    _btnGetLocation.layer.masksToBounds = YES;
-    
-    [self addShadow:_btnAdd];
-    [self addShadow:_btnCancel];
-    
-    [_btnAdd addTarget:self action:@selector(onClickStoreAddToServer:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [_btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
-    
-    [_btnGetLocation addTarget:self action:@selector(getLocation) forControlEvents:UIControlEventTouchUpInside];
 }
-
 
 -(void)enableAddNewStoreBtn
 {
@@ -364,26 +513,18 @@
     
     NSString *str=[defaults valueForKey:@"BasicAuth"];
     
-    
     [httpClient setDefaultHeader:@"Authorization" value:str];
-    
     //{"storeName":"OPPO Tirumalgherry","address":"Via Rest API","latitude":100.00,"longitude":100.00,"proximityRadius":200}
-    
     NSDictionary * json = @{@"storeName":_txtFieldStoreName.text,
                             @"address":_txtVwStoreAddress.text,
                             @"latitude":strForCurLatitude,
                             @"longitude":strForCurLongitude,
                             };
-    
     NSMutableURLRequest *request;
-    
-    
-    
     if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
         request = [httpClient requestWithMethod:@"POST"
                                            path:@"/rest/s1/ft/stores"
                                      parameters:json];
-        
     }
     else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
         
@@ -397,14 +538,12 @@
     [DejalBezelActivityView activityViewForView:self.view];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
         
     }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        
         [DejalBezelActivityView removeView];
         NSLog(@"Add Store Successfully==%@",JSON);
         
@@ -426,12 +565,9 @@
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
-    
-    
 }
+
 -(void)onClickCancel{
-    //    [[NSNotificationCenter defaultCenter] postNotificationName:@"CloseView" object:self];
-    
     _vwForStoreAdd.hidden = YES;
     _backBtn.hidden=NO;
 }
@@ -445,15 +581,10 @@
     [locationManager startUpdatingLocation];
     CLLocation *location = [locationManager location];
     CLLocationCoordinate2D coordinate = [location coordinate];
-    
-    
-    NSLog(@"Lat:%f Lon:%f",coordinate.latitude,coordinate.longitude);
-    
+    //    NSLog(@"Lat:%f Lon:%f",coordinate.latitude,coordinate.longitude);
     //    return coordinate;
-    
     strForCurLatitude=[NSString stringWithFormat:@"%f",coordinate.latitude];
     strForCurLongitude=[NSString stringWithFormat:@"%f",coordinate.longitude];
-    
     [self getAddress];
 }
 
@@ -478,7 +609,7 @@
             //            frame.size.height = self.textVwForAddress.contentSize.height;
             //            self.textVwForAddress.frame=frame;
             
-            NSLog(@"Address==%@",[[getAddress objectAtIndex:0]objectAtIndex:0]);
+            //            NSLog(@"Address==%@",[[getAddress objectAtIndex:0]objectAtIndex:0]);
             
             _lblForLatLon.text=[NSString stringWithFormat:@"Lat: %f | Lon: %f",[strForCurLatitude floatValue],[strForCurLongitude floatValue]];
             
@@ -552,7 +683,7 @@
         
         [DejalBezelActivityView removeView];
         
-        NSLog(@"Store List==%@",JSON);
+        //        NSLog(@"Store List==%@",JSON);
         
         arrayForStoreList=[JSON objectForKey:@"userStores"];
         
@@ -592,7 +723,6 @@
     
     NSString *str=[defaults valueForKey:@"BasicAuth"];
     
-    
     [httpClient setDefaultHeader:@"Authorization" value:str];
     
     NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/list?pageIndex=%i&pageSize=10",pageNumber];
@@ -623,7 +753,7 @@
         
         NSMutableArray *array=[[JSON objectForKey:@"requestList"] mutableCopy];
         
-//        arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
+        //        arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
         
         for (NSDictionary *dict in array) {
             [arrayForPromoters addObject:dict];
@@ -639,7 +769,6 @@
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
-    
 }
 
 
@@ -648,9 +777,9 @@
 -(void)multiSelect:(MultiSelectSegmentedControl *)multiSelectSegmentedControl didChangeValue:(BOOL)selected atIndex:(NSUInteger)index {
     
     if (selected) {
-        NSLog(@"multiSelect with tag %i selected button at index: %i", multiSelectSegmentedControl.tag, index);
+        //        NSLog(@"multiSelect with tag %i selected button at index: %i", multiSelectSegmentedControl.tag, index);
     } else {
-        NSLog(@"multiSelect with tag %i deselected button at index: %i", multiSelectSegmentedControl.tag, index);
+        //        NSLog(@"multiSelect with tag %i deselected button at index: %i", multiSelectSegmentedControl.tag, index);
     }
     
     NSLog(@"selected: '%@'", [multiSelectSegmentedControl.selectedSegmentTitles componentsJoinedByString:@","]);
@@ -673,12 +802,25 @@
     _backBtn.hidden = YES;
     
     if (!isAddOrEdit) {
+        
+        
+        if (![[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"statusId"] isKindOfClass:[NSNull class]]) {
+            NSString *promoterStatus=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"statusId"];
+            
+            if ([promoterStatus containsString:@"Completed"]) {
+                [self disablePromoterView];
+            }else if ([promoterStatus containsString:@"Submitted"] || [promoterStatus containsString:@"Rejected"]){
+                [self enablePromoterView];
+            }
+        }
+        
         [_btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
+        
         NSString *jsonString = [[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestJson"];
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         
-//        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
+        //        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
         
         _txtFieldFNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"];
         _txtFieldLNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"];
@@ -714,7 +856,40 @@
         _txtVwAddressPromoter.text=@"Address";
     }
 }
-
+-(void)disablePromoterView{
+    _txtFieldFNamePromoter.userInteractionEnabled = NO;
+    _txtFieldLNamePromoter.userInteractionEnabled = NO;
+    _txtFieldEmailPromoter.userInteractionEnabled = NO;
+    _txtFieldPhonePromoter.userInteractionEnabled = NO;
+    _txtFieldSEAsgnmntPromoter.userInteractionEnabled = NO;
+    _txtFieldStoreAsgnmntPromoter.userInteractionEnabled = NO;
+    _txtVwAddressPromoter.userInteractionEnabled = NO;
+    _segmentControl.userInteractionEnabled = NO;
+    _btnAddPromoterConfirm.userInteractionEnabled = NO;
+    _btnAdressProofPromoter.userInteractionEnabled = NO;
+    _btnAadharPromoter.userInteractionEnabled = NO;
+    _btnPhotoPromoter.userInteractionEnabled = NO;
+    _btnForStoreAssignmtPopup.userInteractionEnabled = NO;
+    
+    _btnAddPromoterConfirm.alpha = 0.4;
+}
+-(void)enablePromoterView{
+    _txtFieldFNamePromoter.userInteractionEnabled = YES;
+    _txtFieldLNamePromoter.userInteractionEnabled = YES;
+    _txtFieldEmailPromoter.userInteractionEnabled = YES;
+    _txtFieldPhonePromoter.userInteractionEnabled = YES;
+    _txtFieldSEAsgnmntPromoter.userInteractionEnabled = YES;
+    _txtFieldStoreAsgnmntPromoter.userInteractionEnabled = YES;
+    _txtVwAddressPromoter.userInteractionEnabled = YES;
+    _segmentControl.userInteractionEnabled = YES;
+    _btnAddPromoterConfirm.userInteractionEnabled = YES;
+    _btnAdressProofPromoter.userInteractionEnabled = YES;
+    _btnAadharPromoter.userInteractionEnabled = YES;
+    _btnPhotoPromoter.userInteractionEnabled = YES;
+    _btnForStoreAssignmtPopup.userInteractionEnabled = YES;
+    
+    _btnAddPromoterConfirm.alpha = 1.0;
+}
 -(void)addPromoterViewSetup{
     [self textFieldEdit:_txtFieldFNamePromoter];
     [self textFieldEdit:_txtFieldLNamePromoter];
@@ -746,155 +921,144 @@
     [self addShadow:_btnAddPromoterConfirm];
     [self addShadow:_btnCancelPromoterAdd];
     
+    [_btnAdressProofPromoter setTitle:@"" forState:UIControlStateNormal];
+    [_btnAdressProofPromoter setImage:[UIImage imageNamed:@"id-card72"] forState:UIControlStateNormal];
+    
     [_btnPhotoPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
     [_btnAadharPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
     [_btnAdressProofPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
-}
-
--(void)textFieldEdit:(UITextField*)txtField{
-    txtField.layer.cornerRadius = 5;
-    txtField.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
-    txtField.keyboardType=UIKeyboardTypeASCIICapable;
-    
-    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 20)];
-    txtField.leftView = paddingView;
-    txtField.leftViewMode = UITextFieldViewModeAlways;
-    txtField.layer.cornerRadius=5;
-    txtField.delegate=self;
-    txtField.autocorrectionType = UITextAutocorrectionTypeNo;
-    
-    [txtField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
 -(void)onClickCancelOfAddPromoter{
     _vwForPromoterAdd.hidden = YES;
     _backBtn.hidden = NO;
 }
+
 -(void)addPromoter:(UIButton*)sender
 {
     if (sender.tag == 1 || sender.tag == 0) {
         
         if (_txtFieldFNamePromoter.text.length>0&&_txtFieldLNamePromoter.text.length>0&&_txtFieldEmailPromoter.text.length>0&&_txtVwAddressPromoter.text.length>0&&_txtFieldStoreAsgnmntPromoter.text.length>0&& (![[_txtVwAddressPromoter text] isEqualToString:@"Address"])) {
             
-       if ([self isValidEmail:_txtFieldEmailPromoter.text]) {
-        
-        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
-        
-        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-        httpClient.parameterEncoding = AFFormURLParameterEncoding;
-        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-        
-        NSString *str=[defaults valueForKey:@"BasicAuth"];
-        
-        [httpClient setDefaultHeader:@"Authorization" value:str];
-        
-        //{"requestType":"RqtAddPromoter", "firstName":"James", "lastName":"Managalam","phone":"11111111","address":"eh hai address","emailId":"james@allsmart.in","productStoreId":"100000","statusId":"ReqSubmitted","requestTypeEnumId":"RqtAddPromoter","aadharIdPath":"/img/","userPhoto":"/img/","addressIdPath":"/img/"}
-        /*
-         @"aadharIdPath":strAadharIDPath,
-         @"userPhoto":strUserPhotoPath,
-         @"addressIdPath":strAddressProofPath,
-         */
-        
-        if ([strAadharIDPath length]<=0||strAadharIDPath == nil) {
-            strAadharIDPath=@"/img/";
-        }
-        if ([strUserPhotoPath length]<=0||strUserPhotoPath == nil){
-            strUserPhotoPath=@"/img/";
-        }
-        if ([strAddressProofPath length]<=0||strAddressProofPath == nil){
-            strAddressProofPath=@"/img/";
-        }
-        
-        NSMutableURLRequest *request;
-           
-           if (sender.tag == 1){
-               NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
-                                       @"firstName":_txtFieldFNamePromoter.text,
-                                       @"lastName":_txtFieldLNamePromoter.text,
-                                       @"phone":_txtFieldPhonePromoter.text,
-                                       @"address":_txtVwAddressPromoter.text,
-                                       @"emailId":_txtFieldEmailPromoter.text,
-                                       @"productStoreId":storeIDForPromoterAdd,
-                                       @"statusId":@"ReqSubmitted",
-                                       @"requestTypeEnumId":@"RqtAddPromoter",
-                                       @"aadharIdPath":strAadharIDPath,
-                                       @"userPhoto":strUserPhotoPath,
-                                       @"addressIdPath":strAddressProofPath,
-                                       @"description":@"Requesting new Promoter",
-                                       };
-               request = [httpClient requestWithMethod:@"POST"
-                                                  path:@"/rest/s1/ft/request/promoter"
-                                            parameters:json];
-           }else if (sender.tag == 0){
-               
-               NSString *rqstID=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestId"];
-               NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
-                                       @"firstName":_txtFieldFNamePromoter.text,
-                                       @"lastName":_txtFieldLNamePromoter.text,
-                                       @"phone":_txtFieldPhonePromoter.text,
-                                       @"address":_txtVwAddressPromoter.text,
-                                       @"emailId":_txtFieldEmailPromoter.text,
-                                       @"productStoreId":storeIDForPromoterAdd,
-                                       @"statusId":@"ReqSubmitted",
-                                       @"requestTypeEnumId":@"RqtAddPromoter",
-                                       @"aadharIdPath":strAadharIDPath,
-                                       @"userPhoto":strUserPhotoPath,
-                                       @"addressIdPath":strAddressProofPath,
-                                       @"description":@"Requesting new Promoter",
-                                       @"requestId":rqstID,
-                                       };
-               
-               NSString *strEditPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/%@", rqstID];
-               request = [httpClient requestWithMethod:@"PUT"
-                                                  path:strEditPath
-                                            parameters:json];
-           }
-
-                //====================================================RESPONSE
-        [DejalBezelActivityView activityViewForView:self.view];
-        
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        
-        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-            
-        }];
-        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSError *error = nil;
-            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-            
-            [DejalBezelActivityView removeView];
-            NSLog(@"Add Store Successfully==%@",JSON);
-            
-            
-            _vwForPromoterAdd.hidden = YES;
-            _backBtn.hidden = NO;
-            
-            if (sender.tag == 1){
-            if ([JSON objectForKey:@"request"]) {
-                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                [alert show];
-            }
-            }else if (sender.tag == 0){
-                if ([JSON objectForKey:@"request"]) {
-                    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Edited Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                    [alert show];
+            if ([self isValidEmail:_txtFieldEmailPromoter.text]) {
+                
+                NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+                NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+                
+                AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+                httpClient.parameterEncoding = AFFormURLParameterEncoding;
+                [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+                
+                NSString *str=[defaults valueForKey:@"BasicAuth"];
+                
+                [httpClient setDefaultHeader:@"Authorization" value:str];
+                
+                //{"requestType":"RqtAddPromoter", "firstName":"James", "lastName":"Managalam","phone":"11111111","address":"eh hai address","emailId":"james@allsmart.in","productStoreId":"100000","statusId":"ReqSubmitted","requestTypeEnumId":"RqtAddPromoter","aadharIdPath":"/img/","userPhoto":"/img/","addressIdPath":"/img/"}
+                /*
+                 @"aadharIdPath":strAadharIDPath,
+                 @"userPhoto":strUserPhotoPath,
+                 @"addressIdPath":strAddressProofPath,
+                 */
+                
+                if ([strAadharIDPath length]<=0||strAadharIDPath == nil) {
+                    strAadharIDPath=@"/img/";
                 }
+                if ([strUserPhotoPath length]<=0||strUserPhotoPath == nil){
+                    strUserPhotoPath=@"/img/";
+                }
+                if ([strAddressProofPath length]<=0||strAddressProofPath == nil){
+                    strAddressProofPath=@"/img/";
+                }
+                
+                NSMutableURLRequest *request;
+                
+                if (sender.tag == 1){
+                    NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
+                                            @"firstName":_txtFieldFNamePromoter.text,
+                                            @"lastName":_txtFieldLNamePromoter.text,
+                                            @"phone":_txtFieldPhonePromoter.text,
+                                            @"address":_txtVwAddressPromoter.text,
+                                            @"emailId":_txtFieldEmailPromoter.text,
+                                            @"productStoreId":storeIDForPromoterAdd,
+                                            @"statusId":@"ReqSubmitted",
+                                            @"requestTypeEnumId":@"RqtAddPromoter",
+                                            @"aadharIdPath":strAadharIDPath,
+                                            @"userPhoto":strUserPhotoPath,
+                                            @"addressIdPath":strAddressProofPath,
+                                            @"description":@"Requesting new Promoter",
+                                            };
+                    request = [httpClient requestWithMethod:@"POST"
+                                                       path:@"/rest/s1/ft/request/promoter"
+                                                 parameters:json];
+                }else if (sender.tag == 0){
+                    
+                    NSString *rqstID=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestId"];
+                    NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
+                                            @"firstName":_txtFieldFNamePromoter.text,
+                                            @"lastName":_txtFieldLNamePromoter.text,
+                                            @"phone":_txtFieldPhonePromoter.text,
+                                            @"address":_txtVwAddressPromoter.text,
+                                            @"emailId":_txtFieldEmailPromoter.text,
+                                            @"productStoreId":storeIDForPromoterAdd,
+                                            @"statusId":@"ReqSubmitted",
+                                            @"requestTypeEnumId":@"RqtAddPromoter",
+                                            @"aadharIdPath":strAadharIDPath,
+                                            @"userPhoto":strUserPhotoPath,
+                                            @"addressIdPath":strAddressProofPath,
+                                            @"description":@"Requesting new Promoter",
+                                            @"requestId":rqstID,
+                                            };
+                    
+                    NSString *strEditPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/%@", rqstID];
+                    request = [httpClient requestWithMethod:@"PUT"
+                                                       path:strEditPath
+                                                 parameters:json];
+                }
+                
+                //====================================================RESPONSE
+                [DejalBezelActivityView activityViewForView:self.view];
+                
+                AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+                
+                [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+                    
+                }];
+                [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    NSError *error = nil;
+                    NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+                    
+                    [DejalBezelActivityView removeView];
+                    NSLog(@"Add Store Successfully==%@",JSON);
+                    
+                    
+                    _vwForPromoterAdd.hidden = YES;
+                    _backBtn.hidden = NO;
+                    
+                    if (sender.tag == 1){
+                        if ([JSON objectForKey:@"request"]) {
+                            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                            [alert show];
+                        }
+                    }else if (sender.tag == 0){
+                        if ([JSON objectForKey:@"request"]) {
+                            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Edited Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                            [alert show];
+                        }
+                    }
+                }
+                 //==================================================ERROR
+                                                 failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                     [DejalBezelActivityView removeView];
+                                                     NSLog(@"Error %@",[error description]);
+                                                 }];
+                [operation start];
+            }else{
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+                _txtFieldEmailPromoter.text=@"";
             }
-        }
-         //==================================================ERROR
-                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                             [DejalBezelActivityView removeView];
-                                             NSLog(@"Error %@",[error description]);
-                                         }];
-        [operation start];
-       }else{
-           UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-           [alert show];
-           _txtFieldEmailPromoter.text=@"";
-       }
-
-    }else{
+            
+        }else{
             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter All Details" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
@@ -922,35 +1086,35 @@
         stringForImagePurpose=@"addressProof";
     }
     //userPhoto aadharId addressProof
-//    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-//    {
-//        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-//        imagePickerController.delegate = self;
-//        
-//        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
+    //    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+    //    {
+    //        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    //        imagePickerController.delegate = self;
+    //
+    //        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
     
-        if (sender.tag == 100) {
-//           imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-//
-//            UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
-//            [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
-//            UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
-//            [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
-//            [emptyBlackButton setEnabled:YES];
-//            [cameraOverlayView addSubview:emptyBlackButton];
-//            imagePickerController.allowsEditing = YES;
-//            imagePickerController.showsCameraControls = YES;
-//            imagePickerController.cameraOverlayView = cameraOverlayView;
-        }else if (sender.tag == 200){
-//            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
-        }else if (sender.tag == 300){
-//            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
-        }
-        
-//        [self presentViewController:imagePickerController animated:YES completion:^{
-//            
-//        }];
-//    }
+    if (sender.tag == 100) {
+        //           imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+        //
+        //            UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
+        //            [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
+        //            UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
+        //            [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
+        //            [emptyBlackButton setEnabled:YES];
+        //            [cameraOverlayView addSubview:emptyBlackButton];
+        //            imagePickerController.allowsEditing = YES;
+        //            imagePickerController.showsCameraControls = YES;
+        //            imagePickerController.cameraOverlayView = cameraOverlayView;
+    }else if (sender.tag == 200){
+        //            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+    }else if (sender.tag == 300){
+        //            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+    }
+    
+    //        [self presentViewController:imagePickerController animated:YES completion:^{
+    //
+    //        }];
+    //    }
     
     
     NSError *error;
@@ -1081,7 +1245,7 @@
                    {
                        
                        // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
-                           NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
+                       NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
                        [_params setObject:stringForImagePurpose forKey:@"purpose"];
                        
                        // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
@@ -1155,7 +1319,7 @@
                                                                         JSONObjectWithData:returnData
                                                                         options:NSJSONReadingMutableContainers
                                                                         error:&serializeError];
-                                            NSLog(@"print response after image post : %@",jsonData);
+                                              NSLog(@"print response after image post : %@",jsonData);
                                               //userPhoto aadharId addressProof
                                               if ([stringForImagePurpose isEqualToString:@"userPhoto"]) {
                                                   strUserPhotoPath=[jsonData valueForKey:@"savedFilename"];
@@ -1167,10 +1331,7 @@
                                           }
                                           [DejalBezelActivityView removeView];
                                       });
-                       
-                       
                    });
-    
 }
 #pragma mark - Leave Rqst
 
@@ -1224,7 +1385,6 @@
     
     UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
-    
     if (tableView == _tableVwForLeaveRqst){
         MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         
@@ -1236,28 +1396,53 @@
         return cellLeave;
     }
     
-    if (cell == nil){
-        cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-    }
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
     if (tableView == _tableVwForStore){
+        //Store List
+        if (cell == nil){
+            cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+        }
         cell.textLabel.text=[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"storeName"];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     else if (tableView == _tableVwForPromoters){
+        // Prpomoter List
+        if (cell == nil){
+            cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+        }
         NSString *jsonString = [[arrayForPromoters objectAtIndex:indexPath.row] objectForKey:@"requestJson"];
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         
-//        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
-        
         cell.textLabel.text=[NSString stringWithFormat:@"%@ %@",[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"],[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"]];
+        
+        
+        if (![[[arrayForPromoters objectAtIndex:indexPath.row] valueForKey:@"statusId"] isKindOfClass:[NSNull class]]) {
+            
+            NSString *promoterStatus=[[arrayForPromoters objectAtIndex:indexPath.row] valueForKey:@"statusId"];
+            
+            if ([promoterStatus containsString:@"Completed"]) {
+                //Completed
+                cell.detailTextLabel.text=@"Approved";
+                
+            }else if ([promoterStatus containsString:@"Submitted"]){
+                //Submitted
+                cell.detailTextLabel.text=@"Pending";
+                
+            }else if ([promoterStatus containsString:@"Rejected"]){
+                
+                cell.detailTextLabel.text=@"Rejected";
+            }
+        }
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     else if (tableView == _tableVw){
+        
+        if (cell == nil){
+            cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+        }
         cell.textLabel.text=[arrayForTableData objectAtIndex:indexPath.row];
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
 }
@@ -1265,13 +1450,10 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if (tableView == _tableVw){
-        if (indexPath.row == 4){
+        if (indexPath.row == 6){
             
-            
-             NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-            
+            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
             [defaults setObject:@"0" forKey:@"Is_Login"];
-            
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
             [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
@@ -1291,14 +1473,24 @@
             _tableVwForPromoters.delegate = self;
             _tableVwForPromoters.dataSource = self;
             [_tableVwForPromoters reloadData];
+            
         }else if (indexPath.row ==2){
             _vwForLeaveRqst.hidden =NO;
             _backBtn.hidden = NO;
             _tableVwForLeaveRqst.delegate = self;
             _tableVwForLeaveRqst.dataSource = self;
             [_tableVwForLeaveRqst reloadData];
+        }else if (indexPath.row == 4){
+            _vwForAccount.hidden =NO;
+            _backBtn.hidden = NO;
+        }else if (indexPath.row == 5){
+            _vwForChangePwd.hidden =NO;
+            _backBtn.hidden = NO;
         }
-        
+        else if (indexPath.row == 3){
+            _vwForContact.hidden =NO;
+            _backBtn.hidden = NO;
+        }
     }else if (tableView == _tableVwForStore){
         [[MKSharedClass shareManager] setValueForStoreEditVC:0];
         [self goToStorePopup:indexPath.row];
@@ -1306,30 +1498,13 @@
     else if (tableView == _tableVwForPromoters){
         indexValueOfPromoterEdit=indexPath.row;
         [self promoterDetails:NO];
-        
     }
 }
 
 
 -(void)goToStorePopup:(NSInteger)indexValue{
-    //    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    //    UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"AddStoreVC"];
-    //
-    //    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-    //    {
-    //        BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-100, self.view.frame.size.height/2+200)];
-    //        [self presentViewController:popupViewController animated:NO completion:nil];
-    //    }
-    //    else
-    //    {
-    //
-    //        BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-50, self.view.frame.size.height-100)];
-    //        [self presentViewController:popupViewController animated:NO completion:nil];
-    //    }
-    
     [self setUpForAddStore:indexValue];
     _vwForStoreAdd.hidden = NO;
-    
 }
 
 
@@ -1340,11 +1515,8 @@
     dateFormater.dateFormat = @"dd/MM/yyyy";
     
     NSString *dateTime= [dateFormater stringFromDate:date];
-    
     NSLog(@"Selected Time====%@",dateTime);
-    
     self.tabBarController.tabBar.hidden =NO;
-    
     
     if (isStartOrEndDate) {
         _txtFieldStartDate.text=dateTime;
@@ -1352,8 +1524,6 @@
     else{
         _txtFieldEndDate.text = dateTime;
     }
-    
-    
     
     if (_txtFieldStartDate.text.length > 0 && _txtFieldEndDate.text.length > 0){
         NSString *start = _txtFieldStartDate.text;
@@ -1378,7 +1548,6 @@
             _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
         }
     }
-    
 }
 
 -(void)hasCancelDatePicking{
@@ -1411,7 +1580,7 @@
  // Pass the selected object to the new view controller.
  }
  */
-
+#pragma mark - Back Button
 - (IBAction)onClickBackBtn:(UIButton *)sender{
     
     _backBtn.hidden = YES;
@@ -1422,20 +1591,29 @@
     else if (![_vwForPromoters isHidden]){
         
         if (![_vwForCamera isHidden]){
-//            _backBtn.hidden = NO;
+            //            _backBtn.hidden = NO;
             _vwForCamera.hidden = YES;
         }else{
-         _vwForPromoters.hidden= YES;
+            _vwForPromoters.hidden= YES;
         }
     }
     else if (![_vwForLeaveRqst isHidden]){
         _vwForLeaveRqst.hidden =YES;
     }else if (![_vwForCamera isHidden]){
         _vwForCamera.hidden = YES;
+    }else if (![_vwForAccount isHidden]){
+        _vwForAccount.hidden=YES;
+    }else if (![_vwForChangePwd isHidden]){
+        _vwForChangePwd.hidden=YES;
+        _textFieldCurrentPwd.text=@"";
+        _textFieldNewPwd.text=@"";
+        _textFieldConfirmNewPwd.text=@"";
+    }else if (![_vwForContact isHidden]){
+        _vwForContact.hidden=YES;
     }
 }
 
-
+#pragma mark -
 - (IBAction)onClickLeaveStartDate:(UIButton *)sender{
     isStartOrEndDate = YES;
     self.tabBarController.tabBar.hidden =YES;
@@ -1453,21 +1631,17 @@
 }
 #pragma mark - Popup Store List
 - (IBAction)onClickStorAssignment:(UIButton *)sender {
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
+       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKStoreListPopupVC"];
     
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-    {
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){
         BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-100, self.view.frame.size.height/2+100)];
         [self presentViewController:popupViewController animated:NO completion:nil];
-    }
-    else
-    {
-        
+    }else{
         BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-50, self.view.frame.size.height-100)];
         [self presentViewController:popupViewController animated:NO completion:nil];
     }
-    
 }
 
 - (IBAction)onClickSEAssignment:(UIButton *)sender {
