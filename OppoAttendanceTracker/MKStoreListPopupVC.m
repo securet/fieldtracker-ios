@@ -11,9 +11,13 @@
 @interface MKStoreListPopupVC ()
 {
     NSMutableArray *arrayForStoreList;
+    NSMutableArray *arrayForLeaveType;
+    NSMutableArray *arrayForLeaveReason;
     NSMutableArray*filterResultArray;
     NSMutableArray *searchArray;
     BOOL searchBarActive;
+    
+    NSInteger popupViewDifferentiate;
 }
 @end
 
@@ -25,19 +29,32 @@
     _tableVw.delegate = self;
     _tableVw.dataSource = self;
     _tableVw.tableFooterView=[[UIView alloc] init];
+    
+    popupViewDifferentiate=[[MKSharedClass shareManager] popupViewDifferentiate];
+
+    if (popupViewDifferentiate == 1) {
+        _lblForHeader.text=@"Select Store";
+        arrayForStoreList=[[NSMutableArray alloc] init];
+       
+        self.searchBar.searchBarStyle       = UISearchBarStyleMinimal;
+        self.searchBar.tintColor            = [UIColor blackColor];
+        self.searchBar.barTintColor         = [UIColor blackColor];
+        self.searchBar.delegate             = self;
+        self.searchBar.placeholder          = @"Search here";
+        self.searchBar.backgroundColor=[UIColor lightGrayColor];
+        
+        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor blackColor]];
+        
+        [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO];
+    }else if (popupViewDifferentiate == 2){
+        _lblForHeader.text=@"Select Leave Type";
+        arrayForLeaveType=[[NSMutableArray alloc] init];
+    }else if (popupViewDifferentiate == 3){
+        _lblForHeader.text=@"Select Leave Reason";
+        arrayForLeaveReason=[[NSMutableArray alloc] init];
+    }
+    
     [self getStores];
-    
-    self.searchBar.searchBarStyle       = UISearchBarStyleMinimal;
-    self.searchBar.tintColor            = [UIColor blackColor];
-    self.searchBar.barTintColor         = [UIColor blackColor];
-    self.searchBar.delegate             = self;
-    self.searchBar.placeholder          = @"Search here";
-    self.searchBar.backgroundColor=[UIColor lightGrayColor];
-    
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor blackColor]];
-    
-    
-    [[IQKeyboardManager sharedManager] setEnableAutoToolbar:NO];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
@@ -141,10 +158,23 @@
     
     [httpClient setDefaultHeader:@"Authorization" value:str];
     
+    NSString *strPath;
+    
+    
+    if (popupViewDifferentiate == 1) {
+        strPath=@"/rest/s1/ft/stores/user/list";
+    }else if (popupViewDifferentiate ==2 || popupViewDifferentiate ==3){
+        strPath=@"/rest/s1/ft/leaves/types";
+    }
     
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:@"/rest/s1/ft/stores/user/list"
+                                                            path:strPath
                                                       parameters:nil];
+    
+    
+   
+    
+    
     
     //====================================================RESPONSE
     [DejalBezelActivityView activityViewForView:self.view];
@@ -160,12 +190,15 @@
         
         [DejalBezelActivityView removeView];
         
-//        NSLog(@"Store List==%@",JSON);
-        
-       
-        arrayForStoreList=[JSON objectForKey:@"userStores"];
-        
-        
+        if (popupViewDifferentiate == 1) {
+             arrayForStoreList=[JSON objectForKey:@"userStores"];
+        }else if (popupViewDifferentiate == 2){
+            arrayForLeaveType=[JSON objectForKey:@"leaveTypeEnumId"];
+//             NSLog(@"%@",JSON);
+        }else if (popupViewDifferentiate == 3){
+//             NSLog(@"%@",JSON);
+            arrayForLeaveReason=[JSON objectForKey:@"leaveReasonEnumId"];
+        }
         
         [_tableVw reloadData];
     }
@@ -180,10 +213,23 @@
 #pragma mark- UITableView
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if (searchBarActive) {
-        return filterResultArray.count;
+//    if (searchBarActive) {
+//        return filterResultArray.count;
+//    }
+    
+    NSInteger cellCount=0;
+    
+    if (popupViewDifferentiate == 1) {
+        cellCount=arrayForStoreList.count;
+        
+    }else if (popupViewDifferentiate ==2){
+        cellCount=arrayForLeaveType.count;
+        
+    }else if (popupViewDifferentiate ==3){
+        cellCount=arrayForLeaveReason.count;
     }
-       return arrayForStoreList.count;
+    
+    return cellCount;;
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -200,15 +246,22 @@
     if (searchBarActive) {
         cell.textLabel.text=[filterResultArray objectAtIndex:indexPath.row];
     }else{
-        cell.textLabel.text=[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"storeName"];
+        
+        if (popupViewDifferentiate == 1) {
+           cell.textLabel.text=[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"storeName"];
+        }else if (popupViewDifferentiate ==2){
+            cell.textLabel.text=[[arrayForLeaveType objectAtIndex:indexPath.row] valueForKey:@"description"];
+        }else if (popupViewDifferentiate ==3){
+            cell.textLabel.text=[[arrayForLeaveReason objectAtIndex:indexPath.row] valueForKey:@"description"];
+        }
     }
-    
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    if (popupViewDifferentiate == 1) {
+
     UITableViewCell *cell=[tableView cellForRowAtIndexPath:indexPath];
     
     NSString *storeName = cell.textLabel.text;
@@ -220,8 +273,22 @@
     }
     
     [[MKSharedClass shareManager] setDictForStoreSelected:[arrayForStoreList objectAtIndex:indexForStoreData]];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"CloseView" object:self];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SelectedStore" object:self];
+        
+    }else if (popupViewDifferentiate == 2){
+        
+        NSDictionary *dictToSendLeaveType=[[NSDictionary alloc] init];
+        dictToSendLeaveType=[arrayForLeaveType objectAtIndex:indexPath.row];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"LeaveTypeSelected" object:self userInfo:dictToSendLeaveType];
+        
+    }else if (popupViewDifferentiate == 3){
+        
+        NSDictionary *dictToSendLeaveReason=[[NSDictionary alloc] init];
+        dictToSendLeaveReason=[arrayForLeaveReason objectAtIndex:indexPath.row];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"LeaveReasonSelected" object:self userInfo:dictToSendLeaveReason];
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"CloseView" object:self];
 }
 
 - (void)didReceiveMemoryWarning {

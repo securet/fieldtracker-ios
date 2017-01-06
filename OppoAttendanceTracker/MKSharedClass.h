@@ -17,4 +17,5 @@
 @property NSDictionary *dictForStoreSelected;
 @property NSMutableDictionary *dictForCheckInLoctn;
 
+@property NSInteger popupViewDifferentiate;
 @end

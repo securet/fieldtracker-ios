@@ -9,7 +9,8 @@
 #import "MKMoreVC.h"
 #import "MKCustomCellForLeave.h"
 #import <AVFoundation/AVFoundation.h>
-@interface MKMoreVC ()<HSDatePickerViewControllerDelegate>
+#import "RSDFDatePickerView.h"
+@interface MKMoreVC ()<RSDFDatePickerViewDelegate,RSDFDatePickerViewDataSource>
 {
     NSMutableArray *arrayForTableData;
     NSMutableArray *arrayForStoreList;
@@ -36,6 +37,8 @@
     AVCaptureSession *captureSession;
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
     AVCaptureStillImageOutput *stillImageOutput;
+    
+    __weak IBOutlet RSDFDatePickerView *datePicker;
 }
 @end
 
@@ -81,7 +84,7 @@
     _vwForAccount.hidden = YES;
     _vwForChangePwd.hidden = YES;
     _vwForContact.hidden = YES;
-    
+    _vwForCalendar.hidden = YES;
     _cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
     _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
     _cameraBtn.layer.masksToBounds = YES;
@@ -98,7 +101,13 @@
     
     [_tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     
+    
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveTypeSelected:) name:@"LeaveTypeSelected" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveReasonSelected:) name:@"LeaveReasonSelected" object:nil];
+    
+    
     
     [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
     
@@ -219,7 +228,7 @@
     [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:_lblForEmailContact.text
                                                                              attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
                                                                                           NSBackgroundColorAttributeName: [UIColor clearColor]}]];
-//    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
+    //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
     _lblForEmailContact.attributedText = attributedString;
     
     
@@ -227,14 +236,32 @@
     
     NSMutableAttributedString *attributedStringForNumber = [[NSMutableAttributedString alloc] init];
     [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:@"Phone:  "
-                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
+                                                                                      attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
     
     [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:_lblForPhoneContact.text
-                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
-                                                                                          NSBackgroundColorAttributeName: [UIColor clearColor]}]];
+                                                                                      attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+                                                                                                   NSBackgroundColorAttributeName: [UIColor clearColor]}]];
     //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
     _lblForPhoneContact.attributedText = attributedStringForNumber;
     
+    ///Leave Request Calendar
+    
+    datePicker.delegate = self;
+    datePicker.dataSource = self;
+    _heightOfScrollVwForLeaveRqst.constant = 330;
+    
+}
+
+
+#pragma mark - NSNotifications
+
+
+-(void)leaveTypeSelected:(NSNotification*)userInfo{
+    _txtFieldLeaveType.text=[userInfo.userInfo valueForKey:@"description"];
+}
+
+-(void)leaveReasonSelected:(NSNotification*)userInfo{
+      _txtFieldLeaveReason.text=[userInfo.userInfo valueForKey:@"description"];
 }
 
 #pragma mark - Contact Support
@@ -268,10 +295,10 @@
     }
 }
 -(void)phoneNumTapped{
-//    NSString *phNo = _lblForPhoneContact.text;
+    //    NSString *phNo = _lblForPhoneContact.text;
     
     NSString *string=[NSString stringWithFormat:@"%@",_lblForPhoneContact.attributedText.string];
-
+    
     
     NSURL *phoneUrl = [NSURL URLWithString:[NSString  stringWithFormat:@"telprompt:%@",[string substringFromIndex:8]]];
     
@@ -279,7 +306,7 @@
         [[UIApplication sharedApplication] openURL:phoneUrl];
     } else
     {
-    UIAlertView* calert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Call facility is not available!!!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView* calert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Call facility is not available!!!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [calert show];
     }
 }
@@ -1340,20 +1367,24 @@
     _backBtn.hidden = YES;
     _vwForLeaveRqstAdd.hidden = NO;
     
-    
-    
     [self textFieldEdit:_txtFieldStartDate];
     [self textFieldEdit:_txtFieldEndDate];
     [self textFieldEdit:_txtFieldLeaveType];
+    [self textFieldEdit:_txtFieldLeaveReason];
     
+     _txtFieldStartDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    _txtFieldEndDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    _txtFieldLeaveType.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+      _txtFieldLeaveReason.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+
     [self addShadow:_btnLeaveRqstCancel];
     [self addShadow:_btnLeaveRqstSubmit];
     
-    _txtFieldLeaveReason.backgroundColor=[UIColor clearColor];
-    _txtFieldLeaveReason.delegate = self;
+    _txtFieldLeaveDescription.backgroundColor=[UIColor clearColor];
+    _txtFieldLeaveDescription.delegate = self;
+    _txtFieldLeaveDescription.keyboardType=UIKeyboardTypeASCIICapable;
     
-    
-    [_txtFieldLeaveReason addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
+    [_txtFieldLeaveDescription addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
     [_btnLeaveRqstCancel addTarget:self action:@selector(leaveRqstCancel) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -1366,6 +1397,138 @@
     
 }
 
+- (IBAction)onClickLeaveStartDate:(UIButton *)sender{
+    
+    _lblForDateStartEnd.text=@"Pick a Start Date";
+    _backBtn.hidden = NO;
+    isStartOrEndDate = YES;
+    _vwForCalendar.hidden = NO;
+}
+
+- (IBAction)onClickLeaveEndDate:(UIButton *)sender{
+    _lblForDateStartEnd.text=@"Pick an End Date";
+    _backBtn.hidden = NO;
+    isStartOrEndDate = NO;
+    _vwForCalendar.hidden = NO;
+}
+
+- (void)hasDatePickerPickedDate:(NSDate *)date{
+    
+    NSDateFormatter *dateFormater = [NSDateFormatter new];
+    dateFormater.dateFormat = @"dd/MM/yyyy";
+    
+    NSString *dateTime= [dateFormater stringFromDate:date];
+    NSLog(@"Selected Time====%@",dateTime);
+    self.tabBarController.tabBar.hidden =NO;
+    
+    if (isStartOrEndDate) {
+        _txtFieldStartDate.text=dateTime;
+    }
+    else{
+        _txtFieldEndDate.text = dateTime;
+    }
+    
+    if (_txtFieldStartDate.text.length > 0 && _txtFieldEndDate.text.length > 0){
+        NSString *start = _txtFieldStartDate.text;
+        NSString *end = _txtFieldEndDate.text;
+        
+        NSDateFormatter *f = [[NSDateFormatter alloc] init];
+        [f setDateFormat:@"dd/MM/yyyy"];
+        NSDate *startDate = [f dateFromString:start];
+        NSDate *endDate = [f dateFromString:end];
+        
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
+                                                            fromDate:startDate
+                                                              toDate:endDate
+                                                             options:0];
+        // NSLog(@"Number Of Days===%i",[components day]);
+        _lblForNoOfDays.textAlignment =NSTextAlignmentCenter;
+        if ([components day] >= 0){
+            _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
+        }
+    }
+    
+    _vwForCalendar.hidden = YES;
+    _backBtn.hidden = YES;
+}
+
+#pragma mark - Custom Calendar
+// Returns YES if the date should be highlighted or NO if it should not.
+- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldHighlightDate:(NSDate *)date
+{
+    return YES;
+}
+
+// Returns YES if the date should be selected or NO if it should not.
+- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldSelectDate:(NSDate *)date
+{
+    NSDateComponents *dayComponent = [[NSDateComponents alloc] init];
+    dayComponent.day = 1;
+    
+    NSCalendar *theCalendar = [NSCalendar currentCalendar];
+    NSDate *nextDate = [theCalendar dateByAddingComponents:dayComponent toDate:date options:0];
+    NSString *selectedDate=[nextDate description];
+//    
+//    NSLog(@"%@", [selectedDate substringToIndex:10]);
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    NSString *string = [formatter stringFromDate:[NSDate date]];
+    NSDate *date1= [formatter dateFromString:[selectedDate substringToIndex:10]];
+    NSDate *currentDate = [formatter dateFromString:string];
+    NSComparisonResult result = [date1 compare:currentDate];
+    if(result == NSOrderedDescending){
+        //        NSLog(@"Selected Date is greater than current Date");
+        [self hasDatePickerPickedDate:date];
+        return YES;
+    }else if(result == NSOrderedAscending){
+        //        NSLog(@"Selected Date  is earlier than current date");
+        return NO;
+    }
+    else{
+        //        NSLog(@"dates are the same");
+        [self hasDatePickerPickedDate:date];
+        return YES;
+    }
+    return YES;
+}
+
+// Prints out the selected date.
+- (void)datePickerView:(RSDFDatePickerView *)view didSelectDate:(NSDate *)date
+{
+    //    NSLog(@"%@", [date description]);
+}
+
+// Returns YES if the date should be marked or NO if it should not.
+- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldMarkDate:(NSDate *)date
+{
+    // The date is an `NSDate` object without time components.
+    // So, we need to use dates without time components.
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    unsigned unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit;
+    NSDateComponents *todayComponents = [calendar components:unitFlags fromDate:[NSDate date]];
+    NSDate *today = [calendar dateFromComponents:todayComponents];
+    return [date isEqual:today];
+}
+// Returns the color of the default mark image for the specified date.
+- (UIColor *)datePickerView:(RSDFDatePickerView *)view markImageColorForDate:(NSDate *)date
+{
+    if (arc4random() % 2 == 0) {
+        return [UIColor grayColor];
+    } else {
+        return [UIColor greenColor];
+    }
+}
+
+// Returns the mark image for the specified date.
+- (UIImage *)datePickerView:(RSDFDatePickerView *)view markImageForDate:(NSDate *)date
+{
+    if (arc4random() % 2 == 0) {
+        return [UIImage imageNamed:@"img_gray_mark"];
+    } else {
+        return [UIImage imageNamed:@"img_green_mark"];
+    }
+}
 
 #pragma mark- UITableView
 
@@ -1387,15 +1550,12 @@
     
     if (tableView == _tableVwForLeaveRqst){
         MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
-        
         if (cellLeave == nil) {
             cellLeave=[[MKCustomCellForLeave alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
         }
-        
         cellLeave.selectionStyle = UITableViewCellSelectionStyleNone;
         return cellLeave;
     }
-    
     if (tableView == _tableVwForStore){
         //Store List
         if (cell == nil){
@@ -1412,9 +1572,7 @@
         NSString *jsonString = [[arrayForPromoters objectAtIndex:indexPath.row] objectForKey:@"requestJson"];
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        
         cell.textLabel.text=[NSString stringWithFormat:@"%@ %@",[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"],[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"]];
-        
         
         if (![[[arrayForPromoters objectAtIndex:indexPath.row] valueForKey:@"statusId"] isKindOfClass:[NSNull class]]) {
             
@@ -1507,63 +1665,6 @@
     _vwForStoreAdd.hidden = NO;
 }
 
-
-#pragma mark - HSDatePickerViewControllerDelegate
-- (void)hsDatePickerPickedDate:(NSDate *)date{
-    
-    NSDateFormatter *dateFormater = [NSDateFormatter new];
-    dateFormater.dateFormat = @"dd/MM/yyyy";
-    
-    NSString *dateTime= [dateFormater stringFromDate:date];
-    NSLog(@"Selected Time====%@",dateTime);
-    self.tabBarController.tabBar.hidden =NO;
-    
-    if (isStartOrEndDate) {
-        _txtFieldStartDate.text=dateTime;
-    }
-    else{
-        _txtFieldEndDate.text = dateTime;
-    }
-    
-    if (_txtFieldStartDate.text.length > 0 && _txtFieldEndDate.text.length > 0){
-        NSString *start = _txtFieldStartDate.text;
-        NSString *end = _txtFieldEndDate.text;
-        
-        NSDateFormatter *f = [[NSDateFormatter alloc] init];
-        [f setDateFormat:@"dd/MM/yyyy"];
-        NSDate *startDate = [f dateFromString:start];
-        NSDate *endDate = [f dateFromString:end];
-        
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
-                                                            fromDate:startDate
-                                                              toDate:endDate
-                                                             options:0];
-        
-        NSLog(@"Number Of Days===%i",[components day]);
-        
-        _lblForNoOfDays.textAlignment =NSTextAlignmentCenter;
-        
-        if ([components day] > 0){
-            _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
-        }
-    }
-}
-
--(void)hasCancelDatePicking{
-    self.tabBarController.tabBar.hidden =NO;
-}
-//optional
-- (void)hsDatePickerDidDismissWithQuitMethod:(HSDatePickerQuitMethod)method {
-    NSLog(@"Picker did dismiss with %lu", (unsigned long)method);
-    
-}
-
-//optional
-- (void)hsDatePickerWillDismissWithQuitMethod:(HSDatePickerQuitMethod)method {
-    NSLog(@"Picker will dismiss with %lu", (unsigned long)method);
-    //    self.tabBarController.tabBar.hidden =NO;
-}
 #pragma mark -
 
 - (void)didReceiveMemoryWarning {
@@ -1598,7 +1699,12 @@
         }
     }
     else if (![_vwForLeaveRqst isHidden]){
-        _vwForLeaveRqst.hidden =YES;
+        
+        if (![_vwForCalendar isHidden]) {
+            _vwForCalendar.hidden = YES;
+        }else{
+            _vwForLeaveRqst.hidden =YES;
+        }
     }else if (![_vwForCamera isHidden]){
         _vwForCamera.hidden = YES;
     }else if (![_vwForAccount isHidden]){
@@ -1614,25 +1720,29 @@
 }
 
 #pragma mark -
-- (IBAction)onClickLeaveStartDate:(UIButton *)sender{
-    isStartOrEndDate = YES;
-    self.tabBarController.tabBar.hidden =YES;
-    HSDatePickerViewController *hsdpvc = [HSDatePickerViewController new];
-    hsdpvc.delegate = self;
-    [self presentViewController:hsdpvc animated:YES completion:nil];
-}
 
-- (IBAction)onClickLeaveEndDate:(UIButton *)sender{
-    isStartOrEndDate = NO;
-    self.tabBarController.tabBar.hidden =YES;
-    HSDatePickerViewController *hsdpvc = [HSDatePickerViewController new];
-    hsdpvc.delegate = self;
-    [self presentViewController:hsdpvc animated:YES completion:nil];
-}
 #pragma mark - Popup Store List
 - (IBAction)onClickStorAssignment:(UIButton *)sender {
-    
-       UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    [[MKSharedClass shareManager] setPopupViewDifferentiate:1];
+    [self popupView];
+}
+
+- (IBAction)onClickSEAssignment:(UIButton *)sender {
+}
+
+- (IBAction)onClickType:(UIButton *)sender {
+    [[MKSharedClass shareManager] setPopupViewDifferentiate:2];
+    [self popupView];
+}
+
+- (IBAction)onClickReason:(UIButton *)sender {
+    [[MKSharedClass shareManager] setPopupViewDifferentiate:3];
+    [self popupView];
+}
+
+
+-(void)popupView{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKStoreListPopupVC"];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){
@@ -1642,8 +1752,6 @@
         BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-50, self.view.frame.size.height-100)];
         [self presentViewController:popupViewController animated:NO completion:nil];
     }
-}
 
-- (IBAction)onClickSEAssignment:(UIButton *)sender {
 }
 @end

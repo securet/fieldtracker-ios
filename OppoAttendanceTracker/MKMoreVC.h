@@ -90,6 +90,16 @@
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldEndDate;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveType;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveReason;
+@property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveDescription;
+
+
+@property (strong, nonatomic) IBOutlet UIView *vwForCalendar;
+@property (strong, nonatomic) IBOutlet UILabel *lblForDateStartEnd;
+
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfScrollVwForLeaveRqst;
+- (IBAction)onClickType:(UIButton *)sender;
+- (IBAction)onClickReason:(UIButton *)sender;
 
 #pragma mark - Camera View
 

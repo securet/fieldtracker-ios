@@ -13,7 +13,7 @@
 @synthesize valueForStoreEditVC;
 @synthesize dictForStoreSelected;
 @synthesize dictForCheckInLoctn;
-
+@synthesize popupViewDifferentiate;
 
 static MKSharedClass *instance = nil;
 
