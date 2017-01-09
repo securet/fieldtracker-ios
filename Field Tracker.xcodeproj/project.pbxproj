@@ -742,7 +742,6 @@
 				TargetAttributes = {
 					7FFB546C1E092EBC00A930C7 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = S3ATU3GSN7;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1080,10 +1079,10 @@
 				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager @rpath/RSDayFlow.framework/RSDayFlow";
-				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTrackerios;
 				PRODUCT_NAME = "Field Tracker";
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1104,10 +1103,10 @@
 				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager @rpath/RSDayFlow.framework/RSDayFlow";
-				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTracker;
+				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTrackerios;
 				PRODUCT_NAME = "Field Tracker";
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

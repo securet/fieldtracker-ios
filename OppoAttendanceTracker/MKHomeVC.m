@@ -23,6 +23,8 @@
     AVCaptureSession *captureSession;
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
     AVCaptureStillImageOutput *stillImageOutput;
+    
+    CGFloat radiusForStore;
 }
 @end
 
@@ -91,8 +93,7 @@
     _vwForTimer.backgroundColor=[[UIColor whiteColor] colorWithAlphaComponent:0.7];
     [self checkStatus];
     
-    [self startBackgroundTask];
-    [self startTimedTask];
+       [self startTimedTask];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -121,7 +122,7 @@
 
 - (void)startTimedTask
 {
-    timerForShiftTime= [NSTimer scheduledTimerWithTimeInterval:5.0 target:self selector:@selector(checkStatus) userInfo:nil repeats:YES];
+    timerForShiftTime= [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkStatus) userInfo:nil repeats:YES];
 }
 
 
@@ -226,13 +227,15 @@
         CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
         CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
         
+        radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
+        
         CLLocationCoordinate2D coordinate;
         coordinate.latitude = latitude;
         coordinate.longitude = longitude;
         
         // Build a circle for the GMSMapView
         GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
-        geoFenceCircle.radius = 150; // Meters
+        geoFenceCircle.radius = radiusForStore; // Meters
         geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
         geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.5];
         geoFenceCircle.strokeWidth = 0.5;
@@ -246,7 +249,8 @@
 //            markerCar.position =  coordinate;
 //            [CATransaction commit];
 //            markerCar.map = mapView;
-        
+        [self startBackgroundTask];
+
         [self checkLocation];
     }
      //==================================================ERROR
@@ -355,7 +359,7 @@
     CLLocationDistance distance = [location distanceFromLocation:locationManager.location];
     
    
-    if (distance <= 100 && distance >= 0){
+    if (distance <= radiusForStore && distance >= 0){
         
         //        NSLog(@"You are within 100 meters (actually %.0f meters) of Store", distance);
         _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
@@ -556,7 +560,7 @@
         
         // Build a circle for the GMSMapView
         GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
-        geoFenceCircle.radius = 150; // Meters
+        geoFenceCircle.radius = radiusForStore; // Meters
         geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
         geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
         geoFenceCircle.strokeWidth = 1.5;
@@ -1078,6 +1082,11 @@
         imgData=[UIImagePNGRepresentation(imgToSend) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     }
     
+    
+    if (productStoreId.length>0) {
+        
+    
+    
     NSDictionary * json = @{@"username":userName,
                             @"clockDate":strCurrentTime,
                             @"workEffortTypeEnumId":@"WetAvailable",
@@ -1159,6 +1168,8 @@
     [self startBackgroundTask];
     
     [self startTimedTask];
+        
+    }
 }
 
 -(NSDictionary*)getStatus{

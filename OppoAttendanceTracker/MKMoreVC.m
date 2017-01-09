@@ -15,6 +15,10 @@
     NSMutableArray *arrayForTableData;
     NSMutableArray *arrayForStoreList;
     NSMutableArray *arrayForPromoters;
+    NSMutableArray *arrayForLeaveHistory;
+    NSInteger countForLeaveData,pageNumberForLeave,indexValueForLeaveEdit;
+    BOOL isLeaveEditRNew;
+    NSDictionary *dictForLeaveTypes;
     
     NSString *strForCurLatitude,*strForCurLongitude;
     
@@ -38,7 +42,10 @@
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
     AVCaptureStillImageOutput *stillImageOutput;
     
+    NSString *leaveTypeEnumID,*leaveReasonEnumID;
+    
     __weak IBOutlet RSDFDatePickerView *datePicker;
+    
 }
 @end
 
@@ -57,7 +64,10 @@
     
     arrayForStoreList=[[NSMutableArray alloc] init];
     arrayForPromoters=[[NSMutableArray alloc] init];
-    
+    arrayForLeaveHistory = [[NSMutableArray alloc] init];
+    pageNumberForLeave = 0;
+    countForLeaveData = 0;
+
     _tableVw.delegate = self;
     _tableVw.dataSource = self;
     _tableVw.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -89,8 +99,6 @@
     _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
     _cameraBtn.layer.masksToBounds = YES;
     
-    
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
     
     [self getStores];
@@ -100,7 +108,7 @@
     //    UIColor *color=[UIColor colorWithRed:(84/255.0) green:(138/255.0) blue:(176/255.0) alpha:1.0];
     
     [_tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
-    
+    [_tableVwForLeaveRqst addFooterWithTarget:self action:@selector(refreshFooterForLeave) withIndicatorColor:TopColor];
     
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
@@ -250,6 +258,27 @@
     datePicker.dataSource = self;
     _heightOfScrollVwForLeaveRqst.constant = 330;
     
+    
+    [self textFieldEdit:_txtFieldStartDate];
+    [self textFieldEdit:_txtFieldEndDate];
+    [self textFieldEdit:_txtFieldLeaveType];
+    [self textFieldEdit:_txtFieldLeaveReason];
+    
+    _txtFieldStartDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    _txtFieldEndDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    _txtFieldLeaveType.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    _txtFieldLeaveReason.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    
+    [self addShadow:_btnLeaveRqstCancel];
+    [self addShadow:_btnLeaveRqstSubmit];
+    
+    _txtFieldLeaveDescription.backgroundColor=[UIColor clearColor];
+    _txtFieldLeaveDescription.delegate = self;
+    _txtFieldLeaveDescription.keyboardType=UIKeyboardTypeASCIICapable;
+    
+    [_txtFieldLeaveDescription addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
+    [_btnLeaveRqstCancel addTarget:self action:@selector(leaveRqstCancel) forControlEvents:UIControlEventTouchUpInside];
+    [_btnLeaveRqstSubmit addTarget:self action:@selector(leaveRequestSubmit) forControlEvents:UIControlEventTouchUpInside];
 }
 
 
@@ -258,10 +287,15 @@
 
 -(void)leaveTypeSelected:(NSNotification*)userInfo{
     _txtFieldLeaveType.text=[userInfo.userInfo valueForKey:@"description"];
+    NSLog(@"%@",userInfo.userInfo);
+    
+    leaveTypeEnumID=[userInfo.userInfo valueForKey:@"enumId"];
 }
 
 -(void)leaveReasonSelected:(NSNotification*)userInfo{
       _txtFieldLeaveReason.text=[userInfo.userInfo valueForKey:@"description"];
+     NSLog(@"%@",userInfo.userInfo);
+    leaveReasonEnumID=[userInfo.userInfo valueForKey:@"enumId"];
 }
 
 #pragma mark - Contact Support
@@ -688,9 +722,7 @@
     
     NSString *str=[defaults valueForKey:@"BasicAuth"];
     
-    
     [httpClient setDefaultHeader:@"Authorization" value:str];
-    
     
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:@"/rest/s1/ft/stores/user/list"
@@ -1362,32 +1394,318 @@
 }
 #pragma mark - Leave Rqst
 
+-(void)leaveRequestEdit:(NSInteger)indexValue{
+   
+    NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"fromDate"] substringToIndex:10];
+//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+//    NSDate *date = [dateFormatter dateFromString:startDate];
+//    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
+//    NSString *newDateString = [dateFormatter stringFromDate:date];
+//    
+//    
+   _txtFieldStartDate.text=[NSString stringWithFormat:@"%@",startDate];
+    
+    
+    NSString *endDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"thruDate"] substringToIndex:10];
+    
+//    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+//    date = [dateFormatter dateFromString:endDate];
+//    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
+//    newDateString = [dateFormatter stringFromDate:date];
+//    
+    _txtFieldEndDate.text=[NSString stringWithFormat:@"%@",endDate];
+    
+//    cellLeave.lblForTypeOfLeave.text=[NSString stringWithFormat:@"%@",[[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] substringFromIndex:3]];
+    
+    NSDateFormatter *f = [[NSDateFormatter alloc] init];
+    [f setDateFormat:@"yyyy-MM-dd"];
+    NSDate *start = [f dateFromString:startDate];
+    NSDate *end = [f dateFromString:endDate];
+    
+    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
+                                                        fromDate:start
+                                                          toDate:end
+                                                         options:0];
+    
+    if ([components day] >= 0){
+            _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
+    }
+
+    _txtFieldLeaveDescription.text=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"description"];
+}
+
+
+-(void)getLeaveType:(NSUInteger)indexValue{
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *str=[defaults valueForKey:@"BasicAuth"];
+    
+    [httpClient setDefaultHeader:@"Authorization" value:str];
+    
+    NSString *strPath=@"/rest/s1/ft/leaves/types";
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:strPath
+                                                      parameters:nil];
+    
+    //====================================================RESPONSE
+    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        [DejalBezelActivityView removeView];
+        
+        dictForLeaveTypes=[[NSDictionary alloc] init];
+        dictForLeaveTypes=JSON;
+        
+        NSLog(@"Leave Types===%@",dictForLeaveTypes);
+        
+       NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
+        
+        for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
+            if ([strLeaveType isEqualToString:[dict valueForKey:@"enumId"]]) {
+                _txtFieldLeaveType.text=[dict valueForKey:@"description"];
+                leaveTypeEnumID=[dict valueForKey:@"enumId"];
+            }
+        }
+        
+        NSString *strLeaveReason=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveReasonEnumId"];
+        
+        for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveReasonEnumId"]) {
+            if ([strLeaveReason isEqualToString:[dict valueForKey:@"enumId"]]) {
+                _txtFieldLeaveReason.text=[dict valueForKey:@"description"];
+                leaveReasonEnumID=[dict valueForKey:@"enumId"];
+            }
+        }
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+    
+}
+
+
+- (void)refreshFooterForLeave
+{
+    if(pageNumberForLeave < countForLeaveData)
+    {
+        pageNumberForLeave++;
+        
+        [self getMyLeaveHistory];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableVwForLeaveRqst reloadData];
+            [self.tableVwForLeaveRqst footerEndRefreshing];
+            //        [self.tableVw removeFooter];
+        });
+    }
+    else
+    {
+        [self.tableVwForLeaveRqst footerEndRefreshing];
+        [self.tableVwForLeaveRqst headerEndRefreshing];
+    }
+}
+
+-(void)getMyLeaveHistory{
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *str=[defaults valueForKey:@"BasicAuth"];
+    
+    [httpClient setDefaultHeader:@"Authorization" value:str];
+    
+    
+    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/leaves/my/list?pageIndex=%i&pageSize=10",pageNumberForLeave];
+    
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:strPath
+                                                      parameters:nil];
+    
+    //====================================================RESPONSE
+    
+    if (pageNumberForLeave == 0) {
+        [DejalBezelActivityView activityViewForView:self.view];
+    }
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        if (pageNumberForLeave == 0) {
+            [DejalBezelActivityView removeView];
+        }
+        
+        countForLeaveData = [[JSON valueForKey:@"totalEntries"] integerValue];
+        
+        if ([[JSON objectForKey:@"employeeLeavesList"] isKindOfClass:[NSArray class]]) {
+            if ([[JSON objectForKey:@"employeeLeavesList"] count]>0) {
+                
+                for (NSDictionary *dict in [JSON objectForKey:@"employeeLeavesList"]) {
+                    [arrayForLeaveHistory addObject:dict];
+                }
+            }
+        }
+        
+        [_tableVwForLeaveRqst reloadData];
+       NSLog(@"Leave List==%@",arrayForLeaveHistory);
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+    
+}
+
+
+-(void)leaveRequestSubmit{
+    //{"leaveTypeEnumId":"EltEarned","leaveReasonEnumId":"ElrMedical","description":"Hau hona","fromDate":"2017-01-20","thruDate":"2017-01-25","organizationId":"ORG_OPPO"}
+    ///rest/s1/ft/leaves
+    
+    if (_txtFieldStartDate.text.length>0 && _txtFieldEndDate.text.length>0&&_txtFieldLeaveReason.text.length>0 && _txtFieldLeaveType.text.length>0 && _txtFieldLeaveDescription.text.length>0) {
+        
+    
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    
+    NSString *str=[defaults valueForKey:@"BasicAuth"];
+    
+    [httpClient setDefaultHeader:@"Authorization" value:str];
+   
+    NSDictionary * json ;
+    
+    NSMutableURLRequest *request;
+    
+        
+        if (isLeaveEditRNew) {
+            
+            json = @{@"leaveTypeEnumId":leaveTypeEnumID,
+                     @"leaveReasonEnumId":leaveReasonEnumID,
+                     @"description":_txtFieldLeaveDescription.text,
+                     @"fromDate":_txtFieldStartDate.text,
+                     @"thruDate":_txtFieldEndDate.text,
+                     @"organizationId":@"ORG_OPPO",
+                     };
+            
+            request = [httpClient requestWithMethod:@"POST"
+                                               path:@"/rest/s1/ft/leaves"
+                                         parameters:json];
+        }else if (!isLeaveEditRNew){
+            
+            NSString *partyRelationshipId=[[arrayForLeaveHistory objectAtIndex:indexValueForLeaveEdit] valueForKey:@"partyRelationshipId"];
+            
+            json = @{@"leaveTypeEnumId":leaveTypeEnumID,
+                     @"leaveReasonEnumId":leaveReasonEnumID,
+                     @"description":_txtFieldLeaveDescription.text,
+                     @"fromDate":_txtFieldStartDate.text,
+                     @"thruDate":_txtFieldEndDate.text,
+                     @"partyRelationshipId":partyRelationshipId,
+                     };
+            
+            request = [httpClient requestWithMethod:@"PUT"
+                                               path:@"/rest/s1/ft/leaves"
+                                         parameters:json];
+        }
+    
+    //====================================================RESPONSE
+    [DejalBezelActivityView activityViewForView:self.view];
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        [DejalBezelActivityView removeView];
+        NSLog(@"Add Store Successfully==%@",JSON);
+        
+        _backBtn.hidden = NO;
+        _vwForLeaveRqstAdd.hidden = YES;
+        if ([JSON objectForKey:@"employeeLeave"] && isLeaveEditRNew) {
+            
+            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave requested successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }else{
+            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave edited successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                         
+                                         
+                                         if ([[operation response] statusCode] == 500) {
+                                             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"You have already applied a leave on these dates" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                             [alert show];
+                                         }
+                                         
+                                         if (isLeaveEditRNew) {
+                                             
+                                         }
+                                         //You have already applied a leave
+                                     }];
+    [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter All Details" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    
+}
+
 -(void)onClickLeaveRqst:(UIButton*)btn{
     //        NSLog(@"On Click Leave Request");
     _backBtn.hidden = YES;
     _vwForLeaveRqstAdd.hidden = NO;
     
-    [self textFieldEdit:_txtFieldStartDate];
-    [self textFieldEdit:_txtFieldEndDate];
-    [self textFieldEdit:_txtFieldLeaveType];
-    [self textFieldEdit:_txtFieldLeaveReason];
-    
-     _txtFieldStartDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
-    _txtFieldEndDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
-    _txtFieldLeaveType.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
-      _txtFieldLeaveReason.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
-
-    [self addShadow:_btnLeaveRqstCancel];
-    [self addShadow:_btnLeaveRqstSubmit];
-    
-    _txtFieldLeaveDescription.backgroundColor=[UIColor clearColor];
-    _txtFieldLeaveDescription.delegate = self;
-    _txtFieldLeaveDescription.keyboardType=UIKeyboardTypeASCIICapable;
-    
-    [_txtFieldLeaveDescription addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
-    [_btnLeaveRqstCancel addTarget:self action:@selector(leaveRqstCancel) forControlEvents:UIControlEventTouchUpInside];
+    isLeaveEditRNew=YES;
+    [self emptyLeaveRequestFields];
 }
 
+-(void)emptyLeaveRequestFields{
+    _lblForNoOfDays.text = 0;
+    _txtFieldStartDate.text=@"";
+    _txtFieldEndDate.text=@"";
+    _txtFieldLeaveType.text=@"";
+    _txtFieldLeaveReason.text=@"";
+    _txtFieldLeaveDescription.text=@"";
+}
 -(void)leaveRqstCancel{
     _backBtn.hidden = NO;
     _vwForLeaveRqstAdd.hidden = YES;
@@ -1415,7 +1733,7 @@
 - (void)hasDatePickerPickedDate:(NSDate *)date{
     
     NSDateFormatter *dateFormater = [NSDateFormatter new];
-    dateFormater.dateFormat = @"dd/MM/yyyy";
+    dateFormater.dateFormat = @"yyyy-MM-dd";
     
     NSString *dateTime= [dateFormater stringFromDate:date];
     NSLog(@"Selected Time====%@",dateTime);
@@ -1433,7 +1751,7 @@
         NSString *end = _txtFieldEndDate.text;
         
         NSDateFormatter *f = [[NSDateFormatter alloc] init];
-        [f setDateFormat:@"dd/MM/yyyy"];
+        [f setDateFormat:@"yyyy-MM-dd"];
         NSDate *startDate = [f dateFromString:start];
         NSDate *endDate = [f dateFromString:end];
         
@@ -1539,7 +1857,7 @@
     }else if (tableView == _tableVwForPromoters){
         return arrayForPromoters.count;
     }else if (tableView == _tableVwForLeaveRqst){
-        return 4;
+        return arrayForLeaveHistory.count;
     }
     return arrayForTableData.count;
 }
@@ -1549,13 +1867,65 @@
     UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
     if (tableView == _tableVwForLeaveRqst){
+        
         MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cellLeave == nil) {
             cellLeave=[[MKCustomCellForLeave alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
         }
         cellLeave.selectionStyle = UITableViewCellSelectionStyleNone;
+     
+        
+        NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
+
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+        NSDate *date = [dateFormatter dateFromString:startDate];
+        [dateFormatter setDateFormat:@"dd/MM/yyyy"];
+        NSString *newDateString = [dateFormatter stringFromDate:date];
+
+        
+        cellLeave.lblForStartDate.text=[NSString stringWithFormat:@"From: %@",newDateString];
+        
+    
+        NSString *endDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
+        
+        [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+        date = [dateFormatter dateFromString:endDate];
+        [dateFormatter setDateFormat:@"dd/MM/yyyy"];
+        newDateString = [dateFormatter stringFromDate:date];
+        
+        cellLeave.lblForEndDate.text=[NSString stringWithFormat:@"To: %@",newDateString];
+        
+        cellLeave.lblForTypeOfLeave.text=[NSString stringWithFormat:@"%@",[[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] substringFromIndex:3]];
+        
+        NSDateFormatter *f = [[NSDateFormatter alloc] init];
+        [f setDateFormat:@"yyyy-MM-dd"];
+        NSDate *start = [f dateFromString:startDate];
+        NSDate *end = [f dateFromString:endDate];
+        
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
+                                                            fromDate:start
+                                                              toDate:end
+                                                             options:0];
+
+        if ([components day] >= 0){
+            if ([components day] == 0) {
+                cellLeave.lblForNumOfDays.text=[NSString stringWithFormat:@"%i Day",[components day]+1];
+            }else{
+                cellLeave.lblForNumOfDays.text=[NSString stringWithFormat:@"%i Days",[components day]+1];
+            }
+        }
+        
+        NSString *strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
+        
+        if (![strLeaveApprove isKindOfClass:[NSNull class]]) {
+            cellLeave.lblForStatusOfLeave.text=strLeaveApprove;
+        }
+        
         return cellLeave;
     }
+
     if (tableView == _tableVwForStore){
         //Store List
         if (cell == nil){
@@ -1633,6 +2003,10 @@
             [_tableVwForPromoters reloadData];
             
         }else if (indexPath.row ==2){
+            
+            arrayForLeaveHistory=[[NSMutableArray alloc] init];
+            pageNumberForLeave = 0;
+            [self getMyLeaveHistory];
             _vwForLeaveRqst.hidden =NO;
             _backBtn.hidden = NO;
             _tableVwForLeaveRqst.delegate = self;
@@ -1656,6 +2030,19 @@
     else if (tableView == _tableVwForPromoters){
         indexValueOfPromoterEdit=indexPath.row;
         [self promoterDetails:NO];
+    }else if (tableView == _tableVwForLeaveRqst){
+        
+        NSString *strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
+        
+        if ([strLeaveApprove isKindOfClass:[NSNull class]]) {
+            [self emptyLeaveRequestFields];
+            [self getLeaveType:indexPath.row];
+            indexValueForLeaveEdit=indexPath.row;
+            _backBtn.hidden = YES;
+            _vwForLeaveRqstAdd.hidden = NO;
+            isLeaveEditRNew=NO;
+            [self leaveRequestEdit:indexPath.row];
+        }
     }
 }
 

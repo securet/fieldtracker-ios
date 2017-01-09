@@ -10,4 +10,11 @@
 
 @interface MKCustomCellForLeave : UITableViewCell
 
+@property (strong, nonatomic) IBOutlet UILabel *lblForNumOfDays;
+@property (strong, nonatomic) IBOutlet UILabel *lblForStartDate;
+@property (strong, nonatomic) IBOutlet UILabel *lblForEndDate;
+@property (strong, nonatomic) IBOutlet UILabel *lblForTypeOfLeave;
+@property (strong, nonatomic) IBOutlet UILabel *lblForStatusOfLeave;
+
+
 @end
