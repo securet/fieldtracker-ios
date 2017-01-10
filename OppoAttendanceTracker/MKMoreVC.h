@@ -19,6 +19,8 @@
     CLLocationManager *locationManager;
 }
 
+@property (strong, nonatomic) IBOutlet UIImageView *imgVwUser;
+
 @property (weak, nonatomic) IBOutlet UILabel *lblFName;
 @property (weak, nonatomic) IBOutlet UILabel *lblLName;
 @property (strong, nonatomic) IBOutlet UILabel *lblTime;
@@ -59,13 +61,15 @@
 @property (strong, nonatomic) IBOutlet UILabel *lblForEditStore;
 @property (strong, nonatomic) IBOutlet UILabel *lblForLatLon;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldStoreName;
+@property (strong, nonatomic) IBOutlet UITextField *txtFieldSiteRadius;
 @property (strong, nonatomic) IBOutlet UITextView *txtVwStoreAddress;
 @property  (strong, nonatomic) IBOutlet UIButton *btnGetLocation;
 @property (strong, nonatomic) IBOutlet UIButton *btnAdd;
 @property (strong, nonatomic) IBOutlet UIButton *btnCancel;
 @property (strong, nonatomic) IBOutlet UIButton *btnAddPromoterConfirm;
 @property (strong, nonatomic) IBOutlet UIButton *btnCancelPromoterAdd;
-
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfTxtVwStoreAddress;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfTxtFieldStorName;
 
 #pragma mark - IBOutlets For Add/Edit Promoters
 

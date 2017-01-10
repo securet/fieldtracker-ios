@@ -18,8 +18,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    
-    
     _txtFieldForEmail.text=@"anand@securet.in";
     _txtFieldForPassword.text=@"test@1234";
     [self addPadding:_txtFieldForEmail];
@@ -27,10 +25,7 @@
     
     _btnLogin.layer.cornerRadius = 5;
     
-    
-    
-    
-
+    _txtFieldForEmail.keyboardType = UIKeyboardTypeEmailAddress;
     
     if (![APPDELEGATE connected]) {
         
@@ -42,12 +37,6 @@
 -(void)viewWillAppear:(BOOL)animated{
     [self.navigationItem setHidesBackButton:YES];
     self.navigationController.navigationBarHidden = YES;
-    
-    
-    
-    
-
-    
 }
 
 #pragma mark - AddPadding
@@ -178,6 +167,9 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        
+        NSLog(@"User Data===%@",JSON);
         
         [DejalBezelActivityView removeView];
         

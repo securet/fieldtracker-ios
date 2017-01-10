@@ -16,6 +16,10 @@
 {
     CLLocationManager *locationManager;
 }
+
+@property (strong, nonatomic) IBOutlet UIImageView *imgVwUser;
+
+
 @property (strong, nonatomic) IBOutlet UIView *bottomVw;
 
 @property (weak, nonatomic) IBOutlet UILabel *lblFName;

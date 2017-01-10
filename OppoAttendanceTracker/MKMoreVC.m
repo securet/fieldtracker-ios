@@ -10,6 +10,7 @@
 #import "MKCustomCellForLeave.h"
 #import <AVFoundation/AVFoundation.h>
 #import "RSDFDatePickerView.h"
+#import "JSBadgeView.h"
 @interface MKMoreVC ()<RSDFDatePickerViewDelegate,RSDFDatePickerViewDataSource>
 {
     NSMutableArray *arrayForTableData;
@@ -46,6 +47,9 @@
     
     __weak IBOutlet RSDFDatePickerView *datePicker;
     
+    
+    NSString *roleType;
+    
 }
 @end
 
@@ -57,10 +61,20 @@
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",dict);
+    
+    roleType=[dict valueForKey:@"roleTypeId"];
+    
     _lblFName.text=[dict valueForKey:@"firstName"];
     _lblLName.text=[dict valueForKey:@"lastName"];
     
-    arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
+    
+    if (![roleType isEqualToString:@"FieldExecutiveOnPremise"] && ![roleType isEqualToString:@"FieldExecutiveOffPremise"]) {
+        arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
+    }else{
+        arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
+    }
+    
+    
     
     arrayForStoreList=[[NSMutableArray alloc] init];
     arrayForPromoters=[[NSMutableArray alloc] init];
@@ -115,8 +129,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveTypeSelected:) name:@"LeaveTypeSelected" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveReasonSelected:) name:@"LeaveReasonSelected" object:nil];
     
-    
-    
     [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
     
     [self disableMyAccountEdit];
@@ -169,6 +181,33 @@
     _textFieldMyEmail.text = [dict valueForKey:@"emailAddress"];
     _textFieldMyStore.text = _lblForStoreLocation.text;
     
+    
+    if ([dict valueForKey:@"directions"]) {
+        _textVwMyAddress.text=[dict valueForKey:@"directions"];
+    }
+    
+    if ([dict valueForKey:@"contactNumber"]) {
+        _textFieldMyNumber.text = [dict valueForKey:@"contactNumber"];
+    }
+    
+    if ([dict valueForKey:@"userPhotoPath"]) {
+            NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
+            NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+            NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
+            dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+            dispatch_async(q, ^{
+                /* Fetch the image from the server... */
+                NSData *data = [NSData dataWithContentsOfURL:imgUrl];
+                UIImage *img = [[UIImage alloc] initWithData:data];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _imgVwUser.image = img;
+                });
+            });
+    }
+    
+    
+    
+    
     _textFieldMyName.userInteractionEnabled = NO;
     _textFieldMyNumber.userInteractionEnabled = NO;
     _textFieldMyEmail.userInteractionEnabled = NO;
@@ -177,7 +216,19 @@
 }
 -(void)setupUIForAllViews{
     // For Store View
+    
+    if (IS_IPHONE_4) {
+        _heightOfTxtVwStoreAddress.constant = 50;
+        _txtVwStoreAddress.font = [UIFont systemFontOfSize:12];
+    }else{
+        _heightOfTxtFieldStorName.constant = 40;
+    }
+    
     [self textFieldEdit:_txtFieldStoreName];
+    [self textFieldEdit:_txtFieldSiteRadius];
+    
+    
+    _txtFieldSiteRadius.keyboardType = UIKeyboardTypeNumberPad;
     
     _txtVwStoreAddress.layer.cornerRadius = 5;
     _txtVwStoreAddress.layer.masksToBounds = YES;
@@ -239,9 +290,7 @@
     //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
     _lblForEmailContact.attributedText = attributedString;
     
-    
-    
-    
+
     NSMutableAttributedString *attributedStringForNumber = [[NSMutableAttributedString alloc] init];
     [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:@"Phone:  "
                                                                                       attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
@@ -407,7 +456,7 @@
 
 - (void)refreshFooter
 {
-    if(arrayCountToCheck >= 10)
+    if(arrayCountToCheck > pageNumber)
     {
         
         pageNumber++;
@@ -447,7 +496,7 @@
 
 #pragma mark - TextField Delegate
 -(void)textFieldDidEndEditing:(UITextField *)textField{
-    if (textField == _txtFieldStoreName) {
+    if (textField == _txtFieldStoreName || textField == _txtFieldSiteRadius) {
         [self enableAddNewStoreBtn];
     }else if (textField == _txtFieldStoreAsgnmntPromoter){
     }
@@ -527,6 +576,7 @@
         _btnAdd.alpha = 0.6;
         _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
         _txtFieldStoreName.text=@"";
+        _txtFieldSiteRadius.text=@"";
         
     }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
         
@@ -538,6 +588,7 @@
         
         _txtVwStoreAddress.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"address"];
         _txtFieldStoreName.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"storeName"];
+        _txtFieldSiteRadius.text=[NSString stringWithFormat:@"%i",[[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] integerValue]];
         
         _lblForLatLon.text=[NSString stringWithFormat:@"Lat: %@ | Lon: %@",[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"],[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"]];
         strForCurLatitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"];
@@ -551,7 +602,7 @@
 {
     
     if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
-        if (_txtFieldStoreName.text.length>0&&_txtVwStoreAddress.text.length>0) {
+        if (_txtFieldStoreName.text.length>0&&_txtVwStoreAddress.text.length>0&&_txtFieldSiteRadius.text.length>0&& ![_txtVwStoreAddress.text isEqualToString:@"Store Address"]) {
             _btnAdd.enabled = YES;
             _btnAdd.alpha = 1;
             _btnAdd.backgroundColor=[[UIColor darkGrayColor] colorWithAlphaComponent:1];
@@ -580,6 +631,7 @@
                             @"address":_txtVwStoreAddress.text,
                             @"latitude":strForCurLatitude,
                             @"longitude":strForCurLongitude,
+                            @"proximityRadius":_txtFieldSiteRadius.text,
                             };
     NSMutableURLRequest *request;
     if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
@@ -676,7 +728,7 @@
             
             _txtVwStoreAddress.text=[[getAddress objectAtIndex:0]objectAtIndex:0];
             
-            if (_txtFieldStoreName.text.length>0) {
+            if (_txtFieldStoreName.text.length>0 && _txtFieldSiteRadius.text.length>0) {
                 [self enableAddNewStoreBtn];
             }
         }
@@ -742,7 +794,7 @@
         
         [DejalBezelActivityView removeView];
         
-        //        NSLog(@"Store List==%@",JSON);
+             NSLog(@"Store List==%@",JSON);
         
         arrayForStoreList=[JSON objectForKey:@"userStores"];
         
@@ -817,8 +869,8 @@
         for (NSDictionary *dict in array) {
             [arrayForPromoters addObject:dict];
         }
-        
-        arrayCountToCheck=[[JSON objectForKey:@"requestList"] count];
+        NSLog(@"Promoter List===%@",JSON);
+        arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
         
         [_tableVwForPromoters reloadData];
     }
@@ -846,7 +898,26 @@
 
 
 -(void)onClickAddPromoter:(UIButton*)btn{
-    //    NSLog(@"On Click Add Promoter");
+
+    
+    for (UIView *subview in [_btnPhotoPromoter subviews]) {
+        if([subview isKindOfClass:[JSBadgeView class]]){
+            [subview removeFromSuperview];
+        }
+     }
+    
+    for (UIView *subview in [_btnAadharPromoter subviews]) {
+        if([subview isKindOfClass:[JSBadgeView class]]){
+            [subview removeFromSuperview];
+        }
+    }
+    
+    for (UIView *subview in [_btnAdressProofPromoter subviews]) {
+        if([subview isKindOfClass:[JSBadgeView class]]){
+            [subview removeFromSuperview];
+        }
+    }
+    
     
     [self promoterDetails:YES];
 }
@@ -879,7 +950,7 @@
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         
-        //        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
+        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
         
         _txtFieldFNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"];
         _txtFieldLNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"];
@@ -893,15 +964,22 @@
             if ([[dict valueForKey:@"productStoreId"] isEqualToString:productStoreId]) {
                 _txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
             }
-            
+        }
             _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
-            
-            
+        
             strAadharIDPath=[[json objectForKey:@"requestInfo"] objectForKey:@"aadharIdPath"];;
             strUserPhotoPath=[[json objectForKey:@"requestInfo"] objectForKey:@"userPhoto"];;
             strAddressProofPath=[[json objectForKey:@"requestInfo"] objectForKey:@"addressIdPath"];
             storeIDForPromoterAdd=productStoreId;
-        }
+        
+        
+        /*
+         
+        
+         */
+        
+        
+
         
     }else{
         strAadharIDPath=@"";
@@ -956,6 +1034,8 @@
     [self textFieldEdit:_txtFieldPhonePromoter];
     [self textFieldEdit:_txtFieldSEAsgnmntPromoter];
     [self textFieldEdit:_txtFieldStoreAsgnmntPromoter];
+
+    _txtFieldEmailPromoter.keyboardType = UIKeyboardTypeEmailAddress;
     
     _txtVwAddressPromoter.text=@"Address";
     _txtVwAddressPromoter.layer.cornerRadius = 5;
@@ -964,17 +1044,17 @@
     _txtVwAddressPromoter.delegate = self;
     _txtVwAddressPromoter.autocorrectionType = UITextAutocorrectionTypeNo;
     
-    _btnPhotoPromoter.layer.cornerRadius = 5;
-    _btnPhotoPromoter.layer.masksToBounds = YES;
+//    _btnPhotoPromoter.layer.cornerRadius = 5;
+//    _btnPhotoPromoter.layer.masksToBounds = YES;
     
     _btnPhotoPromoter.tag=100;
     
-    _btnAadharPromoter.layer.cornerRadius = 5;
-    _btnAadharPromoter.layer.masksToBounds =YES;
+//    _btnAadharPromoter.layer.cornerRadius = 5;
+//    _btnAadharPromoter.layer.masksToBounds =YES;
     _btnAadharPromoter.tag = 200;
     
-    _btnAdressProofPromoter.layer.cornerRadius = 5;
-    _btnAdressProofPromoter.layer.masksToBounds =YES;
+//    _btnAdressProofPromoter.layer.cornerRadius = 5;
+//    _btnAdressProofPromoter.layer.masksToBounds =YES;
     _btnAdressProofPromoter.tag=300;
     
     [self addShadow:_btnAddPromoterConfirm];
@@ -1265,6 +1345,8 @@
         }
     }
     
+   
+    
     NSLog(@"About to request a capture from: %@", stillImageOutput);
     [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
      {
@@ -1274,6 +1356,15 @@
          _vwForCamera.hidden = YES;
          _backBtn.hidden = YES;
          [self postImageDataToServer];
+         
+         
+         
+//
+         
+         
+        
+         
+         
      }];
     
     self.tabBarController.tabBar.hidden =NO;
@@ -1382,10 +1473,18 @@
                                               //userPhoto aadharId addressProof
                                               if ([stringForImagePurpose isEqualToString:@"userPhoto"]) {
                                                   strUserPhotoPath=[jsonData valueForKey:@"savedFilename"];
+                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:_btnPhotoPromoter alignment:JSBadgeViewAlignmentTopRight];
+                                                  badgeView.badgeText = [NSString stringWithFormat:@" "];
+                                                  
                                               }else if ([stringForImagePurpose isEqualToString:@"aadharId"]){
                                                   strAadharIDPath=[jsonData valueForKey:@"savedFilename"];
+                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:_btnAadharPromoter alignment:JSBadgeViewAlignmentTopRight];
+                                                  badgeView.badgeText = [NSString stringWithFormat:@" "];
+                                                  
                                               }else if ([stringForImagePurpose isEqualToString:@"addressProof"]){
                                                   strAddressProofPath=[jsonData valueForKey:@"savedFilename"];
+                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:_btnAdressProofPromoter alignment:JSBadgeViewAlignmentTopRight];
+                                                  badgeView.badgeText = [NSString stringWithFormat:@" "];
                                               }
                                           }
                                           [DejalBezelActivityView removeView];
@@ -1668,11 +1767,20 @@
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                          [DejalBezelActivityView removeView];
-                                         NSLog(@"Error %@",[error description]);
+//                                         NSLog(@"Error %@",[error description]);
                                          
+                                         
+                                         NSString *JSON = [[error userInfo] valueForKey:NSLocalizedRecoverySuggestionErrorKey] ;
+                                         
+                                         NSError *aerror = nil;
+                                         NSDictionary *json = [NSJSONSerialization JSONObjectWithData: [JSON dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                              options: NSJSONReadingMutableContainers
+                                                                                                error: &aerror];
+                                         
+                                          NSLog(@"Error %@",json);
                                          
                                          if ([[operation response] statusCode] == 500) {
-                                             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"You have already applied a leave on these dates" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[json valueForKey:@"errors"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                                              [alert show];
                                          }
                                          
@@ -1978,7 +2086,11 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if (tableView == _tableVw){
-        if (indexPath.row == 6){
+        //arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
+        
+        UITableViewCell *cell=[tableView cellForRowAtIndexPath:indexPath];
+        
+        if ([cell.textLabel.text isEqualToString:@"Log Off"]){
             
             NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
             [defaults setObject:@"0" forKey:@"Is_Login"];
@@ -1986,7 +2098,7 @@
             UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
             [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
             
-        }else if (indexPath.row ==0){
+        }else if ([cell.textLabel.text isEqualToString:@"Stores"]){
             [self getStores];
             _vwForStore.hidden =NO;
             _backBtn.hidden = NO;
@@ -1994,7 +2106,7 @@
             _tableVwForStore.dataSource = self;
             [_tableVwForStore reloadData];
             
-        }else if (indexPath.row ==1){
+        }else if ([cell.textLabel.text isEqualToString:@"Promoters"]){
             [self getPromoters];
             _vwForPromoters.hidden =NO;
             _backBtn.hidden = NO;
@@ -2002,7 +2114,7 @@
             _tableVwForPromoters.dataSource = self;
             [_tableVwForPromoters reloadData];
             
-        }else if (indexPath.row ==2){
+        }else if ([cell.textLabel.text isEqualToString:@"Leaves"]){
             
             arrayForLeaveHistory=[[NSMutableArray alloc] init];
             pageNumberForLeave = 0;
@@ -2012,14 +2124,14 @@
             _tableVwForLeaveRqst.delegate = self;
             _tableVwForLeaveRqst.dataSource = self;
             [_tableVwForLeaveRqst reloadData];
-        }else if (indexPath.row == 4){
+        }else if ([cell.textLabel.text isEqualToString:@"My Account"]){
             _vwForAccount.hidden =NO;
             _backBtn.hidden = NO;
-        }else if (indexPath.row == 5){
+        }else if ([cell.textLabel.text isEqualToString:@"Change Password"]){
             _vwForChangePwd.hidden =NO;
             _backBtn.hidden = NO;
         }
-        else if (indexPath.row == 3){
+        else if ([cell.textLabel.text isEqualToString:@"Contact Support"]){
             _vwForContact.hidden =NO;
             _backBtn.hidden = NO;
         }

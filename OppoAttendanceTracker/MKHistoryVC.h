@@ -10,10 +10,16 @@
 
 @interface MKHistoryVC : UIViewController<UITableViewDelegate,UITableViewDataSource>
 
+
+@property (strong, nonatomic) IBOutlet UIImageView *imgVwUser;
+
+
 @property (weak, nonatomic) IBOutlet UILabel *lblFName;
 @property (weak, nonatomic) IBOutlet UILabel *lblLName;
 @property (strong, nonatomic) IBOutlet UILabel *lblTime;
 @property (strong, nonatomic) IBOutlet UILabel *lblAMOrPM;
+
+@property (strong, nonatomic) IBOutlet UILabel *lblNodata;
 
 @property (strong, nonatomic) IBOutlet UITableView *tableVw;
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForIndividual;

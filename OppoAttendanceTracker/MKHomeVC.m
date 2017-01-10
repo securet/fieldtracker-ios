@@ -40,7 +40,21 @@
     _lblFName.text=[dict valueForKey:@"firstName"];
     _lblLName.text=[dict valueForKey:@"lastName"];
     
-    
+    if ([dict valueForKey:@"userPhotoPath"]) {
+        NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
+        NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+        NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
+        dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+        dispatch_async(q, ^{
+            /* Fetch the image from the server... */
+            NSData *data = [NSData dataWithContentsOfURL:imgUrl];
+            UIImage *img = [[UIImage alloc] initWithData:data];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _imgVwUser.image = img;
+            });
+        });
+    }
+
     _bottomVw.layer.cornerRadius = 10;
     _bottomVw.layer.masksToBounds = YES;
     
@@ -105,7 +119,7 @@
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
-    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
@@ -301,13 +315,13 @@
         cell.imgVwForBtmVerticalLine.hidden=NO;
     }
     
-    if (indexPath.row==arrayForStatusData.count-1){
-        cell.centerConstraint.constant = 0;
-        cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
-        cell.lblForStatus.text=@"Time Out";
-        cell.imgVwForTopVerticalLine.hidden=NO;
-        cell.imgVwForBtmVerticalLine.hidden=YES;
-    }
+//    if (indexPath.row==arrayForStatusData.count-1){
+//        cell.centerConstraint.constant = 0;
+//        cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
+//        cell.lblForStatus.text=@"Time Out";
+//        cell.imgVwForTopVerticalLine.hidden=NO;
+//        cell.imgVwForBtmVerticalLine.hidden=YES;
+//    }
     
     cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
     
@@ -1041,7 +1055,7 @@
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     NSString *strCurrentTime=[dateFormatter stringFromDate:now];
@@ -1303,7 +1317,7 @@
     NSDate *now = [NSDate date];
     dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     firstViewd=[dateFormatter stringFromDate:now];
     
     
@@ -1499,10 +1513,20 @@
     
     [httpClient setDefaultHeader:@"Authorization" value:str];
     
-    
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",[dict valueForKey:@"username"]);
     
+    NSDate *now = [NSDate date];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd";
+//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+
+    //estimatedStartDate=2016-12-11 00:00:00&estimatedCompletionDate=2016-12-11 23:50:59
+    NSString *startDate=[NSString stringWithFormat:@"estimatedStartDate=%@ 00:00:00",[dateFormatter stringFromDate:now]];
+    
+    NSString *endDate=[NSString stringWithFormat:@"estimatedCompletionDate=%@ 23:50:59",[dateFormatter stringFromDate:now]];
     
     NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=0&pageSize=1",[dict valueForKey:@"username"]];
     
