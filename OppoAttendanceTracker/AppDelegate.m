@@ -36,20 +36,24 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
     
-    [_locationManager startUpdatingLocation];
+   
     _locationManager = [[CLLocationManager alloc] init];
     _locationManager.delegate=self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
     _locationManager.distanceFilter=kCLDistanceFilterNone;
-    
+    if([_locationManager respondsToSelector:@selector(allowsBackgroundLocationUpdates)]){
+        [_locationManager setAllowsBackgroundLocationUpdates:YES];
+    }
 #ifdef __IPHONE_8_0
-    //  if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-    // Use one or the other, not both. Depending on what you put in info.plist
-    //[self.locationManager requestWhenInUseAuthorization];
-    [_locationManager requestAlwaysAuthorization];
-    //  }
-#endif
+//      if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+//     Use one or the other, not both. Depending on what you put in info.plist
+//    [self.locationManager requestWhenInUseAuthorization];
     
+//      }
+#endif
+    [_locationManager requestAlwaysAuthorization];
+     _locationManager.allowsBackgroundLocationUpdates = YES;
+     [_locationManager startUpdatingLocation];
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
    

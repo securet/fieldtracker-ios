@@ -423,21 +423,34 @@
 
 -(void)checkingInLocation:(NSNotification*)notification{
     
-    NSDictionary *userInfo = notification.userInfo;
-    NSLog(@"Notification In History==%@",userInfo);
     
-    //    NSDictionary *dict=[userIn];
     
-    if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-        _lblForStoreLocation.textColor=[UIColor whiteColor];
-    }else{
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        //        _lblForStoreLocation.text=@"Off site";
-        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+    @try {
+        NSDictionary *userInfo = notification.userInfo;
+        NSLog(@"Notification In History==%@",userInfo);
+        
+        //    NSDictionary *dict=[userIn];
+        
+        if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
+            _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+            _lblForStoreLocation.textColor=[UIColor whiteColor];
+        }else{
+            _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+            //        _lblForStoreLocation.text=@"Off site";
+            _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+        }
+        _textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
+        _lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
     }
-    _textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
-    _lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
+    @catch (NSException *exception) {
+        NSLog(@"%@", exception.reason);
+    }
+    @finally {
+//        NSLog(@"Char at index %d cannot be found", index);
+//        NSLog(@"Max index is: %d", [test length]-1);
+    }
+    
+   
 }
 
 -(void)changeLocationStatus:(NSDictionary*)dictInfo{

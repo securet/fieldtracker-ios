@@ -135,7 +135,6 @@
     
     [_tableVw reloadData];
     
-    
     if (![APPDELEGATE connected]) {
         
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -145,8 +144,7 @@
 
 - (void)refreshFooter
 {
-    if(arrayCountToCheck > pageNumber)
-    {
+    if(arrayCountToCheck > pageNumber){
         pageNumber++;
         
         [self getHistory];
@@ -156,9 +154,7 @@
             [self.tableVw footerEndRefreshing];
             //        [self.tableVw removeFooter];
         });
-    }
-    else
-    {
+    }else{
         [self.tableVw footerEndRefreshing];
         [self.tableVw headerEndRefreshing];
     }
@@ -247,14 +243,13 @@
         cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
         
         if (![[arrayForStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
-            cell.lblForTime.text= [self getTime:[arrayForStatusData objectAtIndex:indexPath.row]];
+            cell.lblForTime.text= [self getTimeIndividual:[arrayForStatusData objectAtIndex:indexPath.row]];
         }else{
             cell.lblForTime.text=@"";
             cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
             cell.lblForStatus.text=@"";
             cell.imgVwForLine.backgroundColor=[UIColor clearColor];
         }
-        
         return cell;
     }
     ////
@@ -277,31 +272,68 @@
     cell.lblDate.text=newDateString;
     //////
     
-    if (![[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedStartDate"] isKindOfClass:[NSNull class]]) {
-        
-        newDateString = [self getTime:[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedStartDate"]];
-    }else{
-        newDateString = @"--";
-    }
-    
-    cell.lblInTime.text=[NSString stringWithFormat:@"Time In: %@",newDateString];
-    
-    if (![[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"] isKindOfClass:[NSNull class]]) {
-        
-        newDateString = [self getTime:[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"]];
-    }else{
-        newDateString = @"--";
-    }
-    
-    cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: %@",newDateString];
-    
-    
-    
-    NSArray *array=[[NSArray alloc] init];
+    NSMutableArray *array=[[NSMutableArray alloc] init];
     NSInteger   hoursBetweenDates = 0;
     
-    array=[[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"];
+    for (NSDictionary *dict in [[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"]) {
+        [array addObject:[dict valueForKey:@"fromDate"]];
+        [array addObject:[dict valueForKey:@"thruDate"]];
+    }
+
+    array =  [self sortingArrayByDate:array];
     
+    if (![[array objectAtIndex:0] isKindOfClass:[NSNull class]]) {
+        cell.lblInTime.text=[NSString stringWithFormat:@"Time In: %@",[self getTimeIndividual:[array objectAtIndex:0] ]];
+    }
+    else{
+        cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
+    }
+    
+    if (![[array lastObject]  isKindOfClass:[NSNull class]] ) {
+        cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: %@",[self getTimeIndividual:[array lastObject] ]];
+    }else{
+        cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
+    }
+    
+    
+    if (![[array objectAtIndex:0] isKindOfClass:[NSNull class]] && ![[array lastObject] isKindOfClass:[NSNull class]]){
+
+        NSString *firstViewd;
+        firstViewd=[NSString stringWithFormat:@"%@",[array objectAtIndex:0]];
+        
+        NSString *lastViewedString;
+        lastViewedString=[NSString stringWithFormat:@"%@",[array lastObject]];
+
+        [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss xxxx"];
+        
+        NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
+        NSDate *now = [dateFormatter dateFromString:firstViewd];
+        
+        NSTimeInterval distanceBetweenDates = [lastViewed timeIntervalSinceDate:now];
+        double minutesInAnHour = 60;
+        hoursBetweenDates = hoursBetweenDates + (distanceBetweenDates / minutesInAnHour);
+        
+        int hour = hoursBetweenDates / 60;
+        int min = hoursBetweenDates % 60;
+        
+        hour=abs(hour);
+        min = abs(min);
+        NSString *timeString = [NSString stringWithFormat:@"%dh %02dm", hour, min];
+        //    NSLog(@"Total Time: %@", timeString);
+        if (hour<0) {
+            cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
+        }else{
+            cell.lblTotalTime.text=timeString;
+        }
+        
+        if ([timeString isEqualToString:@"0h 00m"]) {
+            cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
+        }
+    }else{
+        cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
+    }
+
+/*
     if (![[[array objectAtIndex:0] valueForKey:@"fromDate"] isKindOfClass:[NSNull class]]) {
         cell.lblInTime.text=[NSString stringWithFormat:@"Time In: %@",[self getTime:[[array objectAtIndex:0] valueForKey:@"fromDate"]]];
     }
@@ -309,14 +341,14 @@
         cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
     }
     
-    if (![[[array objectAtIndex:0] valueForKey:@"thruDate"] isKindOfClass:[NSNull class]] ) {
+    if (![[[array lastObject] valueForKey:@"thruDate"] isKindOfClass:[NSNull class]] ) {
         cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: %@",[self getTime:[[array lastObject] valueForKey:@"thruDate"]]];
     }else{
         cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
     }
+ 
     
-    
-    if (![[[array objectAtIndex:0] valueForKey:@"thruDate"] isKindOfClass:[NSNull class]] && ![[[array objectAtIndex:0] valueForKey:@"fromDate"] isKindOfClass:[NSNull class]])
+    if (![[[array lastObject] valueForKey:@"thruDate"] isKindOfClass:[NSNull class]] && ![[[array objectAtIndex:0] valueForKey:@"fromDate"] isKindOfClass:[NSNull class]])
     {
         NSString *firstViewd;
         
@@ -360,89 +392,25 @@
     }else{
         cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
     }
-    
-    //    NSLog(@"=================%@",array);
-    
-    /*        for (NSDictionary *dict in array) {
-     
-     
-     NSDictionary *dict = [array objectAtIndex:0];
-     
-     
-     NSString *lastViewedString = [dict valueForKey:@"fromDate"];
-     
-     lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-     lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"+0000" withString:@""];
-     // NSLog(@"Complete Date===%@",lastViewedString);
-     
-     
-     
-     
-     NSDateFormatter *parsingFormatter = [NSDateFormatter new];
-     [parsingFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-     date = [parsingFormatter dateFromString:lastViewedString];
-     //            NSLog(@"date: %@", date);
-     
-     NSDateFormatter *displayingFormatter = [NSDateFormatter new];
-     [displayingFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-     NSString *display = [displayingFormatter stringFromDate:date];
-     //            NSLog(@"display: %@", display); // 2014-04-18T17:34:19
-     
-     
-     NSLog(@"First Time In===%@",display);
-     
-     
-     //////////////From Date
-     // [NSString stringWithFormat:@"%@ %@",newDateString,strDate];
-     
-     NSString *firstViewd =display;
-     
-     
-     
-     dict=[array lastObject];
-     
-     lastViewedString = [dict valueForKey:@"thruDate"];
-     
-     lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-     lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"+0000" withString:@""];
-     
-     //            lastViewedString=[NSString stringWithFormat:@"%@ %@",newDateString,strDate];
-     
-     
-     
-     parsingFormatter = [NSDateFormatter new];
-     [parsingFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-     date = [parsingFormatter dateFromString:lastViewedString];
-     //            NSLog(@"date: %@", date);
-     
-     displayingFormatter = [NSDateFormatter new];
-     [displayingFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-     display = [displayingFormatter stringFromDate:date];
-     //            NSLog(@"display: %@", display); // 2014-04-18T17:34:19
-     
-     NSLog(@"First Time Out===%@",display);
-     
-     lastViewedString = display;
-     
-     
-     [dateFormatter setDateFormat: @"yyyy-MM-dd hh:mm:ss"];
-     //            [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-     NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
-     NSDate *now = [dateFormatter dateFromString:firstViewd];
-     
-     NSTimeInterval distanceBetweenDates = [lastViewed timeIntervalSinceDate:now];
-     double minutesInAnHour = 60;
-     hoursBetweenDates = hoursBetweenDates + (distanceBetweenDates / minutesInAnHour);
-     
-     NSLog(@"Time: %i", hoursBetweenDates);
-     
-     //    }
-     
-     //    NSLog(@"Minutes BetweenDates: %d", hoursBetweenDates);
-     
-     */
+    */
     
     return cell;
+}
+
+-(NSString*)getTimeIndividual:(NSString*)strDate
+{
+    if ([strDate isKindOfClass:[NSNull class]]) {
+        return @"--";
+    }
+    
+    strDate=[strDate substringFromIndex:11];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"HH:mm:ss xxxx";
+    NSDate *date = [dateFormatter dateFromString:strDate];
+    dateFormatter.dateFormat = @"hh:mm a";
+    strDate = [dateFormatter stringFromDate:date];
+    return strDate;
 }
 
 -(NSString*)getTime:(NSString*)strDate
@@ -450,21 +418,20 @@
     if ([strDate isKindOfClass:[NSNull class]]) {
         return @"--";
     }
-    NSRange range=[strDate rangeOfString:@"T"];
-    strDate=[strDate substringFromIndex:NSMaxRange(range)];
-    range=[strDate rangeOfString:@"+"];
+
+    strDate = [strDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+    strDate = [strDate stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
+    strDate=[strDate substringFromIndex:11];
     
-    NSString * timeZone=[strDate substringFromIndex:NSMaxRange(range)-1];
-    strDate=[strDate substringToIndex:NSMaxRange(range)-1];
-    strDate=[NSString stringWithFormat:@"%@ %@",strDate,timeZone];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"HH:mm:ss xxxx"];
+    dateFormatter.dateFormat = @"HH:mm:ss xxxx";
     NSDate *date = [dateFormatter dateFromString:strDate];
+    dateFormatter.dateFormat = @"hh:mm a";
+    strDate = [dateFormatter stringFromDate:date];
     
-    [dateFormatter setDateFormat:@"HH:mm"];
-    //    newDateString = [dateFormatter stringFromDate:date];
+//    NSLog (@"%@", strDate);
     
-    return [dateFormatter stringFromDate:date];
+    return strDate;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -475,16 +442,16 @@
         
         arrayForStatusData=[[NSMutableArray alloc] init];
         
-        //        arrayForStatusData=[[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"];
+        //arrayForStatusData=[[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"];
         
         for (NSDictionary *dict in [[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"]) {
             [arrayForStatusData addObject:[dict valueForKey:@"fromDate"]];
             [arrayForStatusData addObject:[dict valueForKey:@"thruDate"]];
         }
         
-        NSLog(@"Status Array====%@",arrayForStatusData);
+        arrayForStatusData = [self sortingArrayByDate:arrayForStatusData];
+       
         [_tableVwForIndividual reloadData];
-        
         [_tableVwForIndividual setContentOffset:CGPointZero animated:NO];
         
         ///Date Parsing
@@ -498,64 +465,25 @@
         NSString *newDateString = [dateFormatter stringFromDate:date];
         _lblEntryDate.text=newDateString;
         //////
-        
-        //        newDateString = [self getTime:[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedStartDate"]];
-        
+    
         if (![[arrayForStatusData objectAtIndex:0] isKindOfClass:[NSNull class]]) {
-            newDateString = [self getTime:[arrayForStatusData objectAtIndex:0]];
+            newDateString = [self getTimeIndividual:[arrayForStatusData objectAtIndex:0]];
         }else{
             newDateString = @"--";
         }
-        
-        
-        
-        
-        
         _lblTimeIn.text=[NSString stringWithFormat:@"Time In: %@",newDateString];
         
-        //        newDateString = [self getTime:[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"]];
-        //
         if (![[arrayForStatusData lastObject] isKindOfClass:[NSNull class]]) {
-            newDateString = [self getTime:[arrayForStatusData lastObject]];
+            newDateString = [self getTimeIndividual:[arrayForStatusData lastObject]];
         }else{
             newDateString = @"--";
         }
-        
         _lblTimeOut.text=[NSString stringWithFormat:@"Time Out: %@",newDateString];
-        ////
         
-        /*   ////////Calculating Hours and Minutes
-         NSInteger hoursBetweenDates=0;
-         NSString *lastViewedString = [[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
-         lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-         lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"+" withString:@" +"];
-         // NSLog(@"Complete Date===%@",lastViewedString);
-         
-         NSString *startViewedString = [[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedStartDate"];
-         startViewedString = [startViewedString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-         startViewedString = [startViewedString stringByReplacingOccurrencesOfString:@"+" withString:@" +"];
-         //    NSLog(@"Start Date===%@",startViewedString);
-         
-         [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss zzz"];
-         
-         NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
-         NSDate *now = [dateFormatter dateFromString:startViewedString];
-         NSTimeInterval distanceBetweenDates = [lastViewed timeIntervalSinceDate:now];
-         double minutesInAnHour = 60;
-         hoursBetweenDates = distanceBetweenDates / minutesInAnHour;
-         int hour = hoursBetweenDates / 60;
-         int min = hoursBetweenDates % 60;
-         NSString *timeString = [NSString stringWithFormat:@"%dh %02dm", hour, min];
-         //    NSLog(@"Time: %@", timeString);
-         
-         _lblTotalTime.text=timeString;
-         
-         if (![[arrayForStatusData lastObject] isKindOfClass:[NSNull class]]) {
-         
-         }else{
-         _lblTotalTime.text = @"--";
-         }
-         */
+        MKHistoryCustomCell *cell=(MKHistoryCustomCell*)[tableView cellForRowAtIndexPath:indexPath];
+        _lblTotalTime.text = cell.lblTotalTime.text;
+        
+        /*
         NSArray *array=[[NSArray alloc] init];
         NSInteger   hoursBetweenDates = 0;
         
@@ -565,15 +493,15 @@
         
         firstViewd=[NSString stringWithFormat:@"%@",[[array objectAtIndex:0] valueForKey:@"fromDate"]];
         firstViewd = [firstViewd stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-        firstViewd = [firstViewd stringByReplacingOccurrencesOfString:@"+0000" withString:@""];
+        firstViewd = [firstViewd stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
         
         NSString *lastViewedString;
         
         lastViewedString=[NSString stringWithFormat:@"%@",[[array lastObject] valueForKey:@"thruDate"]];
         lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-        lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"+0000" withString:@""];
+        lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
         
-        [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+        [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss xxxx"];
         
         
         NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
@@ -599,10 +527,45 @@
         
         if ([timeString isEqualToString:@"0h 00m"]) {
             _lblTotalTime.text=[NSString stringWithFormat:@"--"];
-        }
-        
+        }         */
     }
 }
+
+-(NSMutableArray*)sortingArrayByDate:(NSMutableArray*)array{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss xxxx"];
+    
+    NSMutableArray *tempArray = [NSMutableArray array];
+    
+    // fast enumeration of the array
+    for (NSString *dateString in array) {
+        if (![dateString isKindOfClass:[NSNull class]]){
+            NSString *str=dateString;
+            str = [str stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+            str = [str stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
+            NSDate *date = [formatter dateFromString:str];
+            [tempArray addObject:date];
+        }
+    }
+    
+    // sort the array of dates
+    [tempArray sortUsingComparator:^NSComparisonResult(NSDate *date1, NSDate *date2) {
+        // return date2 compare date1 for descending. Or reverse the call for ascending.
+        return [date2 compare:date1];
+    }];
+    
+    //        NSLog(@"%@", [[tempArray reverseObjectEnumerator] allObjects]);
+    
+    tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
+    NSMutableArray *correctOrderStringArray = [NSMutableArray array];
+    
+    for (NSDate *date in tempArray) {
+        NSString *dateString = [formatter stringFromDate:date];
+        [correctOrderStringArray addObject:dateString];
+    }
+    return correctOrderStringArray;
+}
+
 
 #pragma mark - Get History
 
@@ -622,7 +585,6 @@
     
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",[dict valueForKey:@"username"]);
-    
     
     NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=%i&pageSize=10",[dict valueForKey:@"username"],pageNumber];
     

@@ -18,7 +18,7 @@
     UIImage *imgToSend;
     NSString *imgPathToSend;
     BOOL boolValueForInLocationOrNot;
-    NSTimer *timerForShiftTime;
+    NSTimer *timerForShiftTime,*timerForLocation;
     NSMutableArray *arrayForStatusData;
     AVCaptureSession *captureSession;
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
@@ -96,7 +96,6 @@
     _vwForCamera.hidden = YES;
     _backBtn.hidden = YES;
     
-    
     _cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
     _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
     _cameraBtn.layer.masksToBounds = YES;
@@ -105,9 +104,12 @@
     _tableVwForTimeline.tableFooterView = [[UIView alloc] init];
     
     _vwForTimer.backgroundColor=[[UIColor whiteColor] colorWithAlphaComponent:0.7];
-    [self checkStatus];
     
-       [self startTimedTask];
+    [self checkStatus];
+    [self startTimedTask];
+    
+    [self checkLocation];
+    timerForLocation= [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateLocationBackground) userInfo:nil repeats:YES];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -134,13 +136,29 @@
 
 #pragma mark - Background Task
 
-- (void)startTimedTask
-{
-    timerForShiftTime= [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkStatus) userInfo:nil repeats:YES];
+
+-(void)updateLocationBackground{
+    UIApplication*    app = [UIApplication sharedApplication];
+    __block UIBackgroundTaskIdentifier task;
+    task = [app beginBackgroundTaskWithExpirationHandler:^{
+        [app endBackgroundTask:task];
+        task = UIBackgroundTaskInvalid;
+    }];
+    // Start the long-running task and return immediately.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        CLLocationCoordinate2D coordinate=[self getLocation];
+         NSLog(@"Location Updates====%f,%f",coordinate.latitude,coordinate.longitude);
+        strForCurLatitude=[NSString stringWithFormat:@"%f",coordinate.latitude];
+        strForCurLongitude=[NSString stringWithFormat:@"%f",coordinate.longitude];
+        [app endBackgroundTask:task];
+        task = UIBackgroundTaskInvalid;
+    });
+            [self checkLocation];
 }
 
-
-
+- (void)startTimedTask{
+    timerForShiftTime= [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(checkStatus) userInfo:nil repeats:YES];
+}
 
 -(void)startBackgroundTask{
     UIApplication*    app = [UIApplication sharedApplication];
@@ -326,7 +344,7 @@
     cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
     
     if (![[arrayForStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
-        cell.lblForTime.text= [self getTime:[arrayForStatusData objectAtIndex:indexPath.row]];
+        cell.lblForTime.text= [self getTimeIndividual:[arrayForStatusData objectAtIndex:indexPath.row]];
     }else{
         cell.lblForTime.text=@"";
         cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
@@ -335,7 +353,27 @@
     }
     return cell;
 }
-
+-(NSString*)getTimeIndividual:(NSString*)strDate
+{
+    if ([strDate isKindOfClass:[NSNull class]]) {
+        return @"--";
+    }
+    
+    
+    //    strDate = [strDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+    //    strDate = [strDate stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
+    strDate=[strDate substringFromIndex:11];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"HH:mm:ss xxxx";
+    NSDate *date = [dateFormatter dateFromString:strDate];
+    dateFormatter.dateFormat = @"hh:mm a";
+    strDate = [dateFormatter stringFromDate:date];
+    
+    //    NSLog (@"%@", strDate);
+    
+    return strDate;
+}
 -(NSString*)getTime:(NSString*)strDate
 {
     //    strDate=[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
@@ -351,7 +389,7 @@
     [dateFormatter setDateFormat:@"HH:mm:ss xxxx"];
     NSDate *date = [dateFormatter dateFromString:strDate];
     
-    [dateFormatter setDateFormat:@"hh:mm"];
+    [dateFormatter setDateFormat:@"hh:mm a"];
     //    newDateString = [dateFormatter stringFromDate:date];
     
     return [dateFormatter stringFromDate:date];
@@ -375,7 +413,7 @@
    
     if (distance <= radiusForStore && distance >= 0){
         
-        //        NSLog(@"You are within 100 meters (actually %.0f meters) of Store", distance);
+                NSLog(@"You are within Geofence (actually %.0f meters) of Store", distance);
         _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
         _lblForStoreLocation.text=[dictForStoreDetails valueForKey:@"storeName"];
         _lblForStoreLocation.textColor=[UIColor whiteColor];
@@ -385,7 +423,7 @@
         
     }else{
         
-        //        NSLog(@"You are not within 100 meters (actually %.0f meters) of Store", distance);
+                NSLog(@"You are not within Geofence (actually %.0f meters) of Store", distance);
         _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
         _lblForStoreLocation.text=@"Off site";
         _lblForStoreLocation.textColor=[UIColor darkGrayColor];
@@ -407,15 +445,12 @@
     }
     
     
-    
     [[MKSharedClass shareManager] setDictForCheckInLoctn:dictToSendLctnStatus];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"LocationChecking" object:self userInfo:dictToSendLctnStatus];
     
     NSDictionary *statusData=[self getStatus];
-    
-    
-    
+
     NSMutableArray *arrayForTimeLine=[self getTimeLineData];
     
     NSDictionary *dictForBeforelast=[[NSDictionary alloc] init];
@@ -450,13 +485,13 @@
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
     NSLog(@"Entered Region - %@", region.identifier);
     [self showRegionAlert:@"Entering Region" forRegion:region.identifier];
-    [self checkLocation];
+//    [self checkLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
     NSLog(@"Exited Region - %@", region.identifier);
     [self showRegionAlert:@"Exiting Region" forRegion:region.identifier];
-    [self checkLocation];
+//    [self checkLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
@@ -477,6 +512,11 @@
     locationManager.delegate = self;
     locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     locationManager.distanceFilter = kCLDistanceFilterNone;
+    locationManager.allowsBackgroundLocationUpdates = YES;
+     [locationManager requestAlwaysAuthorization];
+    if([locationManager respondsToSelector:@selector(allowsBackgroundLocationUpdates)]){
+        [locationManager setAllowsBackgroundLocationUpdates:YES];
+    }
     [locationManager startUpdatingLocation];
     CLLocation *location = [locationManager location];
     CLLocationCoordinate2D coordinate = [location coordinate];
@@ -484,7 +524,7 @@
 }
 
 -(void)updateLocationManagerr{
-    [locationManager startUpdatingLocation];
+   
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate=self;
     locationManager.desiredAccuracy=kCLLocationAccuracyBest;
@@ -492,6 +532,11 @@
     //#ifdef __IPHONE_8_0
     [locationManager requestAlwaysAuthorization];
     //#endif
+     locationManager.allowsBackgroundLocationUpdates = YES;
+    if([locationManager respondsToSelector:@selector(allowsBackgroundLocationUpdates)]){
+        [locationManager setAllowsBackgroundLocationUpdates:YES];
+    }
+    
     [locationManager startUpdatingLocation];
 }
 
@@ -503,7 +548,16 @@
     strForCurLongitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
     
     //    [self showingCurrentLocation];
+    
+//    NSLog(@"Location Updates====%@,%@",strForCurLatitude,strForCurLongitude);
     [self checkLocation];
+}
+
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    
+    NSLog(@"Location Updates====%@,%@",strForCurLatitude,strForCurLongitude);
+
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -587,7 +641,7 @@
         [alertLocation show];
     }
     
-    [self checkLocation];
+//    [self checkLocation];
     
 }
 
@@ -1096,12 +1150,9 @@
         imgData=[UIImagePNGRepresentation(imgToSend) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     }
     
-    
     if (productStoreId.length>0) {
         
-    
-    
-    NSDictionary * json = @{@"username":userName,
+        NSDictionary * json = @{@"username":userName,
                             @"clockDate":strCurrentTime,
                             @"workEffortTypeEnumId":@"WetAvailable",
                             @"purposeEnumId":@"WepAttendance",
@@ -1113,11 +1164,6 @@
                             @"longitude":strForCurLongitude,
                             @"issend":@"0",
                             };
-    
-    
-    
-    //    NSLog(@"Saved Data====%@",json);
-    
     //  actiontype clockdate comments latitude longitude productstoreid actionimage username
     
     self.timeLineDataEntity = [NSEntityDescription entityForName:@"TimeLineData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
@@ -1319,7 +1365,6 @@
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
 //    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     firstViewd=[dateFormatter stringFromDate:now];
-    
     
     
     NSString *lastViewedString;
@@ -1524,9 +1569,9 @@
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
 
     //estimatedStartDate=2016-12-11 00:00:00&estimatedCompletionDate=2016-12-11 23:50:59
-    NSString *startDate=[NSString stringWithFormat:@"estimatedStartDate=%@ 00:00:00",[dateFormatter stringFromDate:now]];
+//    NSString *startDate=[NSString stringWithFormat:@"estimatedStartDate=%@ 00:00:00",[dateFormatter stringFromDate:now]];
     
-    NSString *endDate=[NSString stringWithFormat:@"estimatedCompletionDate=%@ 23:50:59",[dateFormatter stringFromDate:now]];
+//    NSString *endDate=[NSString stringWithFormat:@"estimatedCompletionDate=%@ 23:50:59",[dateFormatter stringFromDate:now]];
     
     NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=0&pageSize=1",[dict valueForKey:@"username"]];
     
@@ -1537,9 +1582,7 @@
     
     //====================================================RESPONSE
     
-    
     [DejalBezelActivityView activityViewForView:self.view];
-    
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     
@@ -1566,6 +1609,43 @@
             [arrayForStatusData addObject:[dict valueForKey:@"fromDate"]];
             [arrayForStatusData addObject:[dict valueForKey:@"thruDate"]];
         }
+        
+        [arrayForStatusData removeObjectIdenticalTo:[NSNull null]];
+        
+        // create the date formatter with the correct format
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss xxxx"];
+        NSMutableArray *tempArray = [NSMutableArray array];
+        
+        // fast enumeration of the array
+        for (NSString *dateString in arrayForStatusData) {
+            if (![dateString isKindOfClass:[NSNull class]]) {
+                NSString *str=dateString;
+                str = [str stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+                str = [str stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
+                
+                NSDate *date = [formatter dateFromString:str];
+                [tempArray addObject:date];
+            }
+        }
+        
+        // sort the array of dates
+        [tempArray sortUsingComparator:^NSComparisonResult(NSDate *date1, NSDate *date2) {
+            // return date2 compare date1 for descending. Or reverse the call for ascending.
+            return [date2 compare:date1];
+        }];
+        
+        //        NSLog(@"%@", [[tempArray reverseObjectEnumerator] allObjects]);
+        
+        tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
+        NSMutableArray *correctOrderStringArray = [NSMutableArray array];
+        
+        for (NSDate *date in tempArray) {
+            NSString *dateString = [formatter stringFromDate:date];
+            [correctOrderStringArray addObject:dateString];
+        }
+        
+        arrayForStatusData = [correctOrderStringArray mutableCopy];
         
         _tableVwForTimeline.delegate= self;
         _tableVwForTimeline.dataSource = self;

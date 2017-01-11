@@ -1082,8 +1082,8 @@
 			baseConfigurationReference = 36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: AppsXpress Ltd (578257FC2T)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: AppsXpress Ltd (578257FC2T)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1096,7 +1096,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager @rpath/RSDayFlow.framework/RSDayFlow";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTrackerios;
 				PRODUCT_NAME = "Field Tracker";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "93be3a31-4246-43d0-9758-6973327e8a30";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1106,8 +1106,8 @@
 			baseConfigurationReference = 5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: AppsXpress Ltd (578257FC2T)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: AppsXpress Ltd (578257FC2T)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1120,7 +1120,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager @rpath/RSDayFlow.framework/RSDayFlow";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTrackerios;
 				PRODUCT_NAME = "Field Tracker";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "93be3a31-4246-43d0-9758-6973327e8a30";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
