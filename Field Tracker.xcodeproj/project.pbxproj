@@ -547,8 +547,7 @@
 				7FFB54701E092EBC00A930C7 /* Supporting Files */,
 				7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */,
 			);
-			name = FieldTracker;
-			path = OppoAttendanceTracker;
+			path = FieldTracker;
 			sourceTree = "<group>";
 		};
 		7FFB54701E092EBC00A930C7 /* Supporting Files */ = {
@@ -565,8 +564,7 @@
 				7FFB548A1E092EBC00A930C7 /* FieldTrackerTests.m */,
 				7FFB548C1E092EBC00A930C7 /* Info.plist */,
 			);
-			name = FieldTrackerTests;
-			path = OppoAttendanceTrackerTests;
+			path = FieldTrackerTests;
 			sourceTree = "<group>";
 		};
 		7FFB54941E092EBC00A930C7 /* FieldTrackerUITests */ = {
@@ -575,8 +573,7 @@
 				7FFB54951E092EBC00A930C7 /* FieldTrackerUITests.m */,
 				7FFB54971E092EBC00A930C7 /* Info.plist */,
 			);
-			name = FieldTrackerUITests;
-			path = OppoAttendanceTrackerUITests;
+			path = FieldTrackerUITests;
 			sourceTree = "<group>";
 		};
 		7FFB54A31E092F4800A930C7 /* ImageAssets */ = {
@@ -1089,8 +1086,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				GCC_PREFIX_HEADER = OppoAttendanceTracker/PrefixHeader.pch;
-				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
+				GCC_PREFIX_HEADER = FieldTracker/PrefixHeader.pch;
+				INFOPLIST_FILE = FieldTracker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager @rpath/RSDayFlow.framework/RSDayFlow";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTrackerios;
@@ -1113,8 +1110,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				GCC_PREFIX_HEADER = OppoAttendanceTracker/PrefixHeader.pch;
-				INFOPLIST_FILE = OppoAttendanceTracker/Info.plist;
+				GCC_PREFIX_HEADER = FieldTracker/PrefixHeader.pch;
+				INFOPLIST_FILE = FieldTracker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager @rpath/RSDayFlow.framework/RSDayFlow";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTrackerios;
