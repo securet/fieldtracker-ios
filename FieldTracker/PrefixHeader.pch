@@ -1,0 +1,24 @@
+//
+//  PrefixHeader.pch
+//  OppoAttendanceTracker
+//
+//  Created by User1 on 12/22/16.
+//
+//
+
+
+
+#import <Availability.h>
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
+#import "AppDelegate.h"
+
+#import "BIZPopupViewController.h"
+#import "MKSharedClass.h"
+#import "AFNetworking.h"
+#import "DejalActivityView.h"
+#import "UIScrollView+DXRefresh.h"
+
+#endif
