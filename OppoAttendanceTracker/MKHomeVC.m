@@ -70,10 +70,6 @@
    // mapView.myLocationEnabled = YES;
     mapView.delegate=self;
     
-    
-
-    
-    
     GMSMarker *markerCar = [[GMSMarker alloc] init];
     markerCar.icon=[UIImage imageNamed:@"location_marker"];
     [CATransaction begin];
@@ -295,7 +291,6 @@
 #pragma mark _ UITableView
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return arrayForStatusData.count;
-    
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -359,7 +354,6 @@
         return @"--";
     }
     
-    
     //    strDate = [strDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     //    strDate = [strDate stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
     strDate=[strDate substringFromIndex:11];
@@ -370,10 +364,9 @@
     dateFormatter.dateFormat = @"hh:mm a";
     strDate = [dateFormatter stringFromDate:date];
     
-    //    NSLog (@"%@", strDate);
-    
     return strDate;
 }
+
 -(NSString*)getTime:(NSString*)strDate
 {
     //    strDate=[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
@@ -635,14 +628,12 @@
         geoFenceCircle.strokeColor = [UIColor blueColor];
         geoFenceCircle.map = mapView; // Add it to
         
-        
     }else{
         UIAlertView *alertLocation=[[UIAlertView alloc]initWithTitle:@"" message:@"Please Enable Location Access" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertLocation show];
     }
     
 //    [self checkLocation];
-    
 }
 
 - (IBAction)onClickTimeIn:(UIButton *)sender {
@@ -980,26 +971,16 @@
         [self timeLineUpdating:dictToSend withIndex:indexValue];
     }else{
         
-        
-        //    [DejalBezelActivityView activityViewForView:self.view];
-        
-        
-        
         // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
         NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
         [_params setObject:@"Time_Line" forKey:@"purpose"];
-        
         // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
         NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
-        
         // string constant for the post parameter 'snapshotFile'. My server uses this name: `snapshotFile`. Your's may differ
         NSString* FileParamConstant = @"snapshotFile";
-        
         // the server url to which the image (or the media) is uploaded. Use your server url here
-        
         NSString *stringURL=[NSString stringWithFormat:@"%@/apps/ft/Requests/uploadImage",APPDELEGATE.Base_URL];
         NSURL* requestURL = [NSURL URLWithString:stringURL];
-        
         // create request
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
@@ -1015,7 +996,6 @@
         NSString *str=[defaults valueForKey:@"BasicAuth"];
         [request setValue:str forHTTPHeaderField:@"Authorization"];
         
-        
         // post body
         NSMutableData *body = [NSMutableData data];
         
@@ -1025,10 +1005,8 @@
             [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
             [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
         }
-        
         // add image data
         NSString *base64Encoded = [dictToSend valueForKey:@"actionimage"];
-        
         NSData *imageData = [[NSData alloc] initWithBase64EncodedString:base64Encoded options:NSDataBase64DecodingIgnoreUnknownCharacters];
         
         if (imageData) {
@@ -1043,17 +1021,9 @@
         
         // setting the body of the post to the reqeust
         [request setHTTPBody:body];
-        
-        // set the content-length
         NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
         [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-        
-        // set URL
         [request setURL:requestURL];
-        
-        // NSString *postLength = [NSString stringWithFormat:@"%d", [postData length]];
-        
-        
         [request setHTTPBody:body];
         
         NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]];
@@ -1083,37 +1053,26 @@
                             imgPathToSend=[jsonData valueForKey:@"savedFilename"];
                             [self timeLineUpdating:dictToSend withIndex:indexValue];
                         }
-                        
                     }]
          resume];
-        
     }
-    
 }
 #pragma mark - Database Handling
 
 -(void)saveDataIntoLocal:(BOOL)fromInLoctnOrOutLoctn{
     
     NSError *error = nil;
-    
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    
     NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
-    
     NSString *userName=[dict valueForKey:@"username"];
     NSString *productStoreId=[dictForStoreDetails valueForKey:@"productStoreId"];
-    
     NSDate *now = [NSDate date];
-    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
 //    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
-    
     NSString *strCurrentTime=[dateFormatter stringFromDate:now];
-    
     NSString *actionType;
     NSString *comments;
     //    NSString *statusData;
@@ -1123,9 +1082,7 @@
         comments=@"Time In";
         actionType=@"clockIn";
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
-        
         if (fromInLoctnOrOutLoctn) {
-            
             if (boolValueForInLocationOrNot) {
                 comments=@"InLocation";
                 actionType=@"clockIn";
@@ -1133,7 +1090,6 @@
                 comments=@"OutLocation";
                 actionType=@"clockOut";
             }
-            
         }else{
             comments=@"Time Out";
             actionType=@"clockOut";
@@ -1194,41 +1150,28 @@
         [karthikManagedObject setValue:[NSString stringWithFormat:@"Time In"] forKey:@"comments"];
         
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
-        
         if (([[dictData valueForKey:@"comments"] isEqualToString:@"Time In"] || [[dictData valueForKey:@"comments"] isEqualToString:@"Time Out"]) && fromInLoctnOrOutLoctn) {
-            
             if (boolValueForInLocationOrNot) {
                 [karthikManagedObject setValue:[NSString stringWithFormat:@"Time In"] forKey:@"comments"];
             }else{
                 [karthikManagedObject setValue:[NSString stringWithFormat:@"Time Out"] forKey:@"comments"];
             }
-            
             [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeIn"] forKey:@"status"];
-            
         }else{
-            
             [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeOut"] forKey:@"status"];
         }
-        
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
-        
         [karthikManagedObject setValue:[NSString stringWithFormat:@"TimeIn"] forKey:@"status"];
         [karthikManagedObject setValue:[NSString stringWithFormat:@"Time In"] forKey:@"comments"];
     }
-    
     [karthikManagedObject setValue:strCurrentTime forKey:@"time"];
     [karthikManagedObject.managedObjectContext save:&error];
-    
     
     imgPathToSend=@"";
     imgToSend=nil;
     [self checkStatus];
-    
-    
     [self startBackgroundTask];
-    
     [self startTimedTask];
-        
     }
 }
 
@@ -1243,20 +1186,14 @@
     NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
     
     NSMutableDictionary *dict=[[NSMutableDictionary alloc] init];
-    
     for (NSManagedObject * fetRec  in result) {
         statusData=[fetRec valueForKey:@"status"];
         [dict setValue:statusData forKey:@"status"];
-        
         statusData=[fetRec valueForKey:@"comments"];
         [dict setValue:statusData forKey:@"comments"];
-        
-        
         statusData=[fetRec valueForKey:@"time"];
         [dict setValue:statusData forKey:@"time"];
     }
-    
-    
     //    NSLog(@"Status Data====%@",dict);
     if ([dict valueForKey:@"status"]) {
         if ([[dict valueForKey:@"status"] isEqualToString:@"TimeOut"]) {
@@ -1264,7 +1201,6 @@
             [timerForShiftTime invalidate];
         }
     }
-    
     return dict;
 }
 
@@ -1277,7 +1213,6 @@
     self.timeLineDataEntity=[NSEntityDescription entityForName:@"TimeLineData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
     NSFetchRequest * fr = [[NSFetchRequest alloc]init];
     [fr setEntity:self.timeLineDataEntity];
-    
     
     NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
     
@@ -1295,7 +1230,6 @@
         [dict setValue:[fetRec valueForKey:@"issend"] forKey:@"issend"];
         [arrayOfData addObject:dict];
     }
-    
     //    for (NSDictionary*dict in arrayOfData) {
     //        NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
     //        NSLog(@"User Name===%@",[dict valueForKey:@"actiontype"]);
@@ -1306,30 +1240,21 @@
     //        NSLog(@"productstoreid===%@",[dict valueForKey:@"productstoreid"]);
     //        NSLog(@"issend===%@",[dict valueForKey:@"issend"]);
     //    }
-    
     return arrayOfData;
 }
 
 -(void)updateDatabase:(NSInteger)index{
     
     NSArray* response;
-    
     NSError *error=nil;
-    
     NSManagedObjectContext *managedObjectContext = APPDELEGATE.managedObjectContext;
-    
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"TimeLineData"];
-    
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(issend == issend)"];
-    
     [fetchRequest setPredicate:predicate];
-    
     response = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
-    
     [[response objectAtIndex:index] setValue:@"1" forKey:@"issend"];
     [managedObjectContext save:&error];
 }
-
 
 -(void)checkStatus{
     NSDictionary *statusData=[self getStatus];
@@ -1366,22 +1291,17 @@
 //    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     firstViewd=[dateFormatter stringFromDate:now];
     
-    
     NSString *lastViewedString;
     lastViewedString=time;
-    
     NSInteger   hoursBetweenDates = 0;
-    
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
     NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
     now = [dateFormatter dateFromString:firstViewd];
     NSTimeInterval distanceBetweenDates = [now timeIntervalSinceDate:lastViewed];
     double minutesInAnHour = 60;
     hoursBetweenDates = (distanceBetweenDates / minutesInAnHour);
-    
     int hour = hoursBetweenDates / 60;
     int min = hoursBetweenDates % 60;
-    
     int sec = [[firstViewd substringFromIndex:17] intValue] - [[lastViewedString substringFromIndex:17] intValue];
     if ([[firstViewd substringFromIndex:17] intValue] > [[lastViewedString substringFromIndex:17] intValue]) {
         sec = [[firstViewd substringFromIndex:17] intValue] - [[lastViewedString substringFromIndex:17] intValue];
@@ -1469,19 +1389,12 @@
     }
     
     NSString *username=[dataToSend valueForKey:@"username"];
-    
     NSString *productStoreId=[dataToSend valueForKey:@"productstoreid"];
-    
     NSString *strCurrentTime=[dataToSend valueForKey:@"clockdate"];
-    
     NSString *comments=[dataToSend valueForKey:@"comments"];
-    
     NSString *actionType=[dataToSend valueForKey:@"actiontype"];
-    
     NSString *latitude=[dataToSend valueForKey:@"latitude"];
-    
     NSString *longitude=[dataToSend valueForKey:@"longitude"];
-    
     
     NSDictionary * json = @{@"username":username,
                             @"clockDate":strCurrentTime,
@@ -1512,11 +1425,8 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        
         [DejalBezelActivityView removeView];
         NSLog(@"Add Store Successfully==%@",JSON);
-        
-        
         [self updateDatabase:indexValue];
         imgPathToSend=@"";
     }

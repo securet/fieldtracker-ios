@@ -56,8 +56,8 @@
 		7FFB547B1E092EBC00A930C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB54791E092EBC00A930C7 /* Main.storyboard */; };
 		7FFB547D1E092EBC00A930C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB547C1E092EBC00A930C7 /* Assets.xcassets */; };
 		7FFB54801E092EBC00A930C7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB547E1E092EBC00A930C7 /* LaunchScreen.storyboard */; };
-		7FFB548B1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB548A1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m */; };
-		7FFB54961E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */; };
+		7FFB548B1E092EBC00A930C7 /* FieldTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB548A1E092EBC00A930C7 /* FieldTrackerTests.m */; };
+		7FFB54961E092EBC00A930C7 /* FieldTrackerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54951E092EBC00A930C7 /* FieldTrackerUITests.m */; };
 		7FFB54A51E092F7700A930C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB54A41E092F7700A930C7 /* Images.xcassets */; };
 		7FFB54CB1E0933B400A930C7 /* IQNSArray+Sort.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54AD1E0933B400A930C7 /* IQNSArray+Sort.m */; };
 		7FFB54CC1E0933B400A930C7 /* IQUIView+Hierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54AF1E0933B400A930C7 /* IQUIView+Hierarchy.m */; };
@@ -92,9 +92,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.release.xcconfig"; sourceTree = "<group>"; };
 		36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.debug.xcconfig"; sourceTree = "<group>"; };
-		489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OppoAttendanceTracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OppoAttendanceTracker/Pods-OppoAttendanceTracker.debug.xcconfig"; sourceTree = "<group>"; };
 		5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.release.xcconfig"; sourceTree = "<group>"; };
 		7F04BA3F1E12203200679905 /* DejalActivityView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DejalActivityView.h; sourceTree = "<group>"; };
 		7F04BA401E12203200679905 /* DejalActivityView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DejalActivityView.m; sourceTree = "<group>"; };
@@ -191,10 +189,10 @@
 		7FFB547F1E092EBC00A930C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7FFB54811E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7FFB54861E092EBC00A930C7 /* Field Tracker.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Field Tracker.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7FFB548A1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OppoAttendanceTrackerTests.m; sourceTree = "<group>"; };
+		7FFB548A1E092EBC00A930C7 /* FieldTrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FieldTrackerTests.m; sourceTree = "<group>"; };
 		7FFB548C1E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7FFB54911E092EBC00A930C7 /* Field Tracker.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Field Tracker.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OppoAttendanceTrackerUITests.m; sourceTree = "<group>"; };
+		7FFB54951E092EBC00A930C7 /* FieldTrackerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FieldTrackerUITests.m; sourceTree = "<group>"; };
 		7FFB54971E092EBC00A930C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7FFB54A41E092F7700A930C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		7FFB54A81E09338200A930C7 /* KeyboardManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KeyboardManager.framework; path = ../KeyboardManager.framework; sourceTree = "<group>"; };
@@ -271,8 +269,6 @@
 		6DD7983B09A6BAE248205E4C /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				489AE62006A5509B72619D6E /* Pods-OppoAttendanceTracker.debug.xcconfig */,
-				2DED812F7E0DD8567B3338CC /* Pods-OppoAttendanceTracker.release.xcconfig */,
 				36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */,
 				5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */,
 			);
@@ -509,9 +505,9 @@
 		7FFB54641E092EBC00A930C7 = {
 			isa = PBXGroup;
 			children = (
-				7FFB546F1E092EBC00A930C7 /* OppoAttendanceTracker */,
-				7FFB54891E092EBC00A930C7 /* OppoAttendanceTrackerTests */,
-				7FFB54941E092EBC00A930C7 /* OppoAttendanceTrackerUITests */,
+				7FFB546F1E092EBC00A930C7 /* FieldTracker */,
+				7FFB54891E092EBC00A930C7 /* FieldTrackerTests */,
+				7FFB54941E092EBC00A930C7 /* FieldTrackerUITests */,
 				7FFB546E1E092EBC00A930C7 /* Products */,
 				6DD7983B09A6BAE248205E4C /* Pods */,
 				4201B161AF5C4B6DB38A12E0 /* Frameworks */,
@@ -528,7 +524,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		7FFB546F1E092EBC00A930C7 /* OppoAttendanceTracker */ = {
+		7FFB546F1E092EBC00A930C7 /* FieldTracker */ = {
 			isa = PBXGroup;
 			children = (
 				7FA481D51E162FBB00345BCE /* CoreData */,
@@ -551,6 +547,7 @@
 				7FFB54701E092EBC00A930C7 /* Supporting Files */,
 				7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */,
 			);
+			name = FieldTracker;
 			path = OppoAttendanceTracker;
 			sourceTree = "<group>";
 		};
@@ -562,21 +559,23 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		7FFB54891E092EBC00A930C7 /* OppoAttendanceTrackerTests */ = {
+		7FFB54891E092EBC00A930C7 /* FieldTrackerTests */ = {
 			isa = PBXGroup;
 			children = (
-				7FFB548A1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m */,
+				7FFB548A1E092EBC00A930C7 /* FieldTrackerTests.m */,
 				7FFB548C1E092EBC00A930C7 /* Info.plist */,
 			);
+			name = FieldTrackerTests;
 			path = OppoAttendanceTrackerTests;
 			sourceTree = "<group>";
 		};
-		7FFB54941E092EBC00A930C7 /* OppoAttendanceTrackerUITests */ = {
+		7FFB54941E092EBC00A930C7 /* FieldTrackerUITests */ = {
 			isa = PBXGroup;
 			children = (
-				7FFB54951E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m */,
+				7FFB54951E092EBC00A930C7 /* FieldTrackerUITests.m */,
 				7FFB54971E092EBC00A930C7 /* Info.plist */,
 			);
+			name = FieldTrackerUITests;
 			path = OppoAttendanceTrackerUITests;
 			sourceTree = "<group>";
 		};
@@ -946,7 +945,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7FFB548B1E092EBC00A930C7 /* OppoAttendanceTrackerTests.m in Sources */,
+				7FFB548B1E092EBC00A930C7 /* FieldTrackerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -954,7 +953,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7FFB54961E092EBC00A930C7 /* OppoAttendanceTrackerUITests.m in Sources */,
+				7FFB54961E092EBC00A930C7 /* FieldTrackerUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
