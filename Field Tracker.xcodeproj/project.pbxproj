@@ -25,7 +25,6 @@
 		7F04BA7A1E1221A700679905 /* TPKeyboardAvoidingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA721E1221A700679905 /* TPKeyboardAvoidingTableView.m */; };
 		7F04BA7B1E1221A700679905 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA741E1221A700679905 /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
 		7F04BA7C1E1221A700679905 /* UIViewController+BIZChildViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA761E1221A700679905 /* UIViewController+BIZChildViewController.m */; };
-		7F04BA841E1222F400679905 /* MKAddStoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA831E1222F400679905 /* MKAddStoreVC.m */; };
 		7F04BA881E12232C00679905 /* MKHomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA871E12232C00679905 /* MKHomeVC.m */; };
 		7F04BA8B1E12234400679905 /* MKHistoryVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA8A1E12234400679905 /* MKHistoryVC.m */; };
 		7F04BA911E12235A00679905 /* MKHistoryCustomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BA8E1E12235A00679905 /* MKHistoryCustomCell.m */; };
@@ -41,6 +40,7 @@
 		7FA481D41E162EF200345BCE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA481D31E162EF200345BCE /* CoreData.framework */; };
 		7FA481D81E162FE400345BCE /* FieldTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7FA481D61E162FE400345BCE /* FieldTracker.xcdatamodeld */; };
 		7FB6AB181E2F395000C0E270 /* Location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7FB6AB171E2F395000C0E270 /* Location.gpx */; };
+		7FB6AB241E2F3C6F00C0E270 /* MKAddStoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AB231E2F3C6F00C0E270 /* MKAddStoreVC.m */; };
 		7FC8108B1E24ED7800097144 /* JSBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FC8108A1E24ED7800097144 /* JSBadgeView.m */; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
@@ -131,8 +131,6 @@
 		7F04BA741E1221A700679905 /* UIScrollView+TPKeyboardAvoidingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+TPKeyboardAvoidingAdditions.m"; sourceTree = "<group>"; };
 		7F04BA751E1221A700679905 /* UIViewController+BIZChildViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+BIZChildViewController.h"; sourceTree = "<group>"; };
 		7F04BA761E1221A700679905 /* UIViewController+BIZChildViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+BIZChildViewController.m"; sourceTree = "<group>"; };
-		7F04BA821E1222F400679905 /* MKAddStoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKAddStoreVC.h; path = ../../MKAddStoreVC.h; sourceTree = "<group>"; };
-		7F04BA831E1222F400679905 /* MKAddStoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKAddStoreVC.m; path = ../../MKAddStoreVC.m; sourceTree = "<group>"; };
 		7F04BA861E12232C00679905 /* MKHomeVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKHomeVC.h; path = ../../MKHomeVC.h; sourceTree = "<group>"; };
 		7F04BA871E12232C00679905 /* MKHomeVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKHomeVC.m; path = ../../MKHomeVC.m; sourceTree = "<group>"; };
 		7F04BA891E12234400679905 /* MKHistoryVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKHistoryVC.h; path = ../../MKHistoryVC.h; sourceTree = "<group>"; };
@@ -157,6 +155,8 @@
 		7FA481D31E162EF200345BCE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		7FA481D71E162FE400345BCE /* FieldTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FieldTracker.xcdatamodel; sourceTree = "<group>"; };
 		7FB6AB171E2F395000C0E270 /* Location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Location.gpx; sourceTree = "<group>"; };
+		7FB6AB221E2F3C6F00C0E270 /* MKAddStoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKAddStoreVC.h; sourceTree = "<group>"; };
+		7FB6AB231E2F3C6F00C0E270 /* MKAddStoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKAddStoreVC.m; sourceTree = "<group>"; };
 		7FC810891E24ED7800097144 /* JSBadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBadgeView.h; sourceTree = "<group>"; };
 		7FC8108A1E24ED7800097144 /* JSBadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSBadgeView.m; sourceTree = "<group>"; };
 		7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
@@ -463,8 +463,8 @@
 		7FB6AB201E2F3B3000C0E270 /* Add Edit Store */ = {
 			isa = PBXGroup;
 			children = (
-				7F04BA821E1222F400679905 /* MKAddStoreVC.h */,
-				7F04BA831E1222F400679905 /* MKAddStoreVC.m */,
+				7FB6AB221E2F3C6F00C0E270 /* MKAddStoreVC.h */,
+				7FB6AB231E2F3C6F00C0E270 /* MKAddStoreVC.m */,
 			);
 			path = "Add Edit Store";
 			sourceTree = "<group>";
@@ -907,7 +907,6 @@
 				7F04BA7B1E1221A700679905 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
 				7F04BA571E1220CC00679905 /* AFHTTPRequestOperation.m in Sources */,
 				7FFB54CF1E0933B400A930C7 /* IQKeyboardReturnKeyHandler.m in Sources */,
-				7F04BA841E1222F400679905 /* MKAddStoreVC.m in Sources */,
 				7FFB54D51E0933B400A930C7 /* IQUIView+IQKeyboardToolbar.m in Sources */,
 				7FFB54D21E0933B400A930C7 /* IQBarButtonItem.m in Sources */,
 				7F04BA5C1E1220CC00679905 /* AFURLConnectionOperation.m in Sources */,
@@ -918,6 +917,7 @@
 				7F04BA791E1221A700679905 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				7F04BA881E12232C00679905 /* MKHomeVC.m in Sources */,
 				7FFB54D11E0933B400A930C7 /* IQTextView.m in Sources */,
+				7FB6AB241E2F3C6F00C0E270 /* MKAddStoreVC.m in Sources */,
 				7F04BA8B1E12234400679905 /* MKHistoryVC.m in Sources */,
 				7FFB54CE1E0933B400A930C7 /* IQKeyboardManager.m in Sources */,
 				7F04BA591E1220CC00679905 /* AFJSONRequestOperation.m in Sources */,
