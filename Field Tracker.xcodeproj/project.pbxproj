@@ -131,24 +131,24 @@
 		7F04BA741E1221A700679905 /* UIScrollView+TPKeyboardAvoidingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+TPKeyboardAvoidingAdditions.m"; sourceTree = "<group>"; };
 		7F04BA751E1221A700679905 /* UIViewController+BIZChildViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+BIZChildViewController.h"; sourceTree = "<group>"; };
 		7F04BA761E1221A700679905 /* UIViewController+BIZChildViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+BIZChildViewController.m"; sourceTree = "<group>"; };
-		7F04BA821E1222F400679905 /* MKAddStoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKAddStoreVC.h; sourceTree = "<group>"; };
-		7F04BA831E1222F400679905 /* MKAddStoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKAddStoreVC.m; sourceTree = "<group>"; };
-		7F04BA861E12232C00679905 /* MKHomeVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKHomeVC.h; sourceTree = "<group>"; };
-		7F04BA871E12232C00679905 /* MKHomeVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKHomeVC.m; sourceTree = "<group>"; };
-		7F04BA891E12234400679905 /* MKHistoryVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKHistoryVC.h; sourceTree = "<group>"; };
-		7F04BA8A1E12234400679905 /* MKHistoryVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKHistoryVC.m; sourceTree = "<group>"; };
-		7F04BA8D1E12235A00679905 /* MKHistoryCustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKHistoryCustomCell.h; sourceTree = "<group>"; };
-		7F04BA8E1E12235A00679905 /* MKHistoryCustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKHistoryCustomCell.m; sourceTree = "<group>"; };
-		7F04BA8F1E12235A00679905 /* MKIndividualHistoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKIndividualHistoryCell.h; sourceTree = "<group>"; };
-		7F04BA901E12235A00679905 /* MKIndividualHistoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKIndividualHistoryCell.m; sourceTree = "<group>"; };
-		7F04BA931E12237700679905 /* MKMoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMoreVC.h; sourceTree = "<group>"; };
-		7F04BA941E12237700679905 /* MKMoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMoreVC.m; sourceTree = "<group>"; };
-		7F04BA971E12239600679905 /* MKCustomCellForLeave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCustomCellForLeave.h; sourceTree = "<group>"; };
-		7F04BA981E12239600679905 /* MKCustomCellForLeave.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCustomCellForLeave.m; sourceTree = "<group>"; };
-		7F04BA9B1E12568500679905 /* MKStoreListPopupVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKStoreListPopupVC.h; sourceTree = "<group>"; };
-		7F04BA9C1E12568500679905 /* MKStoreListPopupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStoreListPopupVC.m; sourceTree = "<group>"; };
-		7F04BA9F1E128B1F00679905 /* MKSharedClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKSharedClass.h; sourceTree = "<group>"; };
-		7F04BAA01E128B1F00679905 /* MKSharedClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKSharedClass.m; sourceTree = "<group>"; };
+		7F04BA821E1222F400679905 /* MKAddStoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKAddStoreVC.h; path = ../../MKAddStoreVC.h; sourceTree = "<group>"; };
+		7F04BA831E1222F400679905 /* MKAddStoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKAddStoreVC.m; path = ../../MKAddStoreVC.m; sourceTree = "<group>"; };
+		7F04BA861E12232C00679905 /* MKHomeVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKHomeVC.h; path = ../../MKHomeVC.h; sourceTree = "<group>"; };
+		7F04BA871E12232C00679905 /* MKHomeVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKHomeVC.m; path = ../../MKHomeVC.m; sourceTree = "<group>"; };
+		7F04BA891E12234400679905 /* MKHistoryVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKHistoryVC.h; path = ../../MKHistoryVC.h; sourceTree = "<group>"; };
+		7F04BA8A1E12234400679905 /* MKHistoryVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKHistoryVC.m; path = ../../MKHistoryVC.m; sourceTree = "<group>"; };
+		7F04BA8D1E12235A00679905 /* MKHistoryCustomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKHistoryCustomCell.h; path = ../../../MKHistoryCustomCell.h; sourceTree = "<group>"; };
+		7F04BA8E1E12235A00679905 /* MKHistoryCustomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKHistoryCustomCell.m; path = ../../../MKHistoryCustomCell.m; sourceTree = "<group>"; };
+		7F04BA8F1E12235A00679905 /* MKIndividualHistoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKIndividualHistoryCell.h; path = ../../../MKIndividualHistoryCell.h; sourceTree = "<group>"; };
+		7F04BA901E12235A00679905 /* MKIndividualHistoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKIndividualHistoryCell.m; path = ../../../MKIndividualHistoryCell.m; sourceTree = "<group>"; };
+		7F04BA931E12237700679905 /* MKMoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKMoreVC.h; path = ../../MKMoreVC.h; sourceTree = "<group>"; };
+		7F04BA941E12237700679905 /* MKMoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKMoreVC.m; path = ../../MKMoreVC.m; sourceTree = "<group>"; };
+		7F04BA971E12239600679905 /* MKCustomCellForLeave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCustomCellForLeave.h; path = ../../../MKCustomCellForLeave.h; sourceTree = "<group>"; };
+		7F04BA981E12239600679905 /* MKCustomCellForLeave.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCustomCellForLeave.m; path = ../../../MKCustomCellForLeave.m; sourceTree = "<group>"; };
+		7F04BA9B1E12568500679905 /* MKStoreListPopupVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKStoreListPopupVC.h; path = ../../../MKStoreListPopupVC.h; sourceTree = "<group>"; };
+		7F04BA9C1E12568500679905 /* MKStoreListPopupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKStoreListPopupVC.m; path = ../../../MKStoreListPopupVC.m; sourceTree = "<group>"; };
+		7F04BA9F1E128B1F00679905 /* MKSharedClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKSharedClass.h; path = ../MKSharedClass.h; sourceTree = "<group>"; };
+		7F04BAA01E128B1F00679905 /* MKSharedClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKSharedClass.m; path = ../MKSharedClass.m; sourceTree = "<group>"; };
 		7F8CE5FC1E14F0030067D0F8 /* UIScrollView+DXRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+DXRefresh.h"; sourceTree = "<group>"; };
 		7F8CE5FD1E14F0030067D0F8 /* UIScrollView+DXRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DXRefresh.m"; sourceTree = "<group>"; };
 		7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -356,94 +356,6 @@
 			name = "Popup View";
 			sourceTree = "<group>";
 		};
-		7F04BA7D1E1222B100679905 /* ViewControllers */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA811E1222E200679905 /* Add Edit Store */,
-				7F04BA801E1222CE00679905 /* Attendance */,
-				7F04BA7F1E1222C500679905 /* History */,
-				7F04BA7E1E1222BD00679905 /* More */,
-			);
-			name = ViewControllers;
-			sourceTree = "<group>";
-		};
-		7F04BA7E1E1222BD00679905 /* More */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA9A1E12565700679905 /* PopUpForStoreList */,
-				7F04BA961E12238300679905 /* CustomCellForLeave */,
-				7F04BA931E12237700679905 /* MKMoreVC.h */,
-				7F04BA941E12237700679905 /* MKMoreVC.m */,
-			);
-			name = More;
-			sourceTree = "<group>";
-		};
-		7F04BA7F1E1222C500679905 /* History */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA8C1E12234700679905 /* Custom Cell */,
-				7F04BA891E12234400679905 /* MKHistoryVC.h */,
-				7F04BA8A1E12234400679905 /* MKHistoryVC.m */,
-			);
-			name = History;
-			sourceTree = "<group>";
-		};
-		7F04BA801E1222CE00679905 /* Attendance */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA861E12232C00679905 /* MKHomeVC.h */,
-				7F04BA871E12232C00679905 /* MKHomeVC.m */,
-			);
-			name = Attendance;
-			sourceTree = "<group>";
-		};
-		7F04BA811E1222E200679905 /* Add Edit Store */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA821E1222F400679905 /* MKAddStoreVC.h */,
-				7F04BA831E1222F400679905 /* MKAddStoreVC.m */,
-			);
-			name = "Add Edit Store";
-			sourceTree = "<group>";
-		};
-		7F04BA8C1E12234700679905 /* Custom Cell */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA8D1E12235A00679905 /* MKHistoryCustomCell.h */,
-				7F04BA8E1E12235A00679905 /* MKHistoryCustomCell.m */,
-				7F04BA8F1E12235A00679905 /* MKIndividualHistoryCell.h */,
-				7F04BA901E12235A00679905 /* MKIndividualHistoryCell.m */,
-			);
-			name = "Custom Cell";
-			sourceTree = "<group>";
-		};
-		7F04BA961E12238300679905 /* CustomCellForLeave */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA971E12239600679905 /* MKCustomCellForLeave.h */,
-				7F04BA981E12239600679905 /* MKCustomCellForLeave.m */,
-			);
-			name = CustomCellForLeave;
-			sourceTree = "<group>";
-		};
-		7F04BA9A1E12565700679905 /* PopUpForStoreList */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA9B1E12568500679905 /* MKStoreListPopupVC.h */,
-				7F04BA9C1E12568500679905 /* MKStoreListPopupVC.m */,
-			);
-			name = PopUpForStoreList;
-			sourceTree = "<group>";
-		};
-		7F04BA9E1E128B0100679905 /* Shared Class */ = {
-			isa = PBXGroup;
-			children = (
-				7F04BA9F1E128B1F00679905 /* MKSharedClass.h */,
-				7F04BAA01E128B1F00679905 /* MKSharedClass.m */,
-			);
-			name = "Shared Class";
-			sourceTree = "<group>";
-		};
 		7F8CE5FB1E14EFD10067D0F8 /* Footer Refresh */ = {
 			isa = PBXGroup;
 			children = (
@@ -476,6 +388,94 @@
 				7FB6AB171E2F395000C0E270 /* Location.gpx */,
 			);
 			path = "Location GPX";
+			sourceTree = "<group>";
+		};
+		7FB6AB191E2F39DF00C0E270 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				7FB6AB201E2F3B3000C0E270 /* Add Edit Store */,
+				7FB6AB1F1E2F3ADF00C0E270 /* TimeInTimeOutHome */,
+				7FB6AB1D1E2F3A7800C0E270 /* History */,
+				7FB6AB1A1E2F3A0B00C0E270 /* More */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		7FB6AB1A1E2F3A0B00C0E270 /* More */ = {
+			isa = PBXGroup;
+			children = (
+				7FB6AB1C1E2F3A5100C0E270 /* CustomCellForLeave */,
+				7F04BA931E12237700679905 /* MKMoreVC.h */,
+				7F04BA941E12237700679905 /* MKMoreVC.m */,
+				7FB6AB1B1E2F3A1F00C0E270 /* PopUpForStoreList */,
+			);
+			path = More;
+			sourceTree = "<group>";
+		};
+		7FB6AB1B1E2F3A1F00C0E270 /* PopUpForStoreList */ = {
+			isa = PBXGroup;
+			children = (
+				7F04BA9B1E12568500679905 /* MKStoreListPopupVC.h */,
+				7F04BA9C1E12568500679905 /* MKStoreListPopupVC.m */,
+			);
+			path = PopUpForStoreList;
+			sourceTree = "<group>";
+		};
+		7FB6AB1C1E2F3A5100C0E270 /* CustomCellForLeave */ = {
+			isa = PBXGroup;
+			children = (
+				7F04BA971E12239600679905 /* MKCustomCellForLeave.h */,
+				7F04BA981E12239600679905 /* MKCustomCellForLeave.m */,
+			);
+			path = CustomCellForLeave;
+			sourceTree = "<group>";
+		};
+		7FB6AB1D1E2F3A7800C0E270 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				7F04BA891E12234400679905 /* MKHistoryVC.h */,
+				7F04BA8A1E12234400679905 /* MKHistoryVC.m */,
+				7FB6AB1E1E2F3A9600C0E270 /* CustomCellForHistory */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		7FB6AB1E1E2F3A9600C0E270 /* CustomCellForHistory */ = {
+			isa = PBXGroup;
+			children = (
+				7F04BA8D1E12235A00679905 /* MKHistoryCustomCell.h */,
+				7F04BA8E1E12235A00679905 /* MKHistoryCustomCell.m */,
+				7F04BA8F1E12235A00679905 /* MKIndividualHistoryCell.h */,
+				7F04BA901E12235A00679905 /* MKIndividualHistoryCell.m */,
+			);
+			path = CustomCellForHistory;
+			sourceTree = "<group>";
+		};
+		7FB6AB1F1E2F3ADF00C0E270 /* TimeInTimeOutHome */ = {
+			isa = PBXGroup;
+			children = (
+				7F04BA861E12232C00679905 /* MKHomeVC.h */,
+				7F04BA871E12232C00679905 /* MKHomeVC.m */,
+			);
+			path = TimeInTimeOutHome;
+			sourceTree = "<group>";
+		};
+		7FB6AB201E2F3B3000C0E270 /* Add Edit Store */ = {
+			isa = PBXGroup;
+			children = (
+				7F04BA821E1222F400679905 /* MKAddStoreVC.h */,
+				7F04BA831E1222F400679905 /* MKAddStoreVC.m */,
+			);
+			path = "Add Edit Store";
+			sourceTree = "<group>";
+		};
+		7FB6AB211E2F3B5E00C0E270 /* SharedGlobalClass */ = {
+			isa = PBXGroup;
+			children = (
+				7F04BA9F1E128B1F00679905 /* MKSharedClass.h */,
+				7F04BAA01E128B1F00679905 /* MKSharedClass.m */,
+			);
+			path = SharedGlobalClass;
 			sourceTree = "<group>";
 		};
 		7FC8108C1E2512CA00097144 /* Badge View */ = {
@@ -537,10 +537,10 @@
 		7FFB546F1E092EBC00A930C7 /* FieldTracker */ = {
 			isa = PBXGroup;
 			children = (
+				7FB6AB211E2F3B5E00C0E270 /* SharedGlobalClass */,
+				7FB6AB191E2F39DF00C0E270 /* ViewControllers */,
 				7FB6AB161E2F394800C0E270 /* Location GPX */,
 				7FA481D51E162FBB00345BCE /* CoreData */,
-				7F04BA9E1E128B0100679905 /* Shared Class */,
-				7F04BA7D1E1222B100679905 /* ViewControllers */,
 				7F04BA3D1E121FF200679905 /* Helper Libraries */,
 				7FECDA501E0A460F000E923F /* Podfile */,
 				7FFB54E41E0951F400A930C7 /* Frameworks */,
