@@ -81,7 +81,7 @@
     return YES;
 }
 -(void)timeChangeGot:(NSNotification*)notifi{
-     NSLog(@"Time===%@",notifi.userInfo);
+     NSLog(@"Time Changed===%@",notifi.userInfo);
 }
 -(void)timeChange:(NSNotification*)notifi{
     NSLog(@"Time Changed===%@",notifi.userInfo);
