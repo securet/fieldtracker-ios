@@ -18,8 +18,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    _txtFieldForEmail.text=@"anand@securet.in";
-    _txtFieldForPassword.text=@"test@1234";
+//    _txtFieldForEmail.text=@"anand@securet.in";
+//    _txtFieldForPassword.text=@"test@1234";
+    _txtFieldForEmail.text=@"";
+    _txtFieldForPassword.text=@"";
     [self addPadding:_txtFieldForEmail];
     [self addPadding:_txtFieldForPassword];
     
@@ -167,15 +169,11 @@
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        
-        
         NSLog(@"User Data===%@",JSON);
-        
         [DejalBezelActivityView removeView];
-        
         NSMutableDictionary *prunedDictionary = [NSMutableDictionary dictionary];
-        for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys])
-        {
+        for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys]){
+            
             if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
                 [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
         }

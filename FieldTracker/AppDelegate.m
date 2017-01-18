@@ -54,10 +54,18 @@
     [_locationManager requestAlwaysAuthorization];
      _locationManager.allowsBackgroundLocationUpdates = YES;
      [_locationManager startUpdatingLocation];
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
-   
-
+    
+    if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+    }
+    
+   // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChange:) name:UIApplicationSignificantTimeChangeNotification object:nil];
+    //NSSystemTimeZoneDidChangeNotification
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChangeGot:) name:NSCurrentLocaleDidChangeNotification object:nil];
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSInteger is_Login=[[defaults valueForKey:@"Is_Login"] integerValue];
     
     if (is_Login == 1) {
@@ -72,8 +80,20 @@
     
     return YES;
 }
-
-
+-(void)timeChangeGot:(NSNotification*)notifi{
+     NSLog(@"Time===%@",notifi.userInfo);
+}
+-(void)timeChange:(NSNotification*)notifi{
+    NSLog(@"Time Changed===%@",notifi.userInfo);
+    
+//     UIApplication *application=[[UIApplication sharedApplication] delegate];
+//        UILocalNotification *notification = [[UILocalNotification alloc]init];
+//        notification.repeatInterval = NSCalendarUnitDay;
+//        [notification setAlertBody:@"Don't Change Time. Keep it automatically"];
+//        [notification setFireDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+//        [notification setTimeZone:[NSTimeZone  defaultTimeZone]];
+//        [application setScheduledLocalNotifications:[NSArray arrayWithObject:notification]];
+}
 #pragma mark - sharedAppDelegate
 
 +(AppDelegate *)sharedAppDelegate
@@ -96,6 +116,14 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+   // UIApplication *application=[[UIApplication sharedApplication] delegate];
+//    UILocalNotification *notification = [[UILocalNotification alloc]init];
+//    notification.repeatInterval = NSCalendarUnitDay;
+//    [notification setAlertBody:@"Hello world"];
+//    [notification setFireDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+//    [notification setTimeZone:[NSTimeZone  defaultTimeZone]];
+//    [application setScheduledLocalNotifications:[NSArray arrayWithObject:notification]];
+    
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {

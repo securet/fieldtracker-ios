@@ -48,7 +48,6 @@
         });
     }
 
-    
     _lblNodata.hidden = YES;
     _tableVw.delegate = self;
     _tableVw.dataSource = self;
@@ -71,8 +70,6 @@
     //    [self getHistory];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
-    
-    [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
 }
 
 
@@ -111,6 +108,10 @@
 
 
 -(void)viewWillAppear:(BOOL)animated{
+    
+    _lblForStoreLocation.text=@"";
+    [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
+    
     self.navigationController.navigationBarHidden = YES;
     self.navigationItem.hidesBackButton = YES;
     [self.navigationItem setHidesBackButton:YES];
@@ -123,10 +124,10 @@
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    
     _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
-                _tableVw.hidden = NO;
-     _lblNodata.hidden = YES;
+    _tableVw.hidden = NO;
+    _lblNodata.hidden = YES;
+    
     if (arrayForTableData.count<=0) {
         arrayForTableData=[[NSMutableArray alloc] init];
         pageNumber=0;
@@ -139,6 +140,14 @@
         
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
+    }
+    
+    if ([CLLocationManager locationServicesEnabled]) {
+        
+    }else{
+        [[[UIAlertView alloc] initWithTitle:@""
+                                    message:@"Please Enable GPS"
+                                   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
     }
 }
 
@@ -227,7 +236,6 @@
                 cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_outlocation"];
                 cell.lblForStatus.text=@"Out of location";
             }
-            
             cell.imgVwForTopVerticalLine.hidden=NO;
             cell.imgVwForBtmVerticalLine.hidden=NO;
         }
@@ -254,11 +262,10 @@
     }
     ////
     if (cell == nil) {
-        
         cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     }
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     ///Date Parsing
     NSString *strDate=[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
@@ -295,27 +302,20 @@
         cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
     }
     
-    
     if (![[array objectAtIndex:0] isKindOfClass:[NSNull class]] && ![[array lastObject] isKindOfClass:[NSNull class]]){
-
+        
         NSString *firstViewd;
         firstViewd=[NSString stringWithFormat:@"%@",[array objectAtIndex:0]];
-        
         NSString *lastViewedString;
         lastViewedString=[NSString stringWithFormat:@"%@",[array lastObject]];
-
         [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss xxxx"];
-        
         NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
         NSDate *now = [dateFormatter dateFromString:firstViewd];
-        
         NSTimeInterval distanceBetweenDates = [lastViewed timeIntervalSinceDate:now];
         double minutesInAnHour = 60;
         hoursBetweenDates = hoursBetweenDates + (distanceBetweenDates / minutesInAnHour);
-        
         int hour = hoursBetweenDates / 60;
         int min = hoursBetweenDates % 60;
-        
         hour=abs(hour);
         min = abs(min);
         NSString *timeString = [NSString stringWithFormat:@"%dh %02dm", hour, min];
@@ -325,7 +325,6 @@
         }else{
             cell.lblTotalTime.text=timeString;
         }
-        
         if ([timeString isEqualToString:@"0h 00m"]) {
             cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
         }
@@ -402,15 +401,46 @@
     if ([strDate isKindOfClass:[NSNull class]]) {
         return @"--";
     }
-    
-    strDate=[strDate substringFromIndex:11];
-    
+  //   NSLog(@"Time===%@",strDate);
+    NSString *strDateChange=strDate;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"HH:mm:ss xxxx";
-    NSDate *date = [dateFormatter dateFromString:strDate];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+    NSDateFormatter *dateFormatter1 = [[NSDateFormatter alloc] init];
+    dateFormatter1.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+    NSDate *daate=[dateFormatter1 dateFromString:strDateChange];
+
+    NSTimeZone *tz = [NSTimeZone localTimeZone];
+    NSInteger seconds = [tz secondsFromGMTForDate:daate];
+    daate = [NSDate dateWithTimeInterval: seconds sinceDate: daate];
+    
+   /* NSTimeZone *timeZone = [NSTimeZone localTimeZone];
+    NSString *tzName = [timeZone name];
+    NSLog(@"Time Zone===%@",daate.description);
+    
+    if (![tzName containsString:@"Asia"]) {
+    NSDateFormatter * format = [[NSDateFormatter alloc] init];
+    [format setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+    NSDate * dateTemp = [format dateFromString:strDateChange];
+    [format setDateFormat:@"hh:mm a"];
+    NSTimeZone *currentTimeZone = [NSTimeZone localTimeZone];
+    NSTimeZone *utcTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
+    NSInteger currentGMTOffset = [currentTimeZone secondsFromGMTForDate:dateTemp];
+    NSInteger gmtOffset = [utcTimeZone secondsFromGMTForDate:dateTemp];
+    NSTimeInterval gmtInterval = currentGMTOffset - gmtOffset;
+    NSDate *destinationDate = [[NSDate alloc] initWithTimeInterval:gmtInterval sinceDate:dateTemp];
+    NSString *dateStr = [format stringFromDate:destinationDate];
+   NSLog(@"Converted Time===%@",dateStr);
+    return dateStr;
+    }*/
+
+     NSDate *date_1 = [dateFormatter dateFromString:strDateChange];
     dateFormatter.dateFormat = @"hh:mm a";
-    strDate = [dateFormatter stringFromDate:date];
-    return strDate;
+//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:[NSTimeZone localTimeZone].secondsFromGMT];
+    strDateChange = [dateFormatter stringFromDate:date_1];
+    
+//    NSLog(@"Converted Time===%@",strDateChange);
+    return strDateChange;
 }
 
 -(NSString*)getTime:(NSString*)strDate
@@ -532,11 +562,10 @@
 }
 
 -(NSMutableArray*)sortingArrayByDate:(NSMutableArray*)array{
+    
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss xxxx"];
-    
+    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ssZ"];
     NSMutableArray *tempArray = [NSMutableArray array];
-    
     // fast enumeration of the array
     for (NSString *dateString in array) {
         if (![dateString isKindOfClass:[NSNull class]]){
@@ -547,63 +576,55 @@
             [tempArray addObject:date];
         }
     }
-    
+   // NSLog(@"%@", tempArray);
     // sort the array of dates
     [tempArray sortUsingComparator:^NSComparisonResult(NSDate *date1, NSDate *date2) {
         // return date2 compare date1 for descending. Or reverse the call for ascending.
         return [date2 compare:date1];
     }];
-    
-    //        NSLog(@"%@", [[tempArray reverseObjectEnumerator] allObjects]);
-    
+
     tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
     NSMutableArray *correctOrderStringArray = [NSMutableArray array];
-    
-    for (NSDate *date in tempArray) {
-        NSString *dateString = [formatter stringFromDate:date];
-        [correctOrderStringArray addObject:dateString];
+    for (NSDate *date_1 in tempArray) {
+//        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss xxxx"];
+//        NSString *dateString = [formatter stringFromDate:date_1];
+        [correctOrderStringArray addObject:date_1.description];
     }
+  //  NSLog(@"%@", correctOrderStringArray);
     return correctOrderStringArray;
 }
-
 
 #pragma mark - Get History
 
 -(void)getHistory
 {
+    if ([APPDELEGATE connected]) {
+        
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
-    
-    
+    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",[dict valueForKey:@"username"]);
-    
-    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=%i&pageSize=10",[dict valueForKey:@"username"],pageNumber];
-    
+    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=%li&pageSize=10",[dict valueForKey:@"username"],(long)pageNumber];
     NSLog(@"String Path for Get History===%@",strPath);
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:strPath
                                                       parameters:nil];
     
     //====================================================RESPONSE
-    
     if (pageNumber==0) {
         [DejalBezelActivityView activityViewForView:self.view];
     }
     
-    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-        
     }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
@@ -612,7 +633,6 @@
         if (pageNumber==0) {
             [DejalBezelActivityView removeView];
         }
-        
         //        arrayForTableData=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
         NSMutableArray *array=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
         for (NSDictionary *dict in array) {
@@ -627,16 +647,31 @@
             _lblNodata.hidden = NO;
             _tableVw.hidden = YES;
         }
-        
         [_tableVw reloadData];
     }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                          [DejalBezelActivityView removeView];
-                                         NSLog(@"Error %@",[error description]);
+                                         
+                                         NSError *jsonError;
+                                         NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                         
+                                         if (objectData != nil) {
+                                             
+                                         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                              options:NSJSONReadingMutableContainers
+                                                                                                error:&jsonError];
+                                         
+                                         NSString *strError=[json valueForKey:@"errors"];
+                                         [[[UIAlertView alloc] initWithTitle:@""
+                                                                     message:strError
+                                                                    delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                         }
                                      }];
     [operation start];
-    
+    }else{
+  
+    }
 }
 
 #pragma mark -

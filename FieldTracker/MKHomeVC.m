@@ -25,6 +25,9 @@
     AVCaptureStillImageOutput *stillImageOutput;
     
     CGFloat radiusForStore;
+    
+    
+   
 }
 @end
 
@@ -109,29 +112,44 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    
+    
+//    NSDictionary *pref = [[NSUserDefaults standardUserDefaults] persistentDomainForName:@"com.apple.timed"];
+//    BOOL autotime = [[pref objectForKey:@"TMAutomaticTimeEnabled"] boolValue];
+//    NSLog(@"Automatic time is %@", autotime ? @"enabled" : @"disabled");
+    
+    
+    
+    [self updateLocationManagerr];
+    
     self.navigationController.navigationBarHidden = YES;
     self.navigationItem.hidesBackButton = YES;
     [self.navigationItem setHidesBackButton:YES];
     
     NSDate *now = [NSDate date];
-    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
-//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    
     _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
     
     if (![APPDELEGATE connected]) {
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
+    
+    if ([CLLocationManager locationServicesEnabled]) {
+        
+    }else{
+        [[[UIAlertView alloc] initWithTitle:@""
+                                    message:@"Please Enable GPS"
+                                delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+    }
 }
 
 #pragma mark - Background Task
-
 
 -(void)updateLocationBackground{
     UIApplication*    app = [UIApplication sharedApplication];
@@ -167,7 +185,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
         // Do the work associated with the task.
-        NSLog(@"Started background task timeremaining = %f", [app backgroundTimeRemaining]);
+        NSLog(@"Started background task");
         if ([APPDELEGATE connected]) {
             
             NSMutableArray *arrayForData=[[NSMutableArray alloc] init];
@@ -178,12 +196,11 @@
                 }
             }
         }
-        
         [app endBackgroundTask:task];
         task = UIBackgroundTaskInvalid;
     });
 }
-#pragma mark-
+//#pragma mark-
 
 
 /*
@@ -208,54 +225,45 @@
  return arrayOfData;
  }*/
 
+#pragma mark - StoreDetails
+
 -(void)getStoreDetails{
     
-    dictForStoreDetails=[[NSMutableDictionary alloc] init];
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *auth_String=[defaults valueForKey:@"BasicAuth"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *auth_String=[defaults valueForKey:@"BasicAuth"];
-    
-    
     [httpClient setDefaultHeader:@"Authorization" value:auth_String];
+    
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    
-    
-    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[dict valueForKey:@"partyId"]];
-    
+    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[dict valueForKey:@"productStoreId"]];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:urlPath
                                                       parameters:nil];
-    
     //====================================================RESPONSE
     //    [DejalBezelActivityView activityViewForView:self.view];
-    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-        
     }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        
         //        [DejalBezelActivityView removeView];
         
+        dictForStoreDetails=[[NSMutableDictionary alloc] init];
+
         NSLog(@"Store Details==%@",JSON);
-        
         dictForStoreDetails=[JSON mutableCopy];
-        
         _lblStoreName.text=[dictForStoreDetails valueForKey:@"storeName"];
-        
         CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
         CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
-        
         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        [defaults setObject:dictForStoreDetails forKey:@"StoreData"];
         
         CLLocationCoordinate2D coordinate;
         coordinate.latitude = latitude;
@@ -263,22 +271,14 @@
         
         // Build a circle for the GMSMapView
         GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
-        geoFenceCircle.radius = radiusForStore; // Meters
-        geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
+        geoFenceCircle.radius = radiusForStore;
+        geoFenceCircle.position = coordinate;
         geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.5];
         geoFenceCircle.strokeWidth = 0.5;
         geoFenceCircle.strokeColor = [UIColor blueColor];
-        geoFenceCircle.map = mapView; // Add it to the map.
+        geoFenceCircle.map = mapView;
 
-//            GMSMarker *markerCar = [[GMSMarker alloc] init];
-//            markerCar.icon=[UIImage imageNamed:@"location_marker"];
-//            [CATransaction begin];
-//            [CATransaction setAnimationDuration:2.0];
-//            markerCar.position =  coordinate;
-//            [CATransaction commit];
-//            markerCar.map = mapView;
         [self startBackgroundTask];
-
         [self checkLocation];
     }
      //==================================================ERROR
@@ -288,7 +288,7 @@
                                      }];
     [operation start];
 }
-#pragma mark _ UITableView
+#pragma mark - UITableView
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return arrayForStatusData.count;
 }
@@ -350,21 +350,59 @@
 }
 -(NSString*)getTimeIndividual:(NSString*)strDate
 {
-    if ([strDate isKindOfClass:[NSNull class]]) {
+   /* if ([strDate isKindOfClass:[NSNull class]]) {
         return @"--";
     }
-    
     //    strDate = [strDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     //    strDate = [strDate stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
     strDate=[strDate substringFromIndex:11];
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"HH:mm:ss xxxx";
-    NSDate *date = [dateFormatter dateFromString:strDate];
+    NSDate *date_1 = [dateFormatter dateFromString:strDate];
     dateFormatter.dateFormat = @"hh:mm a";
-    strDate = [dateFormatter stringFromDate:date];
+    strDate = [dateFormatter stringFromDate:date_1];
     
-    return strDate;
+    return strDate;*/
+    
+    if ([strDate isKindOfClass:[NSNull class]]) {
+        return @"--";
+    }
+    NSLog(@"Time===%@",strDate);
+    NSString *strDateChange=strDate;
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+    //    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+   // NSTimeZone *timeZone = [NSTimeZone localTimeZone];
+   // NSString *tzName = [timeZone name];
+    
+    //     NSLog(@"Time Zone===%@",tzName);
+    
+   /* if (![tzName containsString:@"Asia"]) {
+        
+        NSDateFormatter * format = [[NSDateFormatter alloc] init];
+        [format setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+        NSDate * dateTemp = [format dateFromString:strDateChange];
+        [format setDateFormat:@"hh:mm a"];
+        NSTimeZone *currentTimeZone = [NSTimeZone localTimeZone];
+        NSTimeZone *utcTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
+        NSInteger currentGMTOffset = [currentTimeZone secondsFromGMTForDate:dateTemp];
+        NSInteger gmtOffset = [utcTimeZone secondsFromGMTForDate:dateTemp];
+        NSTimeInterval gmtInterval = currentGMTOffset - gmtOffset;
+        NSDate *destinationDate = [[NSDate alloc] initWithTimeInterval:gmtInterval sinceDate:dateTemp];
+        NSString *dateStr = [format stringFromDate:destinationDate];
+        
+        return dateStr;
+    }*/
+    
+    NSDate *date_1 = [dateFormatter dateFromString:strDateChange];
+    dateFormatter.dateFormat = @"hh:mm a";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    strDateChange = [dateFormatter stringFromDate:date_1];
+    
+    //    NSLog(@"Converted Time===%@",strDateChange);
+    return strDateChange;
 }
 
 -(NSString*)getTime:(NSString*)strDate
@@ -380,12 +418,12 @@
     strDate=[NSString stringWithFormat:@"%@ %@",strDate,timeZone];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"HH:mm:ss xxxx"];
-    NSDate *date = [dateFormatter dateFromString:strDate];
+    NSDate *date_1 = [dateFormatter dateFromString:strDate];
     
     [dateFormatter setDateFormat:@"hh:mm a"];
     //    newDateString = [dateFormatter stringFromDate:date];
     
-    return [dateFormatter stringFromDate:date];
+    return [dateFormatter stringFromDate:date_1];
 }
 #pragma mark - LocationManagaer
 
@@ -393,85 +431,75 @@
 
 - (void)checkLocation{
     
-    NSMutableDictionary *dictToSendLctnStatus=[[NSMutableDictionary alloc] init];
+    [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
     
-    CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
-    CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
+    dictForStoreDetails=[[NSMutableDictionary alloc] init];
     
-    CLLocation *location = [[CLLocation alloc] initWithLatitude:latitude
-                                                      longitude:longitude];
-    NSString *storeName=[dictForStoreDetails valueForKey:@"storeName"];
-    CLLocationDistance distance = [location distanceFromLocation:locationManager.location];
-    
-   
-    if (distance <= radiusForStore && distance >= 0){
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:@"StoreData"] != nil)
+    {
+        dictForStoreDetails=[[defaults objectForKey:@"StoreData"] mutableCopy];
         
-                NSLog(@"You are within Geofence (actually %.0f meters) of Store", distance);
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-        _lblForStoreLocation.text=[dictForStoreDetails valueForKey:@"storeName"];
-        _lblForStoreLocation.textColor=[UIColor whiteColor];
-        [dictToSendLctnStatus setObject:@"1" forKey:@"LocationStatus"];
-        storeName=[dictForStoreDetails valueForKey:@"storeName"];
-        boolValueForInLocationOrNot = YES;
+        NSMutableDictionary *dictToSendLctnStatus=[[NSMutableDictionary alloc] init];
+        CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
+        CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
+        CLLocation *location = [[CLLocation alloc] initWithLatitude:latitude
+                                                          longitude:longitude];
+        NSString *storeName=[dictForStoreDetails valueForKey:@"storeName"];
+        CLLocationDistance distance = [location distanceFromLocation:locationManager.location];
+         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
         
-    }else{
-        
-                NSLog(@"You are not within Geofence (actually %.0f meters) of Store", distance);
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        _lblForStoreLocation.text=@"Off site";
-        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
-        [dictToSendLctnStatus setObject:@"0" forKey:@"LocationStatus"];
-        storeName=@"Off site";
-        boolValueForInLocationOrNot = NO;
-    }
-    
-    if ([storeName length] <=0 || storeName  == nil) {
-        storeName=@"Off site";
-    }
-    
-    [dictToSendLctnStatus setObject:storeName forKey:@"StoreName"];
-    
-    if ([dictForStoreDetails valueForKey:@"address"]) {
-        [dictToSendLctnStatus setObject:[dictForStoreDetails valueForKey:@"address"] forKey:@"StoreAddress"];
-    }else{
-        [dictToSendLctnStatus setObject:@"NA" forKey:@"StoreAddress"];
-    }
-    
-    
-    [[MKSharedClass shareManager] setDictForCheckInLoctn:dictToSendLctnStatus];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"LocationChecking" object:self userInfo:dictToSendLctnStatus];
-    
-    NSDictionary *statusData=[self getStatus];
-
-    NSMutableArray *arrayForTimeLine=[self getTimeLineData];
-    
-    NSDictionary *dictForBeforelast=[[NSDictionary alloc] init];
-    
-    if ([arrayForTimeLine count]>1) {
-        dictForBeforelast=[arrayForTimeLine objectAtIndex:[arrayForTimeLine count]-2];
-    }
-    
-    //     NSDictionary *timeLineData=[arrayForTimeLine lastObject];
-    
-    
-    if ([[statusData valueForKey:@"status"] length]<=0) {
-        
-    }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
-        
-        if ([arrayForTimeLine count]>1) {
-            if (boolValueForInLocationOrNot && [[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"OutLocation"]) {
-                [self saveDataIntoLocal:YES];
-                
-            }else if (!boolValueForInLocationOrNot && ([[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"Time In"] || [[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"InLocation"])){
-                [self saveDataIntoLocal:YES];
-            }
-        }else if ([arrayForTimeLine count] ==1){
-            [self saveDataIntoLocal:YES];
+        if (distance <= radiusForStore && distance >= 0){
+            _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+            _lblForStoreLocation.text=[dictForStoreDetails valueForKey:@"storeName"];
+            _lblForStoreLocation.textColor=[UIColor whiteColor];
+            [dictToSendLctnStatus setObject:@"1" forKey:@"LocationStatus"];
+            storeName= [dictForStoreDetails valueForKey:@"storeName"];
+            boolValueForInLocationOrNot = YES;
+        }else{
+            _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+            _lblForStoreLocation.text=@"Off site";
+            _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+            [dictToSendLctnStatus setObject:@"0" forKey:@"LocationStatus"];
+            storeName=@"Off site";
+            boolValueForInLocationOrNot = NO;
         }
         
-    }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
+        [dictToSendLctnStatus setObject:storeName forKey:@"StoreName"];
         
+        if ([dictForStoreDetails valueForKey:@"address"]) {
+            [dictToSendLctnStatus setObject:[dictForStoreDetails valueForKey:@"address"] forKey:@"StoreAddress"];
+        }else{
+            [dictToSendLctnStatus setObject:@"NA" forKey:@"StoreAddress"];
+        }
+        
+        [[MKSharedClass shareManager] setDictForCheckInLoctn:dictToSendLctnStatus];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"LocationChecking" object:self userInfo:dictToSendLctnStatus];
+        
+        NSDictionary *statusData=[self getStatus];
+        NSMutableArray *arrayForTimeLine=[self getTimeLineData];
+        NSDictionary *dictForBeforelast=[[NSDictionary alloc] init];
+        if ([arrayForTimeLine count]>1) {
+            dictForBeforelast=[arrayForTimeLine objectAtIndex:[arrayForTimeLine count]-2];
+        }
+        //     NSDictionary *timeLineData=[arrayForTimeLine lastObject];
+        if ([[statusData valueForKey:@"status"] length]<=0) {
+            
+        }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
+            
+            if ([arrayForTimeLine count]>1) {
+                if (boolValueForInLocationOrNot && [[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"OutLocation"]) {
+                    [self saveDataIntoLocal:YES];
+                    
+                }else if (!boolValueForInLocationOrNot && ([[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"Time In"] || [[dictForBeforelast valueForKey:@"comments"] isEqualToString:@"InLocation"])){
+                    [self saveDataIntoLocal:YES];
+                }
+            }else if ([arrayForTimeLine count] ==1){
+                [self saveDataIntoLocal:YES];
+            }
+        }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
+        }
     }
 }
 
@@ -539,18 +567,12 @@
     
     strForCurLatitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.latitude];
     strForCurLongitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
-    
-    //    [self showingCurrentLocation];
-    
-//    NSLog(@"Location Updates====%@,%@",strForCurLatitude,strForCurLongitude);
     [self checkLocation];
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    
     NSLog(@"Location Updates====%@,%@",strForCurLatitude,strForCurLongitude);
-
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -569,11 +591,9 @@
 }
 - (void) mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position{
     
-    
 }
 
 #pragma mark -
-
 /*
  #pragma mark - Navigation
  
@@ -583,13 +603,16 @@
  // Pass the selected object to the new view controller.
  }
  */
-
-
-
 - (IBAction)onClickMyLocation:(UIButton *)sender {
-    [self showingCurrentLocation];
+    
+    if ([CLLocationManager locationServicesEnabled]) {
+        [self showingCurrentLocation];
+    }else{
+        [[[UIAlertView alloc] initWithTitle:@""
+                                    message:@"Please Enable GPS"
+                                   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+    }
 }
-
 
 -(void)showingCurrentLocation{
     [mapView clear];
@@ -598,6 +621,14 @@
         CLLocationCoordinate2D coordinate;
         coordinate.latitude=[strForCurLatitude doubleValue];
         coordinate.longitude=[strForCurLongitude doubleValue];
+        
+//        CLLocation* gps = [[CLLocation alloc]
+//                           initWithLatitude:coordinate.latitude
+//                           longitude:coordinate.longitude];
+//        NSDate* now = gps.timestamp;
+//        
+//        NSLog(@"Time Got From GPS===%@",[self getTimeIndividual:now.description]);
+        
         GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:coordinate zoom:15];
         [mapView animateWithCameraUpdate:updatedCamera];
         //mapView.myLocationEnabled = YES;
@@ -610,7 +641,6 @@
         markerCar.position =  coordinate;
         [CATransaction commit];
         markerCar.map = mapView;
-        
         
         CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
         CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
@@ -632,8 +662,6 @@
         UIAlertView *alertLocation=[[UIAlertView alloc]initWithTitle:@"" message:@"Please Enable Location Access" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertLocation show];
     }
-    
-//    [self checkLocation];
 }
 
 - (IBAction)onClickTimeIn:(UIButton *)sender {
@@ -652,9 +680,7 @@
     _backBtn.hidden = YES;
     
     NSDictionary *statusData=[self getStatus];
-    
     NSString *strMsg;
-    
     if ([[statusData valueForKey:@"status"] length]<=0) {
         strMsg=@"Confirm Time In";
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
@@ -662,10 +688,8 @@
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
         strMsg=@"Confirm Time In";
     }
-    
     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:strMsg message:[NSString stringWithFormat:@"You are currently at %@",[dictForStoreDetails valueForKey:@"storeName"]] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
     [alert show];
-    
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
@@ -745,7 +769,6 @@
     captureSession = [[AVCaptureSession alloc] init];
     // Set the input device on the capture session.
     [captureSession addInput:input];
-    
     // Setup the still image file output
     AVCaptureStillImageOutput *newStillImageOutput = [[AVCaptureStillImageOutput alloc] init];
     NSDictionary *outputSettings = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -771,11 +794,11 @@
     _backBtn.hidden = NO;
 }
 
-
 - (AVCaptureDevice *) frontFacingCamera
 {
     return [self cameraWithPosition:AVCaptureDevicePositionFront];
 }
+
 - (AVCaptureDevice *) cameraWithPosition:(AVCaptureDevicePosition) position
 {
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
@@ -849,7 +872,6 @@
         _vwForImgPreview.hidden = NO;
         _imgVwForPhotoPreview.image=imgToSend;
     }
-    
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -860,28 +882,17 @@
         imgPathToSend=@"img";
         [self timeLineUpdating:dictToSend withIndex:indexValue];
     }else{
-        
-        
-        //    [DejalBezelActivityView activityViewForView:self.view];
-        
+
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^
                        {
-                           
-                           // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
+        
                            NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
                            [_params setObject:@"Time_Line" forKey:@"purpose"];
                            
-                           // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
                            NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
-                           
-                           // string constant for the post parameter 'file'. My server uses this name: `file`. Your's may differ
                            NSString* FileParamConstant = @"snapshotFile";
-                           
-                           // the server url to which the image (or the media) is uploaded. Use your server url here
-                           
                            NSString *stringURL=[NSString stringWithFormat:@"%@/apps/ft/Requests/uploadImage",APPDELEGATE.Base_URL];
                            NSURL* requestURL = [NSURL URLWithString:stringURL];
-                           
                            // create request
                            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
                            [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
@@ -897,27 +908,17 @@
                            NSString *str=[defaults valueForKey:@"BasicAuth"];
                            [request setValue:str forHTTPHeaderField:@"Authorization"];
                            
-                           
                            // post body
                            NSMutableData *body = [NSMutableData data];
-                           
                            // add params (all params are strings)
                            for (NSString *param in _params) {
                                [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
                                [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
                                [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
                            }
-                           
-                           
                            // add image data
-                           
-                           
-                           
                            NSString *base64Encoded = [dictToSend valueForKey:@"actionimage"];
-                           
                            NSData *imageData = [[NSData alloc] initWithBase64EncodedString:base64Encoded options:NSDataBase64DecodingIgnoreUnknownCharacters];
-                           
-                           
                            if (imageData) {
                                [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
                                [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"snapshotFile.png\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -927,15 +928,9 @@
                            }
                            
                            [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
-                           
-                           // setting the body of the post to the reqeust
                            [request setHTTPBody:body];
-                           
-                           // set the content-length
                            NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
                            [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-                           
-                           // set URL
                            [request setURL:requestURL];
                            
                            dispatch_async(dispatch_get_main_queue(), ^
@@ -957,7 +952,7 @@
                                                       [self timeLineUpdating:dictToSend withIndex:indexValue];
                                                   }
                                               }
-                                              //                                          [DejalBezelActivityView removeView];
+                                              //[DejalBezelActivityView removeView];
                                           });
                        });
     }
@@ -970,15 +965,11 @@
         imgPathToSend=@"img";
         [self timeLineUpdating:dictToSend withIndex:indexValue];
     }else{
-        
-        // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
+       
         NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
         [_params setObject:@"Time_Line" forKey:@"purpose"];
-        // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
         NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
-        // string constant for the post parameter 'snapshotFile'. My server uses this name: `snapshotFile`. Your's may differ
         NSString* FileParamConstant = @"snapshotFile";
-        // the server url to which the image (or the media) is uploaded. Use your server url here
         NSString *stringURL=[NSString stringWithFormat:@"%@/apps/ft/Requests/uploadImage",APPDELEGATE.Base_URL];
         NSURL* requestURL = [NSURL URLWithString:stringURL];
         // create request
@@ -1069,10 +1060,15 @@
     NSString *productStoreId=[dictForStoreDetails valueForKey:@"productStoreId"];
     NSDate *now = [NSDate date];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSTimeZone *timeZone = [NSTimeZone localTimeZone];
+    NSString *tzName = [timeZone name];
+    
+    NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
     NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+    strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+    
     NSString *actionType;
     NSString *comments;
     //    NSString *statusData;
@@ -1264,11 +1260,10 @@
         _vwForTimer.hidden=YES;
         timerForShiftTime=nil;
         [timerForShiftTime invalidate];
+        
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
         _lblTimeInStatus.text=@"Time Out";
         _vwForTimer.hidden=NO;
-        
-        //        NSLog(@"Last Time Updated==%@",[statusData valueForKey:@"time"]);
         [self getTimerForTimeIn:[statusData valueForKey:@"time"]];
         
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
@@ -1287,14 +1282,16 @@
     
     NSDate *now = [NSDate date];
     dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
 //    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     firstViewd=[dateFormatter stringFromDate:now];
     
     NSString *lastViewedString;
+    time = [time stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+    
     lastViewedString=time;
     NSInteger   hoursBetweenDates = 0;
-    [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+    [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ssZ"];
     NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
     now = [dateFormatter dateFromString:firstViewd];
     NSTimeInterval distanceBetweenDates = [now timeIntervalSinceDate:lastViewed];
@@ -1315,7 +1312,7 @@
     
     _lblForTimer.text=timeString;
     _lblForTimer.textAlignment= NSTextAlignmentCenter;
-    //    NSLog(@"Time Started==%@",timeString);
+//        NSLog(@"Time Started==%@",timeString);
 }
 
 #pragma mark - Time Line Update
@@ -1324,37 +1321,18 @@
 {
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+     NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
     
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    
-    NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
-    
-    //    NSString *userName=[dict valueForKey:@"username"];
-    //    NSString *productStoreId=[dictForStoreDetails valueForKey:@"productStoreId"];
-    
-    //    NSDate *now = [NSDate date];
-    //
-    //    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    //    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-    //    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    //    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
-    //
-    //    NSString *strCurrentTime=[dateFormatter stringFromDate:now];
-    
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
-    
+   // NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+//    NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
     //{"username":"anand@securet.in","clockDate":"2016-12-10 18:40:00","workEffortTypeEnumId":"WetAvailable","purposeEnumId":"WepAttendance","comments":"Clocking out now from ameerpet","productStoreId":"100051","actionType":"clockOut",'actionImage":"test.jpg","latitude":"15.00","longitude":"19.00"}
-    
     // messages = "Successfully Clocked In!\n";
     //messages = "Successfully Clocked out!\n";
-    
     
     /*
      
@@ -1414,13 +1392,8 @@
                                                             path:@"/rest/s1/ft/attendance/log"
                                                       parameters:json];
     
-    //====================================================RESPONSE
-    //    [DejalBezelActivityView activityViewForView:self.view];
-    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-        
     }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
@@ -1432,8 +1405,8 @@
     }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                         NSLog(@"Error %@",[error description]);
-                                         [self updateDatabase:indexValue];
+                                         NSLog(@"Error %@",[error userInfo]);
+                                        // [self updateDatabase:indexValue];
                                      }];
     [operation start];
 }
@@ -1459,104 +1432,77 @@
 {
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
+    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
     
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",[dict valueForKey:@"username"]);
-    
     NSDate *now = [NSDate date];
-    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd";
-//    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
-
+//    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     //estimatedStartDate=2016-12-11 00:00:00&estimatedCompletionDate=2016-12-11 23:50:59
 //    NSString *startDate=[NSString stringWithFormat:@"estimatedStartDate=%@ 00:00:00",[dateFormatter stringFromDate:now]];
-    
 //    NSString *endDate=[NSString stringWithFormat:@"estimatedCompletionDate=%@ 23:50:59",[dateFormatter stringFromDate:now]];
-    
     NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=0&pageSize=1",[dict valueForKey:@"username"]];
-    
     NSLog(@"String Path for Get History===%@",strPath);
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:strPath
                                                       parameters:nil];
     
     //====================================================RESPONSE
-    
     [DejalBezelActivityView activityViewForView:self.view];
-    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-        
     }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
         
-        
         [DejalBezelActivityView removeView];
-        
-        
-        //        arrayForTableData=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
+      
         NSMutableArray *array=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
-        
-        
         arrayForStatusData=[[NSMutableArray alloc] init];
-        
-        //        arrayForStatusData=[[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"];
-        
         for (NSDictionary *dict in [[array firstObject] objectForKey:@"timeEntryList"]) {
             [arrayForStatusData addObject:[dict valueForKey:@"fromDate"]];
             [arrayForStatusData addObject:[dict valueForKey:@"thruDate"]];
         }
         
         [arrayForStatusData removeObjectIdenticalTo:[NSNull null]];
-        
         // create the date formatter with the correct format
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss xxxx"];
         NSMutableArray *tempArray = [NSMutableArray array];
-        
         // fast enumeration of the array
         for (NSString *dateString in arrayForStatusData) {
             if (![dateString isKindOfClass:[NSNull class]]) {
                 NSString *str=dateString;
                 str = [str stringByReplacingOccurrencesOfString:@"T" withString:@" "];
                 str = [str stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
-                
-                NSDate *date = [formatter dateFromString:str];
-                [tempArray addObject:date];
+                NSDate *date_1 = [formatter dateFromString:str];
+                [tempArray addObject:date_1.description];
             }
         }
-        
         // sort the array of dates
         [tempArray sortUsingComparator:^NSComparisonResult(NSDate *date1, NSDate *date2) {
             // return date2 compare date1 for descending. Or reverse the call for ascending.
             return [date2 compare:date1];
         }];
-        
-        //        NSLog(@"%@", [[tempArray reverseObjectEnumerator] allObjects]);
-        
+      //  NSLog(@"%@", [[tempArray reverseObjectEnumerator] allObjects]);
         tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
+        
         NSMutableArray *correctOrderStringArray = [NSMutableArray array];
         
-        for (NSDate *date in tempArray) {
-            NSString *dateString = [formatter stringFromDate:date];
-            [correctOrderStringArray addObject:dateString];
+        for (NSDate *date_1 in tempArray) {
+      //      NSString *dateString = [formatter stringFromDate:date_1];
+            [correctOrderStringArray addObject:date_1.description];
         }
         
         arrayForStatusData = [correctOrderStringArray mutableCopy];
-        
         _tableVwForTimeline.delegate= self;
         _tableVwForTimeline.dataSource = self;
         [_tableVwForTimeline reloadData];
@@ -1568,6 +1514,5 @@
                                      }];
     [operation start];
 }
-
 
 @end

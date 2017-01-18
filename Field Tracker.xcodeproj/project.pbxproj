@@ -40,6 +40,7 @@
 		7FA481D01E161F1200345BCE /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA481CF1E161F1200345BCE /* Reachability.m */; };
 		7FA481D41E162EF200345BCE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA481D31E162EF200345BCE /* CoreData.framework */; };
 		7FA481D81E162FE400345BCE /* FieldTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7FA481D61E162FE400345BCE /* FieldTracker.xcdatamodeld */; };
+		7FB6AB181E2F395000C0E270 /* Location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7FB6AB171E2F395000C0E270 /* Location.gpx */; };
 		7FC8108B1E24ED7800097144 /* JSBadgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FC8108A1E24ED7800097144 /* JSBadgeView.m */; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
@@ -155,6 +156,7 @@
 		7FA481CF1E161F1200345BCE /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		7FA481D31E162EF200345BCE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		7FA481D71E162FE400345BCE /* FieldTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FieldTracker.xcdatamodel; sourceTree = "<group>"; };
+		7FB6AB171E2F395000C0E270 /* Location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Location.gpx; sourceTree = "<group>"; };
 		7FC810891E24ED7800097144 /* JSBadgeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBadgeView.h; sourceTree = "<group>"; };
 		7FC8108A1E24ED7800097144 /* JSBadgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSBadgeView.m; sourceTree = "<group>"; };
 		7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
@@ -468,6 +470,14 @@
 			name = CoreData;
 			sourceTree = "<group>";
 		};
+		7FB6AB161E2F394800C0E270 /* Location GPX */ = {
+			isa = PBXGroup;
+			children = (
+				7FB6AB171E2F395000C0E270 /* Location.gpx */,
+			);
+			path = "Location GPX";
+			sourceTree = "<group>";
+		};
 		7FC8108C1E2512CA00097144 /* Badge View */ = {
 			isa = PBXGroup;
 			children = (
@@ -527,6 +537,7 @@
 		7FFB546F1E092EBC00A930C7 /* FieldTracker */ = {
 			isa = PBXGroup;
 			children = (
+				7FB6AB161E2F394800C0E270 /* Location GPX */,
 				7FA481D51E162FBB00345BCE /* CoreData */,
 				7F04BA9E1E128B0100679905 /* Shared Class */,
 				7F04BA7D1E1222B100679905 /* ViewControllers */,
@@ -794,6 +805,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7FECDA511E0A4610000E923F /* Podfile in Resources */,
+				7FB6AB181E2F395000C0E270 /* Location.gpx in Resources */,
 				7FFB54D61E0933B400A930C7 /* IQKeyboardManager.bundle in Resources */,
 				7FFB54801E092EBC00A930C7 /* LaunchScreen.storyboard in Resources */,
 				7FFB54A51E092F7700A930C7 /* Images.xcassets in Resources */,
@@ -1078,8 +1090,8 @@
 			baseConfigurationReference = 36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: AppsXpress Ltd (578257FC2T)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: AppsXpress Ltd (578257FC2T)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1092,7 +1104,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager @rpath/RSDayFlow.framework/RSDayFlow";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTrackerios;
 				PRODUCT_NAME = "Field Tracker";
-				PROVISIONING_PROFILE = "93be3a31-4246-43d0-9758-6973327e8a30";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1102,8 +1114,8 @@
 			baseConfigurationReference = 5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: AppsXpress Ltd (578257FC2T)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: AppsXpress Ltd (578257FC2T)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1116,7 +1128,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @rpath/KeyboardManager.framework/KeyboardManager @rpath/RSDayFlow.framework/RSDayFlow";
 				PRODUCT_BUNDLE_IDENTIFIER = com.allsmart.FieldTrackerios;
 				PRODUCT_NAME = "Field Tracker";
-				PROVISIONING_PROFILE = "93be3a31-4246-43d0-9758-6973327e8a30";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

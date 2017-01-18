@@ -47,9 +47,7 @@
     
     __weak IBOutlet RSDFDatePickerView *datePicker;
     
-    
     NSString *roleType;
-    
 }
 @end
 
@@ -67,15 +65,13 @@
     _lblFName.text=[dict valueForKey:@"firstName"];
     _lblLName.text=[dict valueForKey:@"lastName"];
     
-    
     if (![roleType isEqualToString:@"FieldExecutiveOnPremise"] && ![roleType isEqualToString:@"FieldExecutiveOffPremise"]) {
         arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
     }else{
         arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
     }
     
-    
-    
+
     arrayForStoreList=[[NSMutableArray alloc] init];
     arrayForPromoters=[[NSMutableArray alloc] init];
     arrayForLeaveHistory = [[NSMutableArray alloc] init];
@@ -129,13 +125,16 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveTypeSelected:) name:@"LeaveTypeSelected" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveReasonSelected:) name:@"LeaveReasonSelected" object:nil];
     
-    [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
+    
     
     [self disableMyAccountEdit];
     [self setupUIForAllViews];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    
+    _lblForStoreLocation.text=@"";
+    [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
     
     [self updateLocationManagerr];
     self.navigationController.navigationBarHidden = YES;
@@ -155,6 +154,16 @@
     if (![APPDELEGATE connected]) {
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
+    }
+    
+    
+    
+    if ([CLLocationManager locationServicesEnabled]) {
+        
+    }else{
+        [[[UIAlertView alloc] initWithTitle:@""
+                                    message:@"Please Enable GPS"
+                                   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
     }
 }
 
@@ -181,7 +190,6 @@
     _textFieldMyEmail.text = [dict valueForKey:@"emailAddress"];
     _textFieldMyStore.text = _lblForStoreLocation.text;
     
-    
     if ([dict valueForKey:@"directions"]) {
         _textVwMyAddress.text=[dict valueForKey:@"directions"];
     }
@@ -204,10 +212,7 @@
                 });
             });
     }
-    
-    
-    
-    
+
     _textFieldMyName.userInteractionEnabled = NO;
     _textFieldMyNumber.userInteractionEnabled = NO;
     _textFieldMyEmail.userInteractionEnabled = NO;
@@ -226,7 +231,6 @@
     
     [self textFieldEdit:_txtFieldStoreName];
     [self textFieldEdit:_txtFieldSiteRadius];
-    
     
     _txtFieldSiteRadius.keyboardType = UIKeyboardTypeNumberPad;
     
@@ -248,38 +252,33 @@
     [_btnGetLocation addTarget:self action:@selector(getLocation) forControlEvents:UIControlEventTouchUpInside];
     
     //For Promoter View
-    
     [self addPromoterViewSetup];
-    
     [self addShadow:_btnAddStore];
     [self addShadow:_btnAddPromoter];
     [self addShadow:_btnLeaveRqst];
     
     //For Change Password
-    
     [self textFieldEdit:_textFieldCurrentPwd];
     [self textFieldEdit:_textFieldNewPwd];
     [self textFieldEdit:_textFieldConfirmNewPwd];
     [self addShadow:_btnChangePwd];
     
+    [_btnChangePwd addTarget:self action:@selector(onClickChangePwd) forControlEvents:UIControlEventTouchUpInside];
+    
     _btnChangePwd.layer.cornerRadius = 5;
     _btnChangePwd.layer.masksToBounds = YES;
     
     //Contact Support
-    
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(emailIDTapped)];
     tapGestureRecognizer.numberOfTapsRequired = 1;
     [_lblForEmailContact addGestureRecognizer:tapGestureRecognizer];
     _lblForEmailContact.userInteractionEnabled = YES;
     
-    
     UITapGestureRecognizer *tapGestureRecognizerForNum = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(phoneNumTapped)];
     tapGestureRecognizerForNum.numberOfTapsRequired = 1;
     [_lblForPhoneContact addGestureRecognizer:tapGestureRecognizerForNum];
     _lblForPhoneContact.userInteractionEnabled = YES;
-    
-    
-    
+
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
     [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"Email:  "
                                                                              attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
@@ -347,12 +346,113 @@
     leaveReasonEnumID=[userInfo.userInfo valueForKey:@"enumId"];
 }
 
+#pragma mark - Change Password
+
+-(void)onClickChangePwd
+{
+    [self.view endEditing:YES];
+   
+    if ([APPDELEGATE connected]) {
+        
+    
+    
+    if (_textFieldCurrentPwd.text.length > 0 && _textFieldNewPwd.text.length>0 && _textFieldConfirmNewPwd.text.length>0) {
+        if ([_textFieldNewPwd.text isEqualToString:_textFieldConfirmNewPwd.text]) {
+            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+            
+            AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+            httpClient.parameterEncoding = AFFormURLParameterEncoding;
+            [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+            
+            NSString *str=[defaults valueForKey:@"BasicAuth"];
+            
+            [httpClient setDefaultHeader:@"Authorization" value:str];
+            //{"oldPassword":"test@123","newPassword":"test@1234","newPasswordVerify":"test@1234"}
+            NSDictionary * json = @{@"oldPassword":_textFieldCurrentPwd.text,
+                                    @"newPassword":_textFieldNewPwd.text,
+                                    @"newPasswordVerify":_textFieldConfirmNewPwd.text,
+                                    };
+            NSMutableURLRequest *request;
+           
+                request = [httpClient requestWithMethod:@"PUT"
+                                                   path:@"/rest/s1/ft/user/changePassword"
+                                             parameters:json];
+           
+            
+            //====================================================RESPONSE
+            [DejalBezelActivityView activityViewForView:self.view];
+            
+            AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+            [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+                
+            }];
+            [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                NSError *error = nil;
+                NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+                [DejalBezelActivityView removeView];
+                NSLog(@"Password was changed Successfully==%@",JSON);
+                
+                [[[UIAlertView alloc] initWithTitle:@"Password updated successfully !"
+                                            message:@""
+                                           delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+                NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
+                NSString *userName=[dict valueForKey:@"username"];
+                
+                NSString *str=[NSString stringWithFormat:@"%@:%@",userName,_textFieldNewPwd.text];
+                NSString *auth_String;
+                NSData *nsdata = [str dataUsingEncoding:NSUTF8StringEncoding];
+                NSString *base64Encoded = [nsdata base64EncodedStringWithOptions:0];
+                auth_String=[NSString stringWithFormat:@"Basic %@",base64Encoded];
+                [defaults setObject:auth_String forKey:@"BasicAuth"];
+                
+                
+                _vwForChangePwd.hidden=YES;
+                _textFieldCurrentPwd.text=@"";
+                _textFieldNewPwd.text=@"";
+                _textFieldConfirmNewPwd.text=@"";
+            }
+             //==================================================ERROR
+                                             failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                 [DejalBezelActivityView removeView];
+                                                NSError *jsonError;
+                                                 NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                options:NSJSONReadingMutableContainers
+                                                                error:&jsonError];
+                                                 
+                                                NSString *strError=[json valueForKey:@"errors"];
+                                                 [[[UIAlertView alloc] initWithTitle:@""
+                                                                             message:strError
+                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                             }];
+            [operation start];
+
+        }else{
+            [[[UIAlertView alloc] initWithTitle:@"Password was doesn't match"
+                                        message:@""
+                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+            _textFieldConfirmNewPwd.text=@"";
+            _textFieldNewPwd.text=@"";
+        }
+    }else{
+        [[[UIAlertView alloc] initWithTitle:@"Please Enter All Fields"
+                                    message:@""
+                                   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+    }
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+
+    }
+}
+
 #pragma mark - Contact Support
 
 -(void)emailIDTapped{
     
     NSString *string=[NSString stringWithFormat:@"%@",_lblForEmailContact.attributedText.string];
-    
     
     if ([self isValidEmail:[string substringFromIndex:8]])
     {
@@ -368,27 +468,22 @@
             NSString *message =@"";
             [controller setMessageBody:message isHTML:YES];
             [self presentViewController:controller animated:YES completion:NULL];
-        }
-        else
-        {
+        }else{
             [[[UIAlertView alloc] initWithTitle:@"Your device is not configured for sending email"
                                         message:@"Please configure your mail account in iphone's setting"
                                        delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
         }
     }
 }
+
 -(void)phoneNumTapped{
     //    NSString *phNo = _lblForPhoneContact.text;
     
     NSString *string=[NSString stringWithFormat:@"%@",_lblForPhoneContact.attributedText.string];
-    
-    
     NSURL *phoneUrl = [NSURL URLWithString:[NSString  stringWithFormat:@"telprompt:%@",[string substringFromIndex:8]]];
-    
     if ([[UIApplication sharedApplication] canOpenURL:phoneUrl]) {
         [[UIApplication sharedApplication] openURL:phoneUrl];
-    } else
-    {
+    } else{
         UIAlertView* calert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"Call facility is not available!!!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [calert show];
     }
@@ -423,8 +518,6 @@
 
 -(void)checkingInLocation:(NSNotification*)notification{
     
-    
-    
     @try {
         NSDictionary *userInfo = notification.userInfo;
         NSLog(@"Notification In History==%@",userInfo);
@@ -449,8 +542,6 @@
 //        NSLog(@"Char at index %d cannot be found", index);
 //        NSLog(@"Max index is: %d", [test length]-1);
     }
-    
-   
 }
 
 -(void)changeLocationStatus:(NSDictionary*)dictInfo{
@@ -608,12 +699,10 @@
         strForCurLongitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"];
         _btnAdd.tag=indexValue;
     }
-    
 }
 
 -(void)enableAddNewStoreBtn
 {
-    
     if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
         if (_txtFieldStoreName.text.length>0&&_txtVwStoreAddress.text.length>0&&_txtFieldSiteRadius.text.length>0&& ![_txtVwStoreAddress.text isEqualToString:@"Store Address"]) {
             _btnAdd.enabled = YES;
@@ -698,7 +787,6 @@
     _backBtn.hidden=NO;
 }
 
-
 -(void)getLocation{
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
@@ -713,7 +801,6 @@
     strForCurLongitude=[NSString stringWithFormat:@"%f",coordinate.longitude];
     [self getAddress];
 }
-
 
 -(void)getAddress
 {
@@ -780,37 +867,27 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
+    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
     
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:@"/rest/s1/ft/stores/user/list"
                                                       parameters:nil];
-    
     //====================================================RESPONSE
     [DejalBezelActivityView activityViewForView:self.view];
-    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-        
     }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        
         [DejalBezelActivityView removeView];
-        
-             NSLog(@"Store List==%@",JSON);
-        
+        NSLog(@"Store List==%@",JSON);
         arrayForStoreList=[JSON objectForKey:@"userStores"];
-        
         [_tableVwForStore reloadData];
     }
      //==================================================ERROR
@@ -819,9 +896,7 @@
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
-    
 }
-
 
 
 #pragma mark - Add Store
@@ -840,18 +915,15 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
+    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
     
     NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/list?pageIndex=%i&pageSize=10",pageNumber];
     NSLog(@"String Path for Get Promoters==%@",strPath);
-    
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:strPath
                                                       parameters:nil];
@@ -884,7 +956,6 @@
         }
         NSLog(@"Promoter List===%@",JSON);
         arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
-        
         [_tableVwForPromoters reloadData];
     }
      //==================================================ERROR
@@ -905,13 +976,11 @@
     } else {
         //        NSLog(@"multiSelect with tag %i deselected button at index: %i", multiSelectSegmentedControl.tag, index);
     }
-    
     NSLog(@"selected: '%@'", [multiSelectSegmentedControl.selectedSegmentTitles componentsJoinedByString:@","]);
 }
 
 
 -(void)onClickAddPromoter:(UIButton*)btn{
-
     
     for (UIView *subview in [_btnPhotoPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
@@ -931,7 +1000,6 @@
         }
     }
     
-    
     [self promoterDetails:YES];
 }
 
@@ -945,7 +1013,6 @@
     _backBtn.hidden = YES;
     
     if (!isAddOrEdit) {
-        
         
         if (![[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"statusId"] isKindOfClass:[NSNull class]]) {
             NSString *promoterStatus=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"statusId"];
@@ -984,16 +1051,6 @@
             strUserPhotoPath=[[json objectForKey:@"requestInfo"] objectForKey:@"userPhoto"];;
             strAddressProofPath=[[json objectForKey:@"requestInfo"] objectForKey:@"addressIdPath"];
             storeIDForPromoterAdd=productStoreId;
-        
-        
-        /*
-         
-        
-         */
-        
-        
-
-        
     }else{
         strAadharIDPath=@"";
         strUserPhotoPath=@"";
@@ -1058,8 +1115,7 @@
     _txtVwAddressPromoter.autocorrectionType = UITextAutocorrectionTypeNo;
     
 //    _btnPhotoPromoter.layer.cornerRadius = 5;
-//    _btnPhotoPromoter.layer.masksToBounds = YES;
-    
+//    _btnPhotoPromoter.layer.masksToBounds = YES;    
     _btnPhotoPromoter.tag=100;
     
 //    _btnAadharPromoter.layer.cornerRadius = 5;
@@ -1096,14 +1152,12 @@
                 
                 NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
                 NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+                NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
                 
                 AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
                 httpClient.parameterEncoding = AFFormURLParameterEncoding;
                 [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-                
-                NSString *str=[defaults valueForKey:@"BasicAuth"];
-                
-                [httpClient setDefaultHeader:@"Authorization" value:str];
+                [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
                 
                 //{"requestType":"RqtAddPromoter", "firstName":"James", "lastName":"Managalam","phone":"11111111","address":"eh hai address","emailId":"james@allsmart.in","productStoreId":"100000","statusId":"ReqSubmitted","requestTypeEnumId":"RqtAddPromoter","aadharIdPath":"/img/","userPhoto":"/img/","addressIdPath":"/img/"}
                 /*
@@ -1267,22 +1321,14 @@
     //
     //        }];
     //    }
-    
-    
     NSError *error;
-    
     AVCaptureDevice *captureDevice ;
-    
-    
     if (sender.tag == 100) {
         captureDevice   = [self frontFacingCamera];
     }else if (sender.tag == 200 || sender.tag == 300){
         captureDevice = [self rearFacingCamera];
     }
-    
-    
-    
-    
+
     AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
     
     if (!input)
@@ -1342,42 +1388,27 @@
     
     AVCaptureConnection *videoConnection = nil;
     
-    for (AVCaptureConnection *connection in [stillImageOutput connections])
-    {
-        for (AVCaptureInputPort *port in [connection inputPorts])
-        {
-            if ([[port mediaType] isEqual:AVMediaTypeVideo] )
-            {
+    for (AVCaptureConnection *connection in [stillImageOutput connections]){
+        for (AVCaptureInputPort *port in [connection inputPorts])        {
+            if ([[port mediaType] isEqual:AVMediaTypeVideo] )            {
                 videoConnection = connection;
                 break;
             }
         }
-        if (videoConnection)
-        {
+        if (videoConnection)        {
             break;
         }
     }
     
-   
-    
     NSLog(@"About to request a capture from: %@", stillImageOutput);
-    [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
-     {
+    [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
+        
          NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
          UIImage *image = [[UIImage alloc] initWithData:imageData];
          imgToSend=image;
          _vwForCamera.hidden = YES;
          _backBtn.hidden = YES;
          [self postImageDataToServer];
-         
-         
-         
-//
-         
-         
-        
-         
-         
      }];
     
     self.tabBarController.tabBar.hidden =NO;
@@ -1388,9 +1419,7 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     if([info valueForKey:UIImagePickerControllerOriginalImage]==nil)
     {
-    }
-    else
-    {
+    }else{
         imgToSend=[info valueForKey:UIImagePickerControllerOriginalImage];
         [self postImageDataToServer];
         //        [self setImage:[info valueForKey:UIImagePickerControllerOriginalImage]];
@@ -1406,21 +1435,12 @@
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
                    {
-                       
-                       // Dictionary that holds post parameters. You can set your post parameters that your server accepts or programmed to accept.
                        NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
                        [_params setObject:stringForImagePurpose forKey:@"purpose"];
-                       
-                       // the boundary string : a random string, that will not repeat in post data, to separate post data fields.
                        NSString *BoundaryConstant = @"----------V2ymHFg03ehbqgZCaKO6jy";
-                       
-                       // string constant for the post parameter 'file'. My server uses this name: `file`. Your's may differ
                        NSString* FileParamConstant = @"snapshotFile";
-                       
-                       // the server url to which the image (or the media) is uploaded. Use your server url here
                        NSString *stringURL=[NSString stringWithFormat:@"%@/apps/ft/Requests/uploadImage",APPDELEGATE.Base_URL];
                        NSURL* requestURL = [NSURL URLWithString:stringURL];
-                       
                        // create request
                        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
                        [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
@@ -1436,7 +1456,6 @@
                        NSString *str=[defaults valueForKey:@"BasicAuth"];
                        [request setValue:str forHTTPHeaderField:@"Authorization"];
                        
-                       
                        // post body
                        NSMutableData *body = [NSMutableData data];
                        
@@ -1446,7 +1465,6 @@
                            [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
                            [body appendData:[[NSString stringWithFormat:@"%@\r\n", [_params objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
                        }
-                       
                        
                        // add image data
                        NSData *imageData = UIImageJPEGRepresentation(imgToSend, 0.5);
@@ -1459,14 +1477,11 @@
                        }
                        
                        [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
-                       
                        // setting the body of the post to the reqeust
                        [request setHTTPBody:body];
-                       
                        // set the content-length
                        NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[body length]];
                        [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-                       
                        // set URL
                        [request setURL:requestURL];
                        
@@ -1509,26 +1524,10 @@
 -(void)leaveRequestEdit:(NSInteger)indexValue{
    
     NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"fromDate"] substringToIndex:10];
-//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-//    NSDate *date = [dateFormatter dateFromString:startDate];
-//    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
-//    NSString *newDateString = [dateFormatter stringFromDate:date];
-//    
-//    
    _txtFieldStartDate.text=[NSString stringWithFormat:@"%@",startDate];
     
-    
     NSString *endDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"thruDate"] substringToIndex:10];
-    
-//    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
-//    date = [dateFormatter dateFromString:endDate];
-//    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
-//    newDateString = [dateFormatter stringFromDate:date];
-//    
     _txtFieldEndDate.text=[NSString stringWithFormat:@"%@",endDate];
-    
-//    cellLeave.lblForTypeOfLeave.text=[NSString stringWithFormat:@"%@",[[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] substringFromIndex:3]];
     
     NSDateFormatter *f = [[NSDateFormatter alloc] init];
     [f setDateFormat:@"yyyy-MM-dd"];
@@ -1540,11 +1539,9 @@
                                                         fromDate:start
                                                           toDate:end
                                                          options:0];
-    
     if ([components day] >= 0){
             _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
     }
-
     _txtFieldLeaveDescription.text=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"description"];
 }
 
@@ -1553,17 +1550,14 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
+    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
     
     NSString *strPath=@"/rest/s1/ft/leaves/types";
-    
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:strPath
                                                       parameters:nil];
@@ -1572,30 +1566,22 @@
     [DejalBezelActivityView activityViewForView:self.view];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-        
     }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        
         [DejalBezelActivityView removeView];
-        
         dictForLeaveTypes=[[NSDictionary alloc] init];
         dictForLeaveTypes=JSON;
-        
         NSLog(@"Leave Types===%@",dictForLeaveTypes);
-        
        NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
-        
         for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
             if ([strLeaveType isEqualToString:[dict valueForKey:@"enumId"]]) {
                 _txtFieldLeaveType.text=[dict valueForKey:@"description"];
                 leaveTypeEnumID=[dict valueForKey:@"enumId"];
             }
         }
-        
         NSString *strLeaveReason=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveReasonEnumId"];
         
         for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveReasonEnumId"]) {
@@ -1611,16 +1597,13 @@
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
-    
 }
 
 
 - (void)refreshFooterForLeave
 {
-    if(pageNumberForLeave < countForLeaveData)
-    {
+    if(pageNumberForLeave < countForLeaveData){
         pageNumberForLeave++;
-        
         [self getMyLeaveHistory];
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -1628,42 +1611,32 @@
             [self.tableVwForLeaveRqst footerEndRefreshing];
             //        [self.tableVw removeFooter];
         });
-    }
-    else
-    {
+    }else{
         [self.tableVwForLeaveRqst footerEndRefreshing];
         [self.tableVwForLeaveRqst headerEndRefreshing];
     }
 }
 
--(void)getMyLeaveHistory{
-    
+-(void)getMyLeaveHistory
+{
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
-    
+    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
     
     NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/leaves/my/list?pageIndex=%i&pageSize=10",pageNumberForLeave];
-    
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:strPath
                                                       parameters:nil];
-    
     //====================================================RESPONSE
-    
     if (pageNumberForLeave == 0) {
         [DejalBezelActivityView activityViewForView:self.view];
     }
-    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
         
     }];
@@ -1685,7 +1658,6 @@
                 }
             }
         }
-        
         [_tableVwForLeaveRqst reloadData];
        NSLog(@"Leave List==%@",arrayForLeaveHistory);
     }
@@ -1695,7 +1667,6 @@
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
-    
 }
 
 
@@ -1704,24 +1675,18 @@
     ///rest/s1/ft/leaves
     
     if (_txtFieldStartDate.text.length>0 && _txtFieldEndDate.text.length>0&&_txtFieldLeaveReason.text.length>0 && _txtFieldLeaveType.text.length>0 && _txtFieldLeaveDescription.text.length>0) {
+
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
         
-    
-    
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
-    
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    httpClient.parameterEncoding = AFFormURLParameterEncoding;
-    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
-   
-    NSDictionary * json ;
-    
-    NSMutableURLRequest *request;
-    
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        NSDictionary * json;
+        NSMutableURLRequest *request;
         
         if (isLeaveEditRNew) {
             
@@ -1752,57 +1717,56 @@
                                                path:@"/rest/s1/ft/leaves"
                                          parameters:json];
         }
-    
-    //====================================================RESPONSE
-    [DejalBezelActivityView activityViewForView:self.view];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
         
-    }];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSError *error = nil;
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        [DejalBezelActivityView removeView];
-        NSLog(@"Add Store Successfully==%@",JSON);
+        //====================================================RESPONSE
+        [DejalBezelActivityView activityViewForView:self.view];
         
-        _backBtn.hidden = NO;
-        _vwForLeaveRqstAdd.hidden = YES;
-        if ([JSON objectForKey:@"employeeLeave"] && isLeaveEditRNew) {
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            [DejalBezelActivityView removeView];
+            NSLog(@"Add Store Successfully==%@",JSON);
             
-            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave requested successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-        }else{
-            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave edited successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
+            _backBtn.hidden = NO;
+            _vwForLeaveRqstAdd.hidden = YES;
+            if ([JSON objectForKey:@"employeeLeave"] && isLeaveEditRNew) {
+                
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave requested successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }else{
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave edited successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
         }
-    }
-     //==================================================ERROR
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                         [DejalBezelActivityView removeView];
-//                                         NSLog(@"Error %@",[error description]);
-                                         
-                                         
-                                         NSString *JSON = [[error userInfo] valueForKey:NSLocalizedRecoverySuggestionErrorKey] ;
-                                         
-                                         NSError *aerror = nil;
-                                         NSDictionary *json = [NSJSONSerialization JSONObjectWithData: [JSON dataUsingEncoding:NSUTF8StringEncoding]
-                                                                                              options: NSJSONReadingMutableContainers
-                                                                                                error: &aerror];
-                                         
-                                          NSLog(@"Error %@",json);
-                                         
-                                         if ([[operation response] statusCode] == 500) {
-                                             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[json valueForKey:@"errors"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                                             [alert show];
-                                         }
-                                         
-                                         if (isLeaveEditRNew) {
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             //                                         NSLog(@"Error %@",[error description]);
                                              
-                                         }
-                                         //You have already applied a leave
-                                     }];
-    [operation start];
+                                             
+                                             NSString *JSON = [[error userInfo] valueForKey:NSLocalizedRecoverySuggestionErrorKey] ;
+                                             
+                                             NSError *aerror = nil;
+                                             NSDictionary *json = [NSJSONSerialization JSONObjectWithData: [JSON dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                                  options: NSJSONReadingMutableContainers
+                                                                                                    error: &aerror];
+                                             
+                                             NSLog(@"Error %@",json);
+                                             
+                                             if ([[operation response] statusCode] == 500) {
+                                                 UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[json valueForKey:@"errors"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                                 [alert show];
+                                             }
+                                             
+                                             if (isLeaveEditRNew) {
+                                                 
+                                             }
+                                             //You have already applied a leave
+                                         }];
+        [operation start];
     }else{
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter All Details" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
@@ -1995,19 +1959,14 @@
         }
         cellLeave.selectionStyle = UITableViewCellSelectionStyleNone;
      
-        
         NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
-
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd"];
         NSDate *date = [dateFormatter dateFromString:startDate];
         [dateFormatter setDateFormat:@"dd/MM/yyyy"];
         NSString *newDateString = [dateFormatter stringFromDate:date];
 
-        
         cellLeave.lblForStartDate.text=[NSString stringWithFormat:@"From: %@",newDateString];
-        
-    
         NSString *endDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
         
         [dateFormatter setDateFormat:@"yyyy-MM-dd"];
@@ -2029,7 +1988,6 @@
                                                             fromDate:start
                                                               toDate:end
                                                              options:0];
-
         if ([components day] >= 0){
             if ([components day] == 0) {
                 cellLeave.lblForNumOfDays.text=[NSString stringWithFormat:@"%i Day",[components day]+1];
@@ -2105,7 +2063,10 @@
         
         if ([cell.textLabel.text isEqualToString:@"Log Off"]){
             
+            [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
             NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            [defaults removeObjectForKey:@"UserData"];
+            [defaults removeObjectForKey:@"StoreData"];
             [defaults setObject:@"0" forKey:@"Is_Login"];
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
@@ -2252,7 +2213,6 @@
     [self popupView];
 }
 
-
 -(void)popupView{
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKStoreListPopupVC"];
@@ -2264,6 +2224,5 @@
         BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-50, self.view.frame.size.height-100)];
         [self presentViewController:popupViewController animated:NO completion:nil];
     }
-
 }
 @end
