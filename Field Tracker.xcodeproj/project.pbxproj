@@ -61,11 +61,11 @@
 		7FB6ABCA1E2F40E700C0E270 /* IQUIView+IQKeyboardToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6ABBB1E2F40E700C0E270 /* IQUIView+IQKeyboardToolbar.m */; };
 		7FB6ABCB1E2F40E700C0E270 /* IQKeyboardManager.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7FB6ABBE1E2F40E700C0E270 /* IQKeyboardManager.bundle */; };
 		7FB6ABCC1E2F40E700C0E270 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FB6ABBF1E2F40E700C0E270 /* KeyboardManager.framework */; };
+		7FB6ABD01E2F417800C0E270 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6ABCF1E2F417800C0E270 /* ViewController.m */; };
+		7FB6ABD41E2F41A800C0E270 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6ABD31E2F41A800C0E270 /* AppDelegate.m */; };
+		7FB6ABD71E2F41E000C0E270 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6ABD61E2F41E000C0E270 /* main.m */; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
-		7FFB54721E092EBC00A930C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54711E092EBC00A930C7 /* main.m */; };
-		7FFB54751E092EBC00A930C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54741E092EBC00A930C7 /* AppDelegate.m */; };
-		7FFB54781E092EBC00A930C7 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54771E092EBC00A930C7 /* ViewController.m */; };
 		7FFB547B1E092EBC00A930C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB54791E092EBC00A930C7 /* Main.storyboard */; };
 		7FFB547D1E092EBC00A930C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB547C1E092EBC00A930C7 /* Assets.xcassets */; };
 		7FFB54801E092EBC00A930C7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB547E1E092EBC00A930C7 /* LaunchScreen.storyboard */; };
@@ -204,15 +204,15 @@
 		7FB6ABBC1E2F40E700C0E270 /* KeyboardManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardManager.h; sourceTree = "<group>"; };
 		7FB6ABBE1E2F40E700C0E270 /* IQKeyboardManager.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IQKeyboardManager.bundle; sourceTree = "<group>"; };
 		7FB6ABBF1E2F40E700C0E270 /* KeyboardManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KeyboardManager.framework; sourceTree = "<group>"; };
+		7FB6ABCE1E2F417800C0E270 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		7FB6ABCF1E2F417800C0E270 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		7FB6ABD21E2F41A800C0E270 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		7FB6ABD31E2F41A800C0E270 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		7FB6ABD61E2F41E000C0E270 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7FFB546D1E092EBC00A930C7 /* Field Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Field Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7FFB54711E092EBC00A930C7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		7FFB54731E092EBC00A930C7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		7FFB54741E092EBC00A930C7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		7FFB54761E092EBC00A930C7 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		7FFB54771E092EBC00A930C7 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		7FFB547A1E092EBC00A930C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7FFB547C1E092EBC00A930C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7FFB547F1E092EBC00A930C7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -296,6 +296,7 @@
 		7FB6AB191E2F39DF00C0E270 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				7FB6ABCD1E2F416C00C0E270 /* MainHomeLogin */,
 				7FB6AB201E2F3B3000C0E270 /* Add Edit Store */,
 				7FB6AB1F1E2F3ADF00C0E270 /* TimeInTimeOutHome */,
 				7FB6AB1D1E2F3A7800C0E270 /* History */,
@@ -595,6 +596,32 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		7FB6ABCD1E2F416C00C0E270 /* MainHomeLogin */ = {
+			isa = PBXGroup;
+			children = (
+				7FB6ABCE1E2F417800C0E270 /* ViewController.h */,
+				7FB6ABCF1E2F417800C0E270 /* ViewController.m */,
+			);
+			path = MainHomeLogin;
+			sourceTree = "<group>";
+		};
+		7FB6ABD11E2F419F00C0E270 /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				7FB6ABD21E2F41A800C0E270 /* AppDelegate.h */,
+				7FB6ABD31E2F41A800C0E270 /* AppDelegate.m */,
+			);
+			path = AppDelegate;
+			sourceTree = "<group>";
+		};
+		7FB6ABD51E2F41D800C0E270 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				7FB6ABD61E2F41E000C0E270 /* main.m */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		7FFB54641E092EBC00A930C7 = {
 			isa = PBXGroup;
 			children = (
@@ -620,6 +647,8 @@
 		7FFB546F1E092EBC00A930C7 /* FieldTracker */ = {
 			isa = PBXGroup;
 			children = (
+				7FB6ABD51E2F41D800C0E270 /* Supporting Files */,
+				7FB6ABD11E2F419F00C0E270 /* AppDelegate */,
 				7FB6AB3A1E2F3DE600C0E270 /* Helper Library Classes */,
 				7FB6AB211E2F3B5E00C0E270 /* SharedGlobalClass */,
 				7FB6AB191E2F39DF00C0E270 /* ViewControllers */,
@@ -628,26 +657,13 @@
 				7FECDA501E0A460F000E923F /* Podfile */,
 				7FFB54E41E0951F400A930C7 /* Frameworks */,
 				7FFB54A31E092F4800A930C7 /* ImageAssets */,
-				7FFB54731E092EBC00A930C7 /* AppDelegate.h */,
-				7FFB54741E092EBC00A930C7 /* AppDelegate.m */,
-				7FFB54761E092EBC00A930C7 /* ViewController.h */,
-				7FFB54771E092EBC00A930C7 /* ViewController.m */,
 				7FFB54791E092EBC00A930C7 /* Main.storyboard */,
 				7FFB547C1E092EBC00A930C7 /* Assets.xcassets */,
 				7FFB547E1E092EBC00A930C7 /* LaunchScreen.storyboard */,
 				7FFB54811E092EBC00A930C7 /* Info.plist */,
-				7FFB54701E092EBC00A930C7 /* Supporting Files */,
 				7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */,
 			);
 			path = FieldTracker;
-			sourceTree = "<group>";
-		};
-		7FFB54701E092EBC00A930C7 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				7FFB54711E092EBC00A930C7 /* main.m */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		7FFB54891E092EBC00A930C7 /* FieldTrackerTests */ = {
@@ -901,6 +917,7 @@
 				7FB6AB271E2F3D3A00C0E270 /* MKHomeVC.m in Sources */,
 				7FB6AB941E2F3F4800C0E270 /* AFImageRequestOperation.m in Sources */,
 				7FB6AB581E2F3E4600C0E270 /* RSDFDatePickerView.m in Sources */,
+				7FB6ABD01E2F417800C0E270 /* ViewController.m in Sources */,
 				7FB6AB3E1E2F3E1300C0E270 /* JSBadgeView.m in Sources */,
 				7FB6AB961E2F3F4800C0E270 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				7FB6AB701E2F3ECF00C0E270 /* TPKeyboardAvoidingCollectionView.m in Sources */,
@@ -914,12 +931,13 @@
 				7FB6ABC61E2F40E700C0E270 /* IQTextView.m in Sources */,
 				7FB6AB531E2F3E4600C0E270 /* RSDFDatePickerCollectionView.m in Sources */,
 				7FB6ABC21E2F40E700C0E270 /* IQUIWindow+Hierarchy.m in Sources */,
+				7FB6ABD41E2F41A800C0E270 /* AppDelegate.m in Sources */,
 				7FB6ABC81E2F40E700C0E270 /* IQTitleBarButtonItem.m in Sources */,
-				7FFB54781E092EBC00A930C7 /* ViewController.m in Sources */,
 				7FB6AB2F1E2F3D6600C0E270 /* MKHistoryCustomCell.m in Sources */,
 				7FB6AB391E2F3DA800C0E270 /* MKStoreListPopupVC.m in Sources */,
 				7FB6AB2A1E2F3D5200C0E270 /* MKHistoryVC.m in Sources */,
 				7FB6ABC11E2F40E700C0E270 /* IQUIView+Hierarchy.m in Sources */,
+				7FB6ABD71E2F41E000C0E270 /* main.m in Sources */,
 				7FB6AB5C1E2F3E7300C0E270 /* Reachability.m in Sources */,
 				7FB6AB741E2F3ECF00C0E270 /* UIViewController+BIZChildViewController.m in Sources */,
 				7FB6AB9A1E2F3F4800C0E270 /* UIImageView+AFNetworking.m in Sources */,
@@ -929,10 +947,8 @@
 				7FB6AB981E2F3F4800C0E270 /* AFURLConnectionOperation.m in Sources */,
 				7FB6AB951E2F3F4800C0E270 /* AFJSONRequestOperation.m in Sources */,
 				7FB6AB331E2F3D8100C0E270 /* MKMoreVC.m in Sources */,
-				7FFB54751E092EBC00A930C7 /* AppDelegate.m in Sources */,
 				7FB6AB7D1E2F3F1C00C0E270 /* DejalActivityView.m in Sources */,
 				7FB6ABC71E2F40E700C0E270 /* IQBarButtonItem.m in Sources */,
-				7FFB54721E092EBC00A930C7 /* main.m in Sources */,
 				7FB6AB521E2F3E4600C0E270 /* NSCalendar+RSDFAdditions.m in Sources */,
 				7FB6AB721E2F3ECF00C0E270 /* TPKeyboardAvoidingTableView.m in Sources */,
 				7FB6AB971E2F3F4800C0E270 /* AFPropertyListRequestOperation.m in Sources */,
