@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		27FC09E77673E9E0B1BDDD97 /* Pods_Field_Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D605FA6ED061FED5593E10 /* Pods_Field_Tracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		7F04BAA11E128B1F00679905 /* MKSharedClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F04BAA01E128B1F00679905 /* MKSharedClass.m */; };
 		7F9FC6CF1E1E3277005767F6 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */; };
 		7FA239A71E0A939300D293D5 /* KeyboardManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FFB54A81E09338200A930C7 /* KeyboardManager.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		7FA481D41E162EF200345BCE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA481D31E162EF200345BCE /* CoreData.framework */; };
@@ -49,6 +48,7 @@
 		7FB6AB981E2F3F4800C0E270 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AB8D1E2F3F4800C0E270 /* AFURLConnectionOperation.m */; };
 		7FB6AB991E2F3F4800C0E270 /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AB8F1E2F3F4800C0E270 /* AFXMLRequestOperation.m */; };
 		7FB6AB9A1E2F3F4800C0E270 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AB911E2F3F4800C0E270 /* UIImageView+AFNetworking.m */; };
+		7FB6AB9D1E2F3FBB00C0E270 /* MKSharedClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AB9C1E2F3FBB00C0E270 /* MKSharedClass.m */; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
 		7FFB54721E092EBC00A930C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFB54711E092EBC00A930C7 /* main.m */; };
@@ -95,8 +95,6 @@
 /* Begin PBXFileReference section */
 		36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.debug.xcconfig"; sourceTree = "<group>"; };
 		5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.release.xcconfig"; sourceTree = "<group>"; };
-		7F04BA9F1E128B1F00679905 /* MKSharedClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKSharedClass.h; path = ../MKSharedClass.h; sourceTree = "<group>"; };
-		7F04BAA01E128B1F00679905 /* MKSharedClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKSharedClass.m; path = ../MKSharedClass.m; sourceTree = "<group>"; };
 		7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		7FA481D31E162EF200345BCE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		7FA481D71E162FE400345BCE /* FieldTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FieldTracker.xcdatamodel; sourceTree = "<group>"; };
@@ -177,6 +175,8 @@
 		7FB6AB8F1E2F3F4800C0E270 /* AFXMLRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFXMLRequestOperation.m; sourceTree = "<group>"; };
 		7FB6AB901E2F3F4800C0E270 /* UIImageView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+AFNetworking.h"; sourceTree = "<group>"; };
 		7FB6AB911E2F3F4800C0E270 /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
+		7FB6AB9B1E2F3FBB00C0E270 /* MKSharedClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKSharedClass.h; sourceTree = "<group>"; };
+		7FB6AB9C1E2F3FBB00C0E270 /* MKSharedClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKSharedClass.m; sourceTree = "<group>"; };
 		7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -375,8 +375,8 @@
 		7FB6AB211E2F3B5E00C0E270 /* SharedGlobalClass */ = {
 			isa = PBXGroup;
 			children = (
-				7F04BA9F1E128B1F00679905 /* MKSharedClass.h */,
-				7F04BAA01E128B1F00679905 /* MKSharedClass.m */,
+				7FB6AB9B1E2F3FBB00C0E270 /* MKSharedClass.h */,
+				7FB6AB9C1E2F3FBB00C0E270 /* MKSharedClass.m */,
 			);
 			path = SharedGlobalClass;
 			sourceTree = "<group>";
@@ -923,6 +923,7 @@
 				7FB6AB5C1E2F3E7300C0E270 /* Reachability.m in Sources */,
 				7FB6AB741E2F3ECF00C0E270 /* UIViewController+BIZChildViewController.m in Sources */,
 				7FB6AB9A1E2F3F4800C0E270 /* UIImageView+AFNetworking.m in Sources */,
+				7FB6AB9D1E2F3FBB00C0E270 /* MKSharedClass.m in Sources */,
 				7FB6AB541E2F3E4600C0E270 /* RSDFDatePickerCollectionViewLayout.m in Sources */,
 				7FB6AB551E2F3E4600C0E270 /* RSDFDatePickerDayCell.m in Sources */,
 				7FB6AB981E2F3F4800C0E270 /* AFURLConnectionOperation.m in Sources */,
@@ -933,7 +934,6 @@
 				7FFB54D41E0933B400A930C7 /* IQToolbar.m in Sources */,
 				7FFB54CD1E0933B400A930C7 /* IQUIWindow+Hierarchy.m in Sources */,
 				7FFB54721E092EBC00A930C7 /* main.m in Sources */,
-				7F04BAA11E128B1F00679905 /* MKSharedClass.m in Sources */,
 				7FB6AB521E2F3E4600C0E270 /* NSCalendar+RSDFAdditions.m in Sources */,
 				7FB6AB721E2F3ECF00C0E270 /* TPKeyboardAvoidingTableView.m in Sources */,
 				7FB6AB971E2F3F4800C0E270 /* AFPropertyListRequestOperation.m in Sources */,
