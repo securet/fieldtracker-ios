@@ -18,8 +18,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-//    _txtFieldForEmail.text=@"anand@securet.in";
-//    _txtFieldForPassword.text=@"test@1234";
+    //    _txtFieldForEmail.text=@"anand@securet.in";
+    //    _txtFieldForPassword.text=@"test@1234";
     _txtFieldForEmail.text=@"";
     _txtFieldForPassword.text=@"";
     [self addPadding:_txtFieldForEmail];
@@ -53,14 +53,14 @@
     txtField.leftView = paddingView;
     txtField.leftViewMode = UITextFieldViewModeAlways;
     txtField.layer.cornerRadius=5;
-
+    
     UIImageView *imgVw=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     
     if (txtField == _txtFieldForEmail){
-            imgVw.image=[UIImage imageNamed:@"email"];
+        imgVw.image=[UIImage imageNamed:@"email"];
     }
     else if (txtField == _txtFieldForPassword){
-            imgVw.image=[UIImage imageNamed:@"password"];
+        imgVw.image=[UIImage imageNamed:@"password"];
     }
     
     imgVw.contentMode = UIViewContentModeScaleAspectFit;
@@ -71,7 +71,7 @@
     [txtField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
-#pragma mark - TextField 
+#pragma mark - TextField
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
     if ([textField isFirstResponder]){
@@ -89,7 +89,7 @@
 }
 
 - (IBAction)onClickLogin:(UIButton *)sender{
-
+    
     if (_txtFieldForEmail.text.length>0 && _txtFieldForPassword.text.length>0) {
         
         if ([self isValidEmail:_txtFieldForEmail.text]) {
@@ -119,6 +119,21 @@
     }
 }
 
+- (IBAction)onClickForgotPassword:(UIButton *)sender {
+    
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKForgotPasswordVC"];
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){
+        BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-100, self.view.frame.size.height/2+100)];
+        [self presentViewController:popupViewController animated:NO completion:nil];
+    }else{
+        BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-50, 350)];
+        [self presentViewController:popupViewController animated:NO completion:nil];
+    }
+}
+
 -(BOOL)isValidEmail:(NSString *)checkString
 {
     BOOL stricterFilter = NO;
@@ -133,7 +148,7 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
-   NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
     
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
@@ -170,25 +185,41 @@
         NSError *error = nil;
         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
         NSLog(@"User Data===%@",JSON);
+        
         [DejalBezelActivityView removeView];
-        NSMutableDictionary *prunedDictionary = [NSMutableDictionary dictionary];
-        for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys]){
+        
+        if ([[JSON objectForKey:@"user"] isKindOfClass:[NSArray class]]) {
+            if ([[JSON objectForKey:@"user"] count]>0)
+            {
+                
+                NSMutableDictionary *prunedDictionary = [NSMutableDictionary dictionary];
+                for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys]){
+                    
+                    if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
+                        [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                }
+                
+                [defaults setObject:@"1" forKey:@"Is_Login"];
+                [defaults setObject:prunedDictionary forKey:@"UserData"];
+                [defaults synchronize];
+                
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
+                [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
+            }else{
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Not account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
+        }else{
             
-            if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
-                [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Not account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
         }
-        
-        [defaults setObject:@"1" forKey:@"Is_Login"];
-        [defaults setObject:prunedDictionary forKey:@"UserData"];
-        [defaults synchronize];
-        
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
-            [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
     }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                    [DejalBezelActivityView removeView];
+                                         [DejalBezelActivityView removeView];
                                          NSLog(@"%i====Error %@",[operation.response statusCode],[error description]);
                                          
                                          if([operation.response statusCode] == 401)
@@ -198,7 +229,7 @@
                                          }
                                      }];
     [operation start];
-
+    
 }
 
 

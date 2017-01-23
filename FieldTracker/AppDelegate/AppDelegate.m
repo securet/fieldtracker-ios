@@ -62,10 +62,14 @@
     
    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChange:) name:UIApplicationSignificantTimeChangeNotification object:nil];
     //NSSystemTimeZoneDidChangeNotification
+    //NSSystemClockDidChangeNotification
+    //name:UIApplicationSignificantTimeChangeNotification
+   // NSCurrentLocaleDidChangeNotification
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChangeGot:) name:NSCurrentLocaleDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChangeGot:) name:NSSystemClockDidChangeNotification object:nil];
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    
     NSInteger is_Login=[[defaults valueForKey:@"Is_Login"] integerValue];
     
     if (is_Login == 1) {
@@ -77,9 +81,9 @@
     }else{
         
     }
-    
     return YES;
 }
+
 -(void)timeChangeGot:(NSNotification*)notifi{
      NSLog(@"Time Changed===%@",notifi.userInfo);
 }

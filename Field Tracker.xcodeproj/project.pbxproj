@@ -64,6 +64,7 @@
 		7FB6AC641E2F47AD00C0E270 /* RSDFDatePickerMonthHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AC381E2F47AD00C0E270 /* RSDFDatePickerMonthHeader.m */; };
 		7FB6AC651E2F47AD00C0E270 /* RSDFDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AC3B1E2F47AD00C0E270 /* RSDFDatePickerView.m */; };
 		7FB6AC661E2F47AD00C0E270 /* UIScrollView+DXRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AC3E1E2F47AD00C0E270 /* UIScrollView+DXRefresh.m */; };
+		7FD6E59F1E35D89200FA01D4 /* MKForgotPasswordVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD6E59E1E35D89200FA01D4 /* MKForgotPasswordVC.m */; };
 		7FECDA511E0A4610000E923F /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 7FECDA501E0A460F000E923F /* Podfile */; };
 		7FECDA531E0A4D1C000E923F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FECDA521E0A4D1C000E923F /* CoreLocation.framework */; };
 		7FFB547B1E092EBC00A930C7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7FFB54791E092EBC00A930C7 /* Main.storyboard */; };
@@ -209,6 +210,8 @@
 		7FB6AC3B1E2F47AD00C0E270 /* RSDFDatePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDFDatePickerView.m; sourceTree = "<group>"; };
 		7FB6AC3D1E2F47AD00C0E270 /* UIScrollView+DXRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+DXRefresh.h"; sourceTree = "<group>"; };
 		7FB6AC3E1E2F47AD00C0E270 /* UIScrollView+DXRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+DXRefresh.m"; sourceTree = "<group>"; };
+		7FD6E59D1E35D89100FA01D4 /* MKForgotPasswordVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKForgotPasswordVC.h; sourceTree = "<group>"; };
+		7FD6E59E1E35D89200FA01D4 /* MKForgotPasswordVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKForgotPasswordVC.m; sourceTree = "<group>"; };
 		7FDB2ACD1E0B8B28002E3117 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		7FECDA501E0A460F000E923F /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7FECDA521E0A4D1C000E923F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -385,6 +388,7 @@
 		7FB6ABCD1E2F416C00C0E270 /* MainHomeLogin */ = {
 			isa = PBXGroup;
 			children = (
+				7FD6E59C1E35D86A00FA01D4 /* ForgotPassword */,
 				7FB6ABCE1E2F417800C0E270 /* ViewController.h */,
 				7FB6ABCF1E2F417800C0E270 /* ViewController.m */,
 			);
@@ -621,6 +625,15 @@
 				7FB6AC3E1E2F47AD00C0E270 /* UIScrollView+DXRefresh.m */,
 			);
 			path = "TableView Footer Refresh";
+			sourceTree = "<group>";
+		};
+		7FD6E59C1E35D86A00FA01D4 /* ForgotPassword */ = {
+			isa = PBXGroup;
+			children = (
+				7FD6E59D1E35D89100FA01D4 /* MKForgotPasswordVC.h */,
+				7FD6E59E1E35D89200FA01D4 /* MKForgotPasswordVC.m */,
+			);
+			path = ForgotPassword;
 			sourceTree = "<group>";
 		};
 		7FFB54641E092EBC00A930C7 = {
@@ -960,6 +973,7 @@
 				7FB6AC451E2F47AD00C0E270 /* UIViewController+BIZChildViewController.m in Sources */,
 				7FB6AC601E2F47AD00C0E270 /* RSDFDatePickerCollectionView.m in Sources */,
 				7FB6AC491E2F47AD00C0E270 /* IQUIWindow+Hierarchy.m in Sources */,
+				7FD6E59F1E35D89200FA01D4 /* MKForgotPasswordVC.m in Sources */,
 				7FB6AB361E2F3D9400C0E270 /* MKCustomCellForLeave.m in Sources */,
 				7FB6AB301E2F3D6600C0E270 /* MKIndividualHistoryCell.m in Sources */,
 				7FB6AC501E2F47AD00C0E270 /* IQToolbar.m in Sources */,

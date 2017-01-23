@@ -71,13 +71,13 @@
         arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
     }
     
-
+    
     arrayForStoreList=[[NSMutableArray alloc] init];
     arrayForPromoters=[[NSMutableArray alloc] init];
     arrayForLeaveHistory = [[NSMutableArray alloc] init];
     pageNumberForLeave = 0;
     countForLeaveData = 0;
-
+    
     _tableVw.delegate = self;
     _tableVw.dataSource = self;
     _tableVw.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -119,15 +119,11 @@
     
     [_tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     [_tableVwForLeaveRqst addFooterWithTarget:self action:@selector(refreshFooterForLeave) withIndicatorColor:TopColor];
-    
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveTypeSelected:) name:@"LeaveTypeSelected" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveReasonSelected:) name:@"LeaveReasonSelected" object:nil];
     
-    
-    
-    [self disableMyAccountEdit];
     [self setupUIForAllViews];
 }
 
@@ -135,6 +131,7 @@
     
     _lblForStoreLocation.text=@"";
     [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
+    [self disableMyAccountEdit];
     
     [self updateLocationManagerr];
     self.navigationController.navigationBarHidden = YES;
@@ -155,9 +152,7 @@
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
-    
-    
-    
+
     if ([CLLocationManager locationServicesEnabled]) {
         
     }else{
@@ -167,57 +162,71 @@
     }
 }
 
+
+- (IBAction)onClickManagerPhoneNumber:(UIButton *)sender {
+    
+    
+}
+
 -(void)disableMyAccountEdit{
     
-    if (IS_IPHONE_4) {
+   /* if (IS_IPHONE_4) {
         _heightConstraintForMyTextFieldAccount.constant = 30;
         _textFieldMyName.font = [UIFont systemFontOfSize:15];
         _textFieldMyNumber.font = [UIFont systemFontOfSize:15];
         _textFieldMyEmail.font = [UIFont systemFontOfSize:15];
         _textFieldMyStore.font = [UIFont systemFontOfSize:15];
         _textVwMyAddress.font = [UIFont systemFontOfSize:15];
-    }
+        _textFieldMyManagerName.font = [UIFont systemFontOfSize:15];
+        _textFieldMyManagerEmailID.font = [UIFont systemFontOfSize:15];
+        _textFieldMyManagerMobileNumber.font = [UIFont systemFontOfSize:15];
+    }*/
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    //    NSLog(@"%@",dict);
-    //    _lblFName.text=[dict valueForKey:@"firstName"];
-    //    _lblLName.text=[dict valueForKey:@"lastName"];
+    
+   // [defaults setObject:dictForStoreDetails forKey:@"StoreData"];
+  //storeName
     
     _textFieldMyName.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
-    
     _textFieldMyNumber.text = [dict valueForKey:@"partyId"];
     _textFieldMyEmail.text = [dict valueForKey:@"emailAddress"];
     _textFieldMyStore.text = _lblForStoreLocation.text;
     
     if ([dict valueForKey:@"directions"]) {
         _textVwMyAddress.text=[dict valueForKey:@"directions"];
+    }else{
+        _textVwMyAddress.text=@"NA";
     }
+    
     
     if ([dict valueForKey:@"contactNumber"]) {
         _textFieldMyNumber.text = [dict valueForKey:@"contactNumber"];
     }
     
     if ([dict valueForKey:@"userPhotoPath"]) {
-            NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
-            NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-            NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
-            dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
-            dispatch_async(q, ^{
-                /* Fetch the image from the server... */
-                NSData *data = [NSData dataWithContentsOfURL:imgUrl];
-                UIImage *img = [[UIImage alloc] initWithData:data];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    _imgVwUser.image = img;
-                });
+        NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
+        NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+        NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
+        dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+        dispatch_async(q, ^{
+            /* Fetch the image from the server... */
+            NSData *data = [NSData dataWithContentsOfURL:imgUrl];
+            UIImage *img = [[UIImage alloc] initWithData:data];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _imgVwUser.image = img;
             });
+        });
     }
-
+    
     _textFieldMyName.userInteractionEnabled = NO;
     _textFieldMyNumber.userInteractionEnabled = NO;
     _textFieldMyEmail.userInteractionEnabled = NO;
     _textFieldMyStore.userInteractionEnabled = NO;
     _textVwMyAddress.userInteractionEnabled = NO;
+    _textFieldMyManagerName.userInteractionEnabled = NO;
+    _textFieldMyManagerEmailID.userInteractionEnabled = NO;
+    _textFieldMyManagerMobileNumber.userInteractionEnabled = NO;
 }
 -(void)setupUIForAllViews{
     // For Store View
@@ -278,7 +287,7 @@
     tapGestureRecognizerForNum.numberOfTapsRequired = 1;
     [_lblForPhoneContact addGestureRecognizer:tapGestureRecognizerForNum];
     _lblForPhoneContact.userInteractionEnabled = YES;
-
+    
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
     [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"Email:  "
                                                                              attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
@@ -289,7 +298,7 @@
     //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
     _lblForEmailContact.attributedText = attributedString;
     
-
+    
     NSMutableAttributedString *attributedStringForNumber = [[NSMutableAttributedString alloc] init];
     [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:@"Phone:  "
                                                                                       attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
@@ -341,8 +350,8 @@
 }
 
 -(void)leaveReasonSelected:(NSNotification*)userInfo{
-      _txtFieldLeaveReason.text=[userInfo.userInfo valueForKey:@"description"];
-     NSLog(@"%@",userInfo.userInfo);
+    _txtFieldLeaveReason.text=[userInfo.userInfo valueForKey:@"description"];
+    NSLog(@"%@",userInfo.userInfo);
     leaveReasonEnumID=[userInfo.userInfo valueForKey:@"enumId"];
 }
 
@@ -351,100 +360,99 @@
 -(void)onClickChangePwd
 {
     [self.view endEditing:YES];
-   
+    
     if ([APPDELEGATE connected]) {
         
-    
-    
-    if (_textFieldCurrentPwd.text.length > 0 && _textFieldNewPwd.text.length>0 && _textFieldConfirmNewPwd.text.length>0) {
-        if ([_textFieldNewPwd.text isEqualToString:_textFieldConfirmNewPwd.text]) {
-            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-            NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        if (_textFieldCurrentPwd.text.length > 0 && _textFieldNewPwd.text.length>0 && _textFieldConfirmNewPwd.text.length>0) {
             
-            AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-            httpClient.parameterEncoding = AFFormURLParameterEncoding;
-            [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-            
-            NSString *str=[defaults valueForKey:@"BasicAuth"];
-            
-            [httpClient setDefaultHeader:@"Authorization" value:str];
-            //{"oldPassword":"test@123","newPassword":"test@1234","newPasswordVerify":"test@1234"}
-            NSDictionary * json = @{@"oldPassword":_textFieldCurrentPwd.text,
-                                    @"newPassword":_textFieldNewPwd.text,
-                                    @"newPasswordVerify":_textFieldConfirmNewPwd.text,
-                                    };
-            NSMutableURLRequest *request;
-           
+            if ([_textFieldNewPwd.text isEqualToString:_textFieldConfirmNewPwd.text]) {
+                NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+                NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+                
+                AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+                httpClient.parameterEncoding = AFFormURLParameterEncoding;
+                [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+                
+                NSString *str=[defaults valueForKey:@"BasicAuth"];
+                
+                [httpClient setDefaultHeader:@"Authorization" value:str];
+                //{"oldPassword":"test@123","newPassword":"test@1234","newPasswordVerify":"test@1234"}
+                NSDictionary * json = @{@"oldPassword":_textFieldCurrentPwd.text,
+                                        @"newPassword":_textFieldNewPwd.text,
+                                        @"newPasswordVerify":_textFieldConfirmNewPwd.text,
+                                        };
+                NSMutableURLRequest *request;
+                
                 request = [httpClient requestWithMethod:@"PUT"
                                                    path:@"/rest/s1/ft/user/changePassword"
                                              parameters:json];
-           
-            
-            //====================================================RESPONSE
-            [DejalBezelActivityView activityViewForView:self.view];
-            
-            AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-            [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
                 
-            }];
-            [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-                NSError *error = nil;
-                NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-                [DejalBezelActivityView removeView];
-                NSLog(@"Password was changed Successfully==%@",JSON);
                 
-                [[[UIAlertView alloc] initWithTitle:@"Password updated successfully !"
+                //====================================================RESPONSE
+                [DejalBezelActivityView activityViewForView:self.view];
+                
+                AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+                [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+                    
+                }];
+                [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    NSError *error = nil;
+                    NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+                    [DejalBezelActivityView removeView];
+                    NSLog(@"Password was changed Successfully==%@",JSON);
+                    
+                    [[[UIAlertView alloc] initWithTitle:@"Password updated successfully !"
+                                                message:@""
+                                               delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+                    NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
+                    NSString *userName=[dict valueForKey:@"username"];
+                    
+                    NSString *str=[NSString stringWithFormat:@"%@:%@",userName,_textFieldNewPwd.text];
+                    NSString *auth_String;
+                    NSData *nsdata = [str dataUsingEncoding:NSUTF8StringEncoding];
+                    NSString *base64Encoded = [nsdata base64EncodedStringWithOptions:0];
+                    auth_String=[NSString stringWithFormat:@"Basic %@",base64Encoded];
+                    [defaults setObject:auth_String forKey:@"BasicAuth"];
+                    
+                    
+                    _vwForChangePwd.hidden=YES;
+                    _textFieldCurrentPwd.text=@"";
+                    _textFieldNewPwd.text=@"";
+                    _textFieldConfirmNewPwd.text=@"";
+                }
+                 //==================================================ERROR
+                                                 failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                     [DejalBezelActivityView removeView];
+                                                     NSError *jsonError;
+                                                     NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                                     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                          options:NSJSONReadingMutableContainers
+                                                                                                            error:&jsonError];
+                                                     
+                                                     NSString *strError=[json valueForKey:@"errors"];
+                                                     [[[UIAlertView alloc] initWithTitle:@""
+                                                                                 message:strError
+                                                                                delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                                 }];
+                [operation start];
+                
+            }else{
+                [[[UIAlertView alloc] initWithTitle:@"Password was doesn't match"
                                             message:@""
                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
-                NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-                NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
-                NSString *userName=[dict valueForKey:@"username"];
-                
-                NSString *str=[NSString stringWithFormat:@"%@:%@",userName,_textFieldNewPwd.text];
-                NSString *auth_String;
-                NSData *nsdata = [str dataUsingEncoding:NSUTF8StringEncoding];
-                NSString *base64Encoded = [nsdata base64EncodedStringWithOptions:0];
-                auth_String=[NSString stringWithFormat:@"Basic %@",base64Encoded];
-                [defaults setObject:auth_String forKey:@"BasicAuth"];
-                
-                
-                _vwForChangePwd.hidden=YES;
-                _textFieldCurrentPwd.text=@"";
-                _textFieldNewPwd.text=@"";
                 _textFieldConfirmNewPwd.text=@"";
+                _textFieldNewPwd.text=@"";
             }
-             //==================================================ERROR
-                                             failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                                 [DejalBezelActivityView removeView];
-                                                NSError *jsonError;
-                                                 NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
-                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
-                                                                options:NSJSONReadingMutableContainers
-                                                                error:&jsonError];
-                                                 
-                                                NSString *strError=[json valueForKey:@"errors"];
-                                                 [[[UIAlertView alloc] initWithTitle:@""
-                                                                             message:strError
-                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
-                                             }];
-            [operation start];
-
         }else{
-            [[[UIAlertView alloc] initWithTitle:@"Password was doesn't match"
+            [[[UIAlertView alloc] initWithTitle:@"Please Enter All Fields"
                                         message:@""
                                        delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
-            _textFieldConfirmNewPwd.text=@"";
-            _textFieldNewPwd.text=@"";
         }
-    }else{
-        [[[UIAlertView alloc] initWithTitle:@"Please Enter All Fields"
-                                    message:@""
-                                   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
-    }
     }else{
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
-
+        
     }
 }
 
@@ -454,11 +462,9 @@
     
     NSString *string=[NSString stringWithFormat:@"%@",_lblForEmailContact.attributedText.string];
     
-    if ([self isValidEmail:[string substringFromIndex:8]])
-    {
+    if ([self isValidEmail:[string substringFromIndex:8]]){
         //send mail
-        if ([MFMailComposeViewController canSendMail])
-        {
+        if ([MFMailComposeViewController canSendMail]){
             [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:[UIColor whiteColor]];
             MFMailComposeViewController *controller = [[MFMailComposeViewController alloc] init];
             controller.mailComposeDelegate = self;
@@ -539,8 +545,8 @@
         NSLog(@"%@", exception.reason);
     }
     @finally {
-//        NSLog(@"Char at index %d cannot be found", index);
-//        NSLog(@"Max index is: %d", [test length]-1);
+        //        NSLog(@"Char at index %d cannot be found", index);
+        //        NSLog(@"Max index is: %d", [test length]-1);
     }
 }
 
@@ -560,8 +566,7 @@
 
 - (void)refreshFooter
 {
-    if(arrayCountToCheck > pageNumber)
-    {
+    if(arrayCountToCheck > pageNumber){
         
         pageNumber++;
         
@@ -572,9 +577,7 @@
             [_tableVwForPromoters footerEndRefreshing];
             //        [self.tableVw removeFooter];
         });
-    }
-    else
-    {
+    }else{
         [_tableVwForPromoters footerEndRefreshing];
         [_tableVwForPromoters headerEndRefreshing];
     }
@@ -708,8 +711,7 @@
             _btnAdd.enabled = YES;
             _btnAdd.alpha = 1;
             _btnAdd.backgroundColor=[[UIColor darkGrayColor] colorWithAlphaComponent:1];
-        }
-        else{
+        }else{
             _btnAdd.enabled = NO;
             _btnAdd.alpha = 0.6;
             _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
@@ -740,8 +742,7 @@
         request = [httpClient requestWithMethod:@"POST"
                                            path:@"/rest/s1/ft/stores"
                                      parameters:json];
-    }
-    else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
+    }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
         
         NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[[arrayForStoreList objectAtIndex:sender.tag] valueForKey:@"productStoreId"]];
         request = [httpClient requestWithMethod:@"PUT"
@@ -986,7 +987,7 @@
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
-     }
+    }
     
     for (UIView *subview in [_btnAadharPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
@@ -1045,12 +1046,12 @@
                 _txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
             }
         }
-            _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
+        _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
         
-            strAadharIDPath=[[json objectForKey:@"requestInfo"] objectForKey:@"aadharIdPath"];;
-            strUserPhotoPath=[[json objectForKey:@"requestInfo"] objectForKey:@"userPhoto"];;
-            strAddressProofPath=[[json objectForKey:@"requestInfo"] objectForKey:@"addressIdPath"];
-            storeIDForPromoterAdd=productStoreId;
+        strAadharIDPath=[[json objectForKey:@"requestInfo"] objectForKey:@"aadharIdPath"];;
+        strUserPhotoPath=[[json objectForKey:@"requestInfo"] objectForKey:@"userPhoto"];;
+        strAddressProofPath=[[json objectForKey:@"requestInfo"] objectForKey:@"addressIdPath"];
+        storeIDForPromoterAdd=productStoreId;
     }else{
         strAadharIDPath=@"";
         strUserPhotoPath=@"";
@@ -1104,7 +1105,7 @@
     [self textFieldEdit:_txtFieldPhonePromoter];
     [self textFieldEdit:_txtFieldSEAsgnmntPromoter];
     [self textFieldEdit:_txtFieldStoreAsgnmntPromoter];
-
+    
     _txtFieldEmailPromoter.keyboardType = UIKeyboardTypeEmailAddress;
     
     _txtVwAddressPromoter.text=@"Address";
@@ -1114,16 +1115,16 @@
     _txtVwAddressPromoter.delegate = self;
     _txtVwAddressPromoter.autocorrectionType = UITextAutocorrectionTypeNo;
     
-//    _btnPhotoPromoter.layer.cornerRadius = 5;
-//    _btnPhotoPromoter.layer.masksToBounds = YES;    
+    //    _btnPhotoPromoter.layer.cornerRadius = 5;
+    //    _btnPhotoPromoter.layer.masksToBounds = YES;
     _btnPhotoPromoter.tag=100;
     
-//    _btnAadharPromoter.layer.cornerRadius = 5;
-//    _btnAadharPromoter.layer.masksToBounds =YES;
+    //    _btnAadharPromoter.layer.cornerRadius = 5;
+    //    _btnAadharPromoter.layer.masksToBounds =YES;
     _btnAadharPromoter.tag = 200;
     
-//    _btnAdressProofPromoter.layer.cornerRadius = 5;
-//    _btnAdressProofPromoter.layer.masksToBounds =YES;
+    //    _btnAdressProofPromoter.layer.cornerRadius = 5;
+    //    _btnAdressProofPromoter.layer.masksToBounds =YES;
     _btnAdressProofPromoter.tag=300;
     
     [self addShadow:_btnAddPromoterConfirm];
@@ -1328,7 +1329,7 @@
     }else if (sender.tag == 200 || sender.tag == 300){
         captureDevice = [self rearFacingCamera];
     }
-
+    
     AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
     
     if (!input)
@@ -1403,13 +1404,13 @@
     NSLog(@"About to request a capture from: %@", stillImageOutput);
     [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
         
-         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-         UIImage *image = [[UIImage alloc] initWithData:imageData];
-         imgToSend=image;
-         _vwForCamera.hidden = YES;
-         _backBtn.hidden = YES;
-         [self postImageDataToServer];
-     }];
+        NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+        UIImage *image = [[UIImage alloc] initWithData:imageData];
+        imgToSend=image;
+        _vwForCamera.hidden = YES;
+        _backBtn.hidden = YES;
+        [self postImageDataToServer];
+    }];
     
     self.tabBarController.tabBar.hidden =NO;
 }
@@ -1522,9 +1523,9 @@
 #pragma mark - Leave Rqst
 
 -(void)leaveRequestEdit:(NSInteger)indexValue{
-   
+    
     NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"fromDate"] substringToIndex:10];
-   _txtFieldStartDate.text=[NSString stringWithFormat:@"%@",startDate];
+    _txtFieldStartDate.text=[NSString stringWithFormat:@"%@",startDate];
     
     NSString *endDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"thruDate"] substringToIndex:10];
     _txtFieldEndDate.text=[NSString stringWithFormat:@"%@",endDate];
@@ -1540,7 +1541,7 @@
                                                           toDate:end
                                                          options:0];
     if ([components day] >= 0){
-            _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
+        _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
     }
     _txtFieldLeaveDescription.text=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"description"];
 }
@@ -1575,7 +1576,7 @@
         dictForLeaveTypes=[[NSDictionary alloc] init];
         dictForLeaveTypes=JSON;
         NSLog(@"Leave Types===%@",dictForLeaveTypes);
-       NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
+        NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
         for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
             if ([strLeaveType isEqualToString:[dict valueForKey:@"enumId"]]) {
                 _txtFieldLeaveType.text=[dict valueForKey:@"description"];
@@ -1659,7 +1660,7 @@
             }
         }
         [_tableVwForLeaveRqst reloadData];
-       NSLog(@"Leave List==%@",arrayForLeaveHistory);
+        NSLog(@"Leave List==%@",arrayForLeaveHistory);
     }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -1675,7 +1676,7 @@
     ///rest/s1/ft/leaves
     
     if (_txtFieldStartDate.text.length>0 && _txtFieldEndDate.text.length>0&&_txtFieldLeaveReason.text.length>0 && _txtFieldLeaveType.text.length>0 && _txtFieldLeaveDescription.text.length>0) {
-
+        
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
         NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
         NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
@@ -1872,8 +1873,8 @@
     NSCalendar *theCalendar = [NSCalendar currentCalendar];
     NSDate *nextDate = [theCalendar dateByAddingComponents:dayComponent toDate:date options:0];
     NSString *selectedDate=[nextDate description];
-//    
-//    NSLog(@"%@", [selectedDate substringToIndex:10]);
+    //
+    //    NSLog(@"%@", [selectedDate substringToIndex:10]);
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyy-MM-dd"];
     NSString *string = [formatter stringFromDate:[NSDate date]];
@@ -1958,14 +1959,14 @@
             cellLeave=[[MKCustomCellForLeave alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
         }
         cellLeave.selectionStyle = UITableViewCellSelectionStyleNone;
-     
+        
         NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd"];
         NSDate *date = [dateFormatter dateFromString:startDate];
         [dateFormatter setDateFormat:@"dd/MM/yyyy"];
         NSString *newDateString = [dateFormatter stringFromDate:date];
-
+        
         cellLeave.lblForStartDate.text=[NSString stringWithFormat:@"From: %@",newDateString];
         NSString *endDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
         
@@ -2004,7 +2005,7 @@
         
         return cellLeave;
     }
-
+    
     if (tableView == _tableVwForStore){
         //Store List
         if (cell == nil){

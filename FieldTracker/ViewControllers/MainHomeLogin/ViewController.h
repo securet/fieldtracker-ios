@@ -15,6 +15,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnLogin;
 @property (strong, nonatomic) IBOutlet UIButton *btnForgotPwd;
 - (IBAction)onClickLogin:(UIButton *)sender;
+- (IBAction)onClickForgotPassword:(UIButton *)sender;
 
 @end
 

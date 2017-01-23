@@ -9,6 +9,7 @@
 #import "MKHomeVC.h"
 #import <GoogleMaps/GoogleMaps.h>
 #import "MKIndividualHistoryCell.h"
+#import <QuartzCore/CAAnimation.h>
 #import <AVFoundation/AVFoundation.h>
 @interface MKHomeVC ()
 {
@@ -23,11 +24,8 @@
     AVCaptureSession *captureSession;
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
     AVCaptureStillImageOutput *stillImageOutput;
-    
     CGFloat radiusForStore;
-    
-    
-   
+    CLLocationCoordinate2D prevCurrLocation;
 }
 @end
 
@@ -58,7 +56,7 @@
         });
     }
 
-    _bottomVw.layer.cornerRadius = 10;
+       _bottomVw.layer.cornerRadius = 10;
     _bottomVw.layer.masksToBounds = YES;
     
     [self updateLocationManagerr];
@@ -68,18 +66,18 @@
     strForCurLatitude = [NSString stringWithFormat:@"%f", coordinate.latitude];
     strForCurLongitude= [NSString stringWithFormat:@"%f", coordinate.longitude];
     
-    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:[strForCurLatitude doubleValue] longitude:[strForCurLongitude doubleValue] zoom:15];
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:coordinate.latitude longitude:coordinate.longitude zoom:15];
     [mapView setCamera:camera];
-   // mapView.myLocationEnabled = YES;
+   mapView.myLocationEnabled = YES;
     mapView.delegate=self;
-    
-    GMSMarker *markerCar = [[GMSMarker alloc] init];
-    markerCar.icon=[UIImage imageNamed:@"location_marker"];
-    [CATransaction begin];
-    [CATransaction setAnimationDuration:2.0];
-    markerCar.position =  coordinate;
-    [CATransaction commit];
-    markerCar.map = mapView;
+
+//    GMSMarker *markerCar = [[GMSMarker alloc] init];
+//    markerCar.icon=[UIImage imageNamed:@"location_marker"];
+//    [CATransaction begin];
+//    [CATransaction setAnimationDuration:2.0];
+//    markerCar.position =  coordinate;
+//    [CATransaction commit];
+//    markerCar.map = mapView;
     
     _lblStoreName.text=@"";
     
@@ -113,13 +111,9 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     
-    
 //    NSDictionary *pref = [[NSUserDefaults standardUserDefaults] persistentDomainForName:@"com.apple.timed"];
 //    BOOL autotime = [[pref objectForKey:@"TMAutomaticTimeEnabled"] boolValue];
 //    NSLog(@"Automatic time is %@", autotime ? @"enabled" : @"disabled");
-    
-    
-    
     [self updateLocationManagerr];
     
     self.navigationController.navigationBarHidden = YES;
@@ -152,22 +146,11 @@
 #pragma mark - Background Task
 
 -(void)updateLocationBackground{
-    UIApplication*    app = [UIApplication sharedApplication];
-    __block UIBackgroundTaskIdentifier task;
-    task = [app beginBackgroundTaskWithExpirationHandler:^{
-        [app endBackgroundTask:task];
-        task = UIBackgroundTaskInvalid;
-    }];
-    // Start the long-running task and return immediately.
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        CLLocationCoordinate2D coordinate=[self getLocation];
-         NSLog(@"Location Updates====%f,%f",coordinate.latitude,coordinate.longitude);
-        strForCurLatitude=[NSString stringWithFormat:@"%f",coordinate.latitude];
-        strForCurLongitude=[NSString stringWithFormat:@"%f",coordinate.longitude];
-        [app endBackgroundTask:task];
-        task = UIBackgroundTaskInvalid;
-    });
-            [self checkLocation];
+    
+    CLLocationCoordinate2D coordinate=[self getLocation];
+    strForCurLatitude=[NSString stringWithFormat:@"%f",coordinate.latitude];
+    strForCurLongitude=[NSString stringWithFormat:@"%f",coordinate.longitude];
+    [self checkLocation];
 }
 
 - (void)startTimedTask{
@@ -201,8 +184,6 @@
     });
 }
 //#pragma mark-
-
-
 /*
  -(NSMutableArray*)getImageData{
  NSError *error=nil;
@@ -264,19 +245,19 @@
         
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
         [defaults setObject:dictForStoreDetails forKey:@"StoreData"];
-        
+        //storeName
         CLLocationCoordinate2D coordinate;
         coordinate.latitude = latitude;
         coordinate.longitude = longitude;
         
         // Build a circle for the GMSMapView
         GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
-        geoFenceCircle.radius = radiusForStore;
-        geoFenceCircle.position = coordinate;
-        geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.5];
-        geoFenceCircle.strokeWidth = 0.5;
+        geoFenceCircle.radius = radiusForStore; // Meters
+        geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
+        geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
+        geoFenceCircle.strokeWidth = 1.5;
         geoFenceCircle.strokeColor = [UIColor blueColor];
-        geoFenceCircle.map = mapView;
+        geoFenceCircle.map = mapView; // Add it to
 
         [self startBackgroundTask];
         [self checkLocation];
@@ -350,64 +331,22 @@
 }
 -(NSString*)getTimeIndividual:(NSString*)strDate
 {
-   /* if ([strDate isKindOfClass:[NSNull class]]) {
-        return @"--";
-    }
-    //    strDate = [strDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-    //    strDate = [strDate stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
-    strDate=[strDate substringFromIndex:11];
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"HH:mm:ss xxxx";
-    NSDate *date_1 = [dateFormatter dateFromString:strDate];
-    dateFormatter.dateFormat = @"hh:mm a";
-    strDate = [dateFormatter stringFromDate:date_1];
-    
-    return strDate;*/
-    
     if ([strDate isKindOfClass:[NSNull class]]) {
         return @"--";
     }
-    NSLog(@"Time===%@",strDate);
+
     NSString *strDateChange=strDate;
-    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
-    //    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
-   // NSTimeZone *timeZone = [NSTimeZone localTimeZone];
-   // NSString *tzName = [timeZone name];
-    
-    //     NSLog(@"Time Zone===%@",tzName);
-    
-   /* if (![tzName containsString:@"Asia"]) {
-        
-        NSDateFormatter * format = [[NSDateFormatter alloc] init];
-        [format setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
-        NSDate * dateTemp = [format dateFromString:strDateChange];
-        [format setDateFormat:@"hh:mm a"];
-        NSTimeZone *currentTimeZone = [NSTimeZone localTimeZone];
-        NSTimeZone *utcTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
-        NSInteger currentGMTOffset = [currentTimeZone secondsFromGMTForDate:dateTemp];
-        NSInteger gmtOffset = [utcTimeZone secondsFromGMTForDate:dateTemp];
-        NSTimeInterval gmtInterval = currentGMTOffset - gmtOffset;
-        NSDate *destinationDate = [[NSDate alloc] initWithTimeInterval:gmtInterval sinceDate:dateTemp];
-        NSString *dateStr = [format stringFromDate:destinationDate];
-        
-        return dateStr;
-    }*/
-    
     NSDate *date_1 = [dateFormatter dateFromString:strDateChange];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     strDateChange = [dateFormatter stringFromDate:date_1];
-    
-    //    NSLog(@"Converted Time===%@",strDateChange);
     return strDateChange;
 }
 
 -(NSString*)getTime:(NSString*)strDate
 {
-    //    strDate=[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
     
     NSRange range=[strDate rangeOfString:@"T"];
     strDate=[strDate substringFromIndex:NSMaxRange(range)];
@@ -421,7 +360,6 @@
     NSDate *date_1 = [dateFormatter dateFromString:strDate];
     
     [dateFormatter setDateFormat:@"hh:mm a"];
-    //    newDateString = [dateFormatter stringFromDate:date];
     
     return [dateFormatter stringFromDate:date_1];
 }
@@ -446,8 +384,17 @@
         CLLocation *location = [[CLLocation alloc] initWithLatitude:latitude
                                                           longitude:longitude];
         NSString *storeName=[dictForStoreDetails valueForKey:@"storeName"];
-        CLLocationDistance distance = [location distanceFromLocation:locationManager.location];
+        
+//        CLLocationCoordinate2D coordinate = [self getLocation];
+//        
+//        CLLocation *userLocation= [[CLLocation alloc] initWithLatitude:coordinate.latitude
+//                                                             longitude:coordinate.longitude];
+        CLLocationDistance distance = [location distanceFromLocation:mapView.myLocation];
          radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
+        
+        //SalesExecutive
+        //FieldExecutiveOnPremise
+        //FieldExectiveOffPremise
         
         if (distance <= radiusForStore && distance >= 0){
             _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
@@ -456,6 +403,7 @@
             [dictToSendLctnStatus setObject:@"1" forKey:@"LocationStatus"];
             storeName= [dictForStoreDetails valueForKey:@"storeName"];
             boolValueForInLocationOrNot = YES;
+            _lblStoreName.text=storeName;
         }else{
             _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
             _lblForStoreLocation.text=@"Off site";
@@ -463,6 +411,13 @@
             [dictToSendLctnStatus setObject:@"0" forKey:@"LocationStatus"];
             storeName=@"Off site";
             boolValueForInLocationOrNot = NO;
+            _lblStoreName.text=@"(Not at location)";
+        }
+        
+        NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
+
+        if ([[dict valueForKey:@"roleTypeId"] isEqualToString:@"SalesExecutive"] || [[dict valueForKey:@"roleTypeId"] isEqualToString:@"FieldExectiveOffPremise"]) {
+            boolValueForInLocationOrNot = YES;
         }
         
         [dictToSendLctnStatus setObject:storeName forKey:@"StoreName"];
@@ -483,7 +438,7 @@
         if ([arrayForTimeLine count]>1) {
             dictForBeforelast=[arrayForTimeLine objectAtIndex:[arrayForTimeLine count]-2];
         }
-        //     NSDictionary *timeLineData=[arrayForTimeLine lastObject];
+        
         if ([[statusData valueForKey:@"status"] length]<=0) {
             
         }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
@@ -568,11 +523,30 @@
     strForCurLatitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.latitude];
     strForCurLongitude=[NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
     [self checkLocation];
+    
+    if (newLocation.coordinate.latitude == prevCurrLocation.latitude && newLocation.coordinate.longitude == prevCurrLocation.longitude){
+        
+    }else{
+        
+        [self showingCurrentLocation];
+        
+//        [mapView_ clear];
+//        mapView_.delegate=self;
+//        marker = [[GMSMarker alloc] init];
+//        [CATransaction begin];
+//        [CATransaction setAnimationDuration:2.0];
+//        marker.position = current;
+//        [CATransaction commit];
+//        marker.icon = [UIImage imageNamed:@"pin_driver"];
+//        marker.map = mapView_;
+        
+        prevCurrLocation=newLocation.coordinate;
+    }
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    NSLog(@"Location Updates====%@,%@",strForCurLatitude,strForCurLongitude);
+//    NSLog(@"Location Updates====%@,%@",strForCurLatitude,strForCurLongitude);
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -583,26 +557,16 @@
 #pragma mark -
 
 - (void)mapView:(GMSMapView *)mapView didChangeCameraPosition:(GMSCameraPosition *)position{
-    
 }
+
 -(void)mapViewDidFinishTileRendering:(GMSMapView *)mapView{
     //TAKE THE SCREENSHOT HERE
-    
 }
+
 - (void) mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position{
-    
 }
 
 #pragma mark -
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 - (IBAction)onClickMyLocation:(UIButton *)sender {
     
     if ([CLLocationManager locationServicesEnabled]) {
@@ -622,25 +586,27 @@
         coordinate.latitude=[strForCurLatitude doubleValue];
         coordinate.longitude=[strForCurLongitude doubleValue];
         
-//        CLLocation* gps = [[CLLocation alloc]
-//                           initWithLatitude:coordinate.latitude
-//                           longitude:coordinate.longitude];
-//        NSDate* now = gps.timestamp;
-//        
-//        NSLog(@"Time Got From GPS===%@",[self getTimeIndividual:now.description]);
+        CLLocation* gps = [[CLLocation alloc]
+                           initWithLatitude:coordinate.latitude
+                           longitude:coordinate.longitude];
+        NSDate* now = gps.timestamp;
         
+        strForCurLatitude = [NSString stringWithFormat:@"%f", coordinate.latitude];
+        strForCurLongitude= [NSString stringWithFormat:@"%f", coordinate.longitude];
+        
+        NSLog(@"Time Got From GPS===%@",[self getTimeIndividual:now.description]);
         GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:coordinate zoom:15];
         [mapView animateWithCameraUpdate:updatedCamera];
-        //mapView.myLocationEnabled = YES;
-      
-        GMSMarker *markerCar = [[GMSMarker alloc] init];
-        markerCar.icon=[UIImage imageNamed:@"location_marker"];
+        mapView.myLocationEnabled = YES;
         
-        [CATransaction begin];
-        [CATransaction setAnimationDuration:5.0];
-        markerCar.position =  coordinate;
-        [CATransaction commit];
-        markerCar.map = mapView;
+        //CLLocationCoordinate2D coordinate=mapView.myLocation;
+//        GMSMarker *markerCar = [[GMSMarker alloc] init];
+//        markerCar.icon=[UIImage imageNamed:@"location_marker"];
+//        [CATransaction begin];
+//        [CATransaction setAnimationDuration:5.0];
+//        markerCar.position =  coordinate;
+//        [CATransaction commit];
+//        markerCar.map = mapView;
         
         CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
         CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
@@ -649,14 +615,13 @@
         coordinate.latitude = latitude;
         coordinate.longitude = longitude;
         
-        // Build a circle for the GMSMapView
         GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
         geoFenceCircle.radius = radiusForStore; // Meters
         geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
         geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
         geoFenceCircle.strokeWidth = 1.5;
         geoFenceCircle.strokeColor = [UIColor blueColor];
-        geoFenceCircle.map = mapView; // Add it to
+        geoFenceCircle.map = mapView;
         
     }else{
         UIAlertView *alertLocation=[[UIAlertView alloc]initWithTitle:@"" message:@"Please Enable Location Access" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -666,10 +631,15 @@
 
 - (IBAction)onClickTimeIn:(UIButton *)sender {
     
-    if (boolValueForInLocationOrNot){
-        [self openCamera];
-    }else{
+    if ([APPDELEGATE connected]) {
+        if (boolValueForInLocationOrNot){
+            [self openCamera];
+        }else{
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Not at store location" message:@"Please go to the store location and try again!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        }
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears there is no internet conection!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
 }
@@ -726,42 +696,12 @@
 }
 
 -(void)openCamera{
-    //    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-    //    imagePickerController.delegate = self;
-    //
-    //    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
-    //        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
-    //        imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-    //
-    //        UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
-    //        [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
-    //        UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
-    //        [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
-    //        [emptyBlackButton setEnabled:YES];
-    //        [cameraOverlayView addSubview:emptyBlackButton];
-    //
-    //        imagePickerController.allowsEditing = YES;
-    //        imagePickerController.showsCameraControls = YES;
-    //        imagePickerController.delegate = self;
-    //
-    //        imagePickerController.cameraOverlayView = cameraOverlayView;
-    //    }
-    //    else{
-    //        imagePickerController.sourceType =UIImagePickerControllerSourceTypePhotoLibrary;
-    //    }
-    //
-    //    [self presentViewController:imagePickerController animated:YES completion:^{
-    //
-    //    }];
-    
-    
+   
     NSError *error;
-    
     AVCaptureDevice *captureDevice = [self frontFacingCamera];
     AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
     
-    if (!input)
-    {
+    if (!input){
         NSLog(@"%@", [error localizedDescription]);
     }
     
@@ -780,7 +720,6 @@
         [captureSession addOutput:newStillImageOutput];
     }
     
-    //    [self setStillImageOutput:newStillImageOutput];
     stillImageOutput = newStillImageOutput;
     videoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
     [videoPreviewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
@@ -789,7 +728,6 @@
     [captureSession startRunning];
     
     self.tabBarController.tabBar.hidden =YES;
-    
     _vwForCamera.hidden = NO;
     _backBtn.hidden = NO;
 }
@@ -814,25 +752,20 @@
     
     AVCaptureConnection *videoConnection = nil;
     
-    for (AVCaptureConnection *connection in [stillImageOutput connections])
-    {
-        for (AVCaptureInputPort *port in [connection inputPorts])
-        {
-            if ([[port mediaType] isEqual:AVMediaTypeVideo] )
-            {
+    for (AVCaptureConnection *connection in [stillImageOutput connections]){
+        for (AVCaptureInputPort *port in [connection inputPorts]){
+            if ([[port mediaType] isEqual:AVMediaTypeVideo] ){
                 videoConnection = connection;
                 break;
             }
         }
-        if (videoConnection)
-        {
+        if (videoConnection){
             break;
         }
     }
     
     NSLog(@"About to request a capture from: %@", stillImageOutput);
-    [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
-     {
+    [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
          NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
          UIImage *image = [[UIImage alloc] initWithData:imageData];
          imgToSend=image;
@@ -842,7 +775,6 @@
      }];
     
     self.tabBarController.tabBar.hidden =NO;
-    
 }
 
 - (IBAction)onClickBackBtn:(UIButton *)sender {
@@ -866,8 +798,7 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     if([info valueForKey:UIImagePickerControllerOriginalImage]==nil){
         NSLog(@"Image Not Available");
-    }
-    else    {
+    }else{
         imgToSend=[info valueForKey:UIImagePickerControllerOriginalImage];
         _vwForImgPreview.hidden = NO;
         _imgVwForPhotoPreview.image=imgToSend;
@@ -876,15 +807,14 @@
 }
 
 -(void)postImageDataToServer:(NSDictionary*)dictToSend
-                   withIndes:(NSInteger)indexValue
-{
+                   withIndes:(NSInteger)indexValue{
+    
     if ([[dictToSend valueForKey:@"actionimage"] isEqualToString:@"img"]) {
         imgPathToSend=@"img";
         [self timeLineUpdating:dictToSend withIndex:indexValue];
     }else{
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^
-                       {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         
                            NSMutableDictionary* _params = [[NSMutableDictionary alloc] init];
                            [_params setObject:@"Time_Line" forKey:@"purpose"];
@@ -933,8 +863,8 @@
                            [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
                            [request setURL:requestURL];
                            
-                           dispatch_async(dispatch_get_main_queue(), ^
-                                          {
+                           dispatch_async(dispatch_get_main_queue(), ^{
+                               
                                               [request setHTTPBody:body];
                                               [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
                                               NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
@@ -957,6 +887,7 @@
                        });
     }
 }
+
 -(void)postData:(NSDictionary*)dictToSend
       withIndex:(NSInteger)indexValue{
     
@@ -1077,6 +1008,7 @@
     if ([[dictData valueForKey:@"status"] length]<=0) {
         comments=@"Time In";
         actionType=@"clockIn";
+        [defaults setObject:strCurrentTime forKey:@"TimeIn"];
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
         if (fromInLoctnOrOutLoctn) {
             if (boolValueForInLocationOrNot) {
@@ -1091,6 +1023,7 @@
             actionType=@"clockOut";
         }
     }else if([[dictData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
+        [defaults setObject:strCurrentTime forKey:@"TimeIn"];
         comments=@"Time In";
         actionType=@"clockIn";
     }
@@ -1182,15 +1115,26 @@
     NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
     
     NSMutableDictionary *dict=[[NSMutableDictionary alloc] init];
+   
+   //c NSMutableArray *arrayForStatus=[[NSMutableArray alloc] init];
+    
+
     for (NSManagedObject * fetRec  in result) {
+        
+        //NSMutableDictionary *dicting=[[NSMutableDictionary alloc] init];
+        
         statusData=[fetRec valueForKey:@"status"];
         [dict setValue:statusData forKey:@"status"];
         statusData=[fetRec valueForKey:@"comments"];
         [dict setValue:statusData forKey:@"comments"];
         statusData=[fetRec valueForKey:@"time"];
         [dict setValue:statusData forKey:@"time"];
+//        dicting=[dict mutableCopy];
+//        [arrayForStatus addObject:dicting];
     }
-    //    NSLog(@"Status Data====%@",dict);
+    
+            //NSLog(@"arrayForStatus====%@",arrayForStatus);
+    
     if ([dict valueForKey:@"status"]) {
         if ([[dict valueForKey:@"status"] isEqualToString:@"TimeOut"]) {
             timerForShiftTime=nil;
@@ -1264,8 +1208,11 @@
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
         _lblTimeInStatus.text=@"Time Out";
         _vwForTimer.hidden=NO;
-        [self getTimerForTimeIn:[statusData valueForKey:@"time"]];
         
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSString *strTime=[defaults objectForKey:@"TimeIn"];
+        [self getTimerForTimeIn:strTime];
+       // [self getTimerForTimeIn:[statusData valueForKey:@"time"]];
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
         _lblTimeInStatus.text=@"Time In";
         _vwForTimer.hidden=YES;
@@ -1312,7 +1259,6 @@
     
     _lblForTimer.text=timeString;
     _lblForTimer.textAlignment= NSTextAlignmentCenter;
-//        NSLog(@"Time Started==%@",timeString);
 }
 
 #pragma mark - Time Line Update
@@ -1407,6 +1353,21 @@
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                          NSLog(@"Error %@",[error userInfo]);
                                         // [self updateDatabase:indexValue];
+                                         
+                                         NSError *jsonError;
+                                         NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                         
+                                         if (objectData != nil) {
+                                             
+                                             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                  options:NSJSONReadingMutableContainers
+                                                                                                    error:&jsonError];
+                                             
+                                             NSString *strError=[json valueForKey:@"errors"];
+                                             if ([strError containsString:@"You cannot clock in twice"]) {
+                                                 [self updateDatabase:indexValue];
+                                             }
+                                         }
                                      }];
     [operation start];
 }
@@ -1450,8 +1411,10 @@
 //    NSString *endDate=[NSString stringWithFormat:@"estimatedCompletionDate=%@ 23:50:59",[dateFormatter stringFromDate:now]];
     NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=0&pageSize=1",[dict valueForKey:@"username"]];
     NSLog(@"String Path for Get History===%@",strPath);
+    NSString *strURL=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    strURL=[strURL stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:strPath
+                                                            path:strURL
                                                       parameters:nil];
     
     //====================================================RESPONSE
@@ -1492,7 +1455,7 @@
             // return date2 compare date1 for descending. Or reverse the call for ascending.
             return [date2 compare:date1];
         }];
-      //  NSLog(@"%@", [[tempArray reverseObjectEnumerator] allObjects]);
+
         tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
         
         NSMutableArray *correctOrderStringArray = [NSMutableArray array];

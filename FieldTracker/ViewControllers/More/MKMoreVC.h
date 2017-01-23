@@ -118,8 +118,13 @@
 @property (strong, nonatomic) IBOutlet UITextField *textFieldMyNumber;
 @property (strong, nonatomic) IBOutlet UITextField *textFieldMyEmail;
 @property (strong, nonatomic) IBOutlet UITextField *textFieldMyStore;
+@property (strong, nonatomic) IBOutlet UITextField *textFieldMyManagerName;
+@property (strong, nonatomic) IBOutlet UITextField *textFieldMyManagerEmailID;
+@property (strong, nonatomic) IBOutlet UITextField *textFieldMyManagerMobileNumber;
+
 @property (strong, nonatomic) IBOutlet UITextView *textVwMyAddress;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightConstraintForMyTextFieldAccount;
+- (IBAction)onClickManagerPhoneNumber:(UIButton *)sender;
 
 #pragma mark - Change Password
 

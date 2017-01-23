@@ -87,6 +87,8 @@
         self.scrollView.alwaysBounceHorizontal = NO;
         self.scrollView.showsVerticalScrollIndicator = NO;
         self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.scrollView.scrollEnabled = NO;
+        
         [self.view addSubview:self.scrollView];
         self.scrollContentView = [[UIView alloc] initWithFrame:self.scrollView.bounds];
         [self.scrollView addSubview:self.scrollContentView];
