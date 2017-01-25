@@ -20,16 +20,15 @@
     
     self.view.backgroundColor = [UIColor clearColor];
     
-    self.bgImgVw.layer.cornerRadius=5;
-    self.bgImgVw.layer.masksToBounds = YES;
+//    self.bgImgVw.layer.cornerRadius=5;
+//    self.bgImgVw.layer.masksToBounds = YES;
 
     self.btnSubmit.layer.cornerRadius=5;
     self.btnSubmit.layer.masksToBounds = YES;
     
-    [self addPadding:_textFielEmailID];
+    [self addPadding:_textFieldNewPwd];
+    [self addPadding:_textFieldConfirmPwd];
 }
-
-
 
 #pragma mark - AddPadding
 
@@ -45,15 +44,10 @@
     txtField.layer.cornerRadius=5;
     
     UIImageView *imgVw=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    
-    if (txtField == _textFielEmailID){
-        imgVw.image=[UIImage imageNamed:@"email"];
-    }
-   
+    imgVw.image=[UIImage imageNamed:@"password"];
     imgVw.contentMode = UIViewContentModeScaleAspectFit;
     txtField.rightView=imgVw;
     txtField.rightViewMode=UITextFieldViewModeAlways;
-    
     
     [txtField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
@@ -80,26 +74,20 @@
 }
 
 - (IBAction)onClickSubmit:(UIButton *)sender {
-    [_textFielEmailID resignFirstResponder];
-    if (_textFielEmailID.text.length>0 ) {
+    [self.view endEditing:YES];
+//    if (_textFieldNewPwd.text.length>0 ) {
+    
+        if ([APPDELEGATE connected]) {
         
-        if ([self isValidEmail:_textFielEmailID.text]) {
-            
-            if ([APPDELEGATE connected]) {
-              
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"CloseView" object:self];
             }else{
                 UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
             }
-        }else{
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-            _textFielEmailID.text=@"";
-        }
-    }else{
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-    }
+//        }else{
+//            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter All Fields" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//            [alert show];
+//        }
 }
 
 -(BOOL)isValidEmail:(NSString *)checkString

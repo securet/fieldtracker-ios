@@ -11,6 +11,9 @@
 #import "MKIndividualHistoryCell.h"
 #import <QuartzCore/CAAnimation.h>
 #import <AVFoundation/AVFoundation.h>
+#import "MKAgentListCell.h"
+#import "MKForgotPasswordVC.h"
+#import "MKHistoryCustomCell.h"
 @interface MKHomeVC ()
 {
     IBOutlet GMSMapView *mapView;
@@ -20,7 +23,7 @@
     NSString *imgPathToSend;
     BOOL boolValueForInLocationOrNot;
     NSTimer *timerForShiftTime,*timerForLocation;
-    NSMutableArray *arrayForStatusData;
+    NSMutableArray *arrayForStatusData,*arrayForAgents;
     AVCaptureSession *captureSession;
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
     AVCaptureStillImageOutput *stillImageOutput;
@@ -56,7 +59,7 @@
         });
     }
 
-       _bottomVw.layer.cornerRadius = 10;
+    _bottomVw.layer.cornerRadius = 10;
     _bottomVw.layer.masksToBounds = YES;
     
     [self updateLocationManagerr];
@@ -92,6 +95,9 @@
     _tableVwForTimeline.hidden = YES;
     _vwForCamera.hidden = YES;
     _backBtn.hidden = YES;
+    _vwForAgentData.hidden = YES;
+    _vwForAgentIndividualData.hidden = YES;
+    
     
     _cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
     _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
@@ -101,6 +107,19 @@
     _tableVwForTimeline.tableFooterView = [[UIView alloc] init];
     
     _vwForTimer.backgroundColor=[[UIColor whiteColor] colorWithAlphaComponent:0.7];
+    
+    _vwForManager.hidden = YES;
+    
+    if ([[dict valueForKey:@"roleTypeId"] isEqualToString:@"SalesExecutive"]){
+        
+        _vwForManager.hidden = NO;
+        _tableVwForAgents.tableFooterView=[[UIView alloc] init];
+        _tableVwForAgents.delegate = self;
+        _tableVwForAgents.dataSource = self;
+
+    }else{
+        
+    }
     
     [self checkStatus];
     [self startTimedTask];
@@ -257,8 +276,8 @@
         geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
         geoFenceCircle.strokeWidth = 1.5;
         geoFenceCircle.strokeColor = [UIColor blueColor];
-        geoFenceCircle.map = mapView; // Add it to
-
+        geoFenceCircle.map = mapView; // Add it to Map
+        
         [self startBackgroundTask];
         [self checkLocation];
     }
@@ -271,11 +290,39 @@
 }
 #pragma mark - UITableView
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
+    if (tableView == _tableVwForAgents) {
+        return 10;
+    }
+    if (tableView == _tableVwForHistoryOfAgent) {
+        return 10;
+    }
+    if (tableView == _tableVwIndividualHistory) {
+        return 10;
+    }
     return arrayForStatusData.count;
 }
-
+ 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
+    if (tableView == _tableVwForAgents) {
+        MKAgentListCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        if (cell==nil) {
+            cell=[[MKAgentListCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+    
+    if (tableView == _tableVwForHistoryOfAgent) {
+        MKHistoryCustomCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        if (cell==nil) {
+            cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+
     MKIndividualHistoryCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (cell == nil) {
         cell=[[MKIndividualHistoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -309,26 +356,53 @@
         cell.imgVwForBtmVerticalLine.hidden=NO;
     }
     
-//    if (indexPath.row==arrayForStatusData.count-1){
-//        cell.centerConstraint.constant = 0;
-//        cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
-//        cell.lblForStatus.text=@"Time Out";
-//        cell.imgVwForTopVerticalLine.hidden=NO;
-//        cell.imgVwForBtmVerticalLine.hidden=YES;
-//    }
-    
     cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
     
-    if (![[arrayForStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
-        cell.lblForTime.text= [self getTimeIndividual:[arrayForStatusData objectAtIndex:indexPath.row]];
+    
+    if (tableView == _tableVwIndividualHistory) {
+         cell.lblForTime.text=@"06:30 AM";
+        
+        
+        if (indexPath.row==9){
+            cell.centerConstraint.constant = 0;
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
+            cell.lblForStatus.text=@"Time Out";
+            cell.imgVwForTopVerticalLine.hidden=NO;
+            cell.imgVwForBtmVerticalLine.hidden=YES;
+        }
+        
     }else{
-        cell.lblForTime.text=@"";
-        cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
-        cell.lblForStatus.text=@"";
-        cell.imgVwForLine.backgroundColor=[UIColor clearColor];
+
+        if (![[arrayForStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
+            cell.lblForTime.text= [self getTimeIndividual:[arrayForStatusData objectAtIndex:indexPath.row]];
+        }else{
+            cell.lblForTime.text=@"";
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+            cell.lblForStatus.text=@"";
+            cell.imgVwForLine.backgroundColor=[UIColor clearColor];
+        }
     }
     return cell;
 }
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if (tableView == _tableVwForAgents) {
+        _vwForAgentData.hidden = NO;
+        _backBtn.hidden = NO;
+        _tableVwForHistoryOfAgent.delegate = self;
+        _tableVwForHistoryOfAgent.dataSource = self;
+        [_tableVwForHistoryOfAgent reloadData];
+    }
+    
+    if (tableView == _tableVwForHistoryOfAgent) {
+        _vwForAgentIndividualData.hidden = NO;
+        _tableVwIndividualHistory.delegate = self;
+        _tableVwIndividualHistory.dataSource = self;
+        [_tableVwIndividualHistory reloadData];
+    }
+}
+
 -(NSString*)getTimeIndividual:(NSString*)strDate
 {
     if ([strDate isKindOfClass:[NSNull class]]) {
@@ -374,8 +448,8 @@
     dictForStoreDetails=[[NSMutableDictionary alloc] init];
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    if ([defaults objectForKey:@"StoreData"] != nil)
-    {
+    if ([defaults objectForKey:@"StoreData"] != nil){
+        
         dictForStoreDetails=[[defaults objectForKey:@"StoreData"] mutableCopy];
         
         NSMutableDictionary *dictToSendLctnStatus=[[NSMutableDictionary alloc] init];
@@ -386,7 +460,6 @@
         NSString *storeName=[dictForStoreDetails valueForKey:@"storeName"];
         
 //        CLLocationCoordinate2D coordinate = [self getLocation];
-//        
 //        CLLocation *userLocation= [[CLLocation alloc] initWithLatitude:coordinate.latitude
 //                                                             longitude:coordinate.longitude];
         CLLocationDistance distance = [location distanceFromLocation:mapView.myLocation];
@@ -527,9 +600,8 @@
     if (newLocation.coordinate.latitude == prevCurrLocation.latitude && newLocation.coordinate.longitude == prevCurrLocation.longitude){
         
     }else{
-        
+
         [self showingCurrentLocation];
-        
 //        [mapView_ clear];
 //        mapView_.delegate=self;
 //        marker = [[GMSMarker alloc] init];
@@ -539,7 +611,6 @@
 //        [CATransaction commit];
 //        marker.icon = [UIImage imageNamed:@"pin_driver"];
 //        marker.map = mapView_;
-        
         prevCurrLocation=newLocation.coordinate;
     }
 }
@@ -790,6 +861,18 @@
         _vwForImgPreview.hidden = YES;
         imgToSend=nil;
     }
+    
+    if (![_vwForAgentData isHidden]) {
+        
+        if (![_vwForAgentIndividualData isHidden]) {
+            _vwForAgentIndividualData.hidden=YES;
+            _backBtn.hidden = NO;
+        }else{
+            _vwForAgentData.hidden=YES;
+        }
+    }
+    
+    
     self.tabBarController.tabBar.hidden =NO;
 }
 
@@ -1116,13 +1199,10 @@
     
     NSMutableDictionary *dict=[[NSMutableDictionary alloc] init];
    
-   //c NSMutableArray *arrayForStatus=[[NSMutableArray alloc] init];
+   // NSMutableArray *arrayForStatus=[[NSMutableArray alloc] init];
     
-
     for (NSManagedObject * fetRec  in result) {
-        
         //NSMutableDictionary *dicting=[[NSMutableDictionary alloc] init];
-        
         statusData=[fetRec valueForKey:@"status"];
         [dict setValue:statusData forKey:@"status"];
         statusData=[fetRec valueForKey:@"comments"];
@@ -1133,7 +1213,7 @@
 //        [arrayForStatus addObject:dicting];
     }
     
-            //NSLog(@"arrayForStatus====%@",arrayForStatus);
+    //NSLog(@"arrayForStatus====%@",arrayForStatus);
     
     if ([dict valueForKey:@"status"]) {
         if ([[dict valueForKey:@"status"] isEqualToString:@"TimeOut"]) {
@@ -1221,7 +1301,6 @@
     }
 }
 
-
 -(void)getTimerForTimeIn:(NSString*)time{
     
     NSString *firstViewd;
@@ -1281,7 +1360,6 @@
     //messages = "Successfully Clocked out!\n";
     
     /*
-     
      NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
      NSLog(@"User Name===%@",[dict valueForKey:@"actiontype"]);
      NSLog(@"clockdate===%@",[dict valueForKey:@"clockdate"]);
@@ -1294,9 +1372,7 @@
      */
     //    NSString *actionType;
     //    NSString *comments;
-    //
     //    NSString *statusData=[self getStatus];
-    //
     //    if ([statusData length]<=0) {
     //        comments=@"Time In";
     //        actionType=@"clockIn";

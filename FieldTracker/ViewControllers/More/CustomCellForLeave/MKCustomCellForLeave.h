@@ -15,6 +15,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *lblForEndDate;
 @property (strong, nonatomic) IBOutlet UILabel *lblForTypeOfLeave;
 @property (strong, nonatomic) IBOutlet UILabel *lblForStatusOfLeave;
-
+@property (strong, nonatomic) IBOutlet UILabel *lblForName;
 
 @end

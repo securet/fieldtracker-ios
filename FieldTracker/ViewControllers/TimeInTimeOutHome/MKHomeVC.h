@@ -33,7 +33,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnPhotoConfirm;
 @property (weak, nonatomic) IBOutlet UIButton *btnPhotoRetake;
 
-
 @property (strong, nonatomic) IBOutlet UIImageView *imgVwForPhotoPreview;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfImgPrvw;
@@ -44,21 +43,27 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *lblTimeInStatus;
 
-
-
 @property (strong, nonatomic) IBOutlet UIView *vwForTimer;
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForTimeline;
 @property (strong, nonatomic) IBOutlet UILabel *lblForTimer;
 
-
 @property (weak, nonatomic) IBOutlet UIImageView *imgVwForTimeline;
-
-
 
 @property (strong, nonatomic) IBOutlet UIView *vwForCamera;
 @property (strong, nonatomic) IBOutlet UIView *previewCamera;
 @property (strong, nonatomic) IBOutlet UIButton *backBtn;
 @property (strong, nonatomic) IBOutlet UIButton *cameraBtn;
+
+#pragma mark - ViewForManager
+@property (strong, nonatomic) IBOutlet UIView *vwForManager;
+@property (strong, nonatomic) IBOutlet UITableView *tableVwForAgents;
+
+@property (strong, nonatomic) IBOutlet UIView *vwForAgentData;
+@property (strong, nonatomic) IBOutlet UITableView *tableVwForHistoryOfAgent;
+
+@property (strong, nonatomic) IBOutlet UIView *vwForAgentIndividualData;
+@property (strong, nonatomic) IBOutlet UITableView *tableVwIndividualHistory;
+
 
 - (IBAction)onClickCamera:(UIButton *)sender;
 - (IBAction)onClickBackBtn:(UIButton *)sender;

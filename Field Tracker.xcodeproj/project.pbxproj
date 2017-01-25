@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		27FC09E77673E9E0B1BDDD97 /* Pods_Field_Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D605FA6ED061FED5593E10 /* Pods_Field_Tracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		7F1716521E3767F50007253E /* MKAgentListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F1716511E3767F50007253E /* MKAgentListCell.m */; };
 		7F9FC6CF1E1E3277005767F6 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */; };
 		7FA481D41E162EF200345BCE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA481D31E162EF200345BCE /* CoreData.framework */; };
 		7FA481D81E162FE400345BCE /* FieldTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7FA481D61E162FE400345BCE /* FieldTracker.xcdatamodeld */; };
@@ -96,6 +97,8 @@
 /* Begin PBXFileReference section */
 		36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.debug.xcconfig"; sourceTree = "<group>"; };
 		5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.release.xcconfig"; sourceTree = "<group>"; };
+		7F1716501E3767F50007253E /* MKAgentListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKAgentListCell.h; sourceTree = "<group>"; };
+		7F1716511E3767F50007253E /* MKAgentListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKAgentListCell.m; sourceTree = "<group>"; };
 		7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		7FA481D31E162EF200345BCE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		7FA481D71E162FE400345BCE /* FieldTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FieldTracker.xcdatamodel; sourceTree = "<group>"; };
@@ -363,6 +366,8 @@
 			children = (
 				7FB6AB251E2F3D3A00C0E270 /* MKHomeVC.h */,
 				7FB6AB261E2F3D3A00C0E270 /* MKHomeVC.m */,
+				7F1716501E3767F50007253E /* MKAgentListCell.h */,
+				7F1716511E3767F50007253E /* MKAgentListCell.m */,
 			);
 			path = TimeInTimeOutHome;
 			sourceTree = "<group>";
@@ -973,6 +978,7 @@
 				7FB6AC451E2F47AD00C0E270 /* UIViewController+BIZChildViewController.m in Sources */,
 				7FB6AC601E2F47AD00C0E270 /* RSDFDatePickerCollectionView.m in Sources */,
 				7FB6AC491E2F47AD00C0E270 /* IQUIWindow+Hierarchy.m in Sources */,
+				7F1716521E3767F50007253E /* MKAgentListCell.m in Sources */,
 				7FD6E59F1E35D89200FA01D4 /* MKForgotPasswordVC.m in Sources */,
 				7FB6AB361E2F3D9400C0E270 /* MKCustomCellForLeave.m in Sources */,
 				7FB6AB301E2F3D6600C0E270 /* MKIndividualHistoryCell.m in Sources */,

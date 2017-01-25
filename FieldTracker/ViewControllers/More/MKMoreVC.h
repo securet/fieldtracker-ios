@@ -140,7 +140,13 @@
 @property (strong, nonatomic) IBOutlet UIImageView *imgVwLogoConatact;
 @property (strong, nonatomic) IBOutlet UILabel *lblForEmailContact;
 @property (strong, nonatomic) IBOutlet UILabel *lblForPhoneContact;
+@property (strong, nonatomic) IBOutlet UILabel *lblForOrgNameContact;
 
+
+#pragma mark - Leave Requisitions ( i.e for approval )
+
+@property (strong, nonatomic) IBOutlet UIView *vwForLeaveRequestForApproval;
+@property (strong, nonatomic) IBOutlet UITableView *tableVwForLeaveApproval;
 
 - (IBAction)onClickCamera:(UIButton *)sender;
 

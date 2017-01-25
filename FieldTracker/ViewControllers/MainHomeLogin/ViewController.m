@@ -101,7 +101,7 @@
                 [alert show];
             }
         }else{
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email ID" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
             _txtFieldForEmail.text=@"";
         }
@@ -109,7 +109,7 @@
     else{
         
         if (_txtFieldForEmail.text.length <= 0) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Email ID" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
         else if (_txtFieldForPassword.text.length <= 0){
@@ -121,16 +121,25 @@
 
 - (IBAction)onClickForgotPassword:(UIButton *)sender {
     
-    
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKForgotPasswordVC"];
-    
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){
-        BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-100, self.view.frame.size.height/2+100)];
-        [self presentViewController:popupViewController animated:NO completion:nil];
+    if (_txtFieldForEmail.text.length > 0) {
+        if ([self isValidEmail:_txtFieldForEmail.text]) {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKForgotPasswordVC"];
+            
+            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){
+                BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-100, self.view.frame.size.height/2+100)];
+                [self presentViewController:popupViewController animated:NO completion:nil];
+            }else{
+                BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width,self.view.frame.size.height)];
+                [self presentViewController:popupViewController animated:NO completion:nil];
+            }
+        }else{
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Email ID is not valid" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
     }else{
-        BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-50, 350)];
-        [self presentViewController:popupViewController animated:NO completion:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Email ID" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     }
 }
 
@@ -221,11 +230,25 @@
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                          [DejalBezelActivityView removeView];
                                          NSLog(@"%i====Error %@",[operation.response statusCode],[error description]);
+//                                         
+//                                         if([operation.response statusCode] == 401)
+//                                         {
+//                                             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Not account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//                                             [alert show];
+//                                         }
+                                         NSError *jsonError;
+                                         NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
                                          
-                                         if([operation.response statusCode] == 401)
-                                         {
-                                             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Not account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                                             [alert show];
+                                         if (objectData != nil) {
+                                             
+                                             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                  options:NSJSONReadingMutableContainers
+                                                                                                    error:&jsonError];
+                                             
+                                             NSString *strError=[json valueForKey:@"errors"];
+                                             [[[UIAlertView alloc] initWithTitle:@""
+                                                                         message:strError
+                                                                        delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
                                          }
                                      }];
     [operation start];
