@@ -31,7 +31,7 @@
     
     if (![APPDELEGATE connected]) {
         
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
 }
@@ -97,7 +97,7 @@
             if ([APPDELEGATE connected]) {
                 [self login];
             }else{
-                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
             }
         }else{
@@ -200,7 +200,6 @@
         if ([[JSON objectForKey:@"user"] isKindOfClass:[NSArray class]]) {
             if ([[JSON objectForKey:@"user"] count]>0)
             {
-                
                 NSMutableDictionary *prunedDictionary = [NSMutableDictionary dictionary];
                 for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys]){
                     

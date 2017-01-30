@@ -87,6 +87,11 @@
 
 #pragma mark - IBOutlets For Leave Request
 
+@property (strong, nonatomic) IBOutlet UIButton *btnLeaveStartDate;
+@property (strong, nonatomic) IBOutlet UIButton *btnLeaveEndDate;
+@property (strong, nonatomic) IBOutlet UIButton *btnLeaveType;
+@property (strong, nonatomic) IBOutlet UIButton *btnLeaveReason;
+
 @property (strong, nonatomic) IBOutlet UIButton *btnLeaveRqstSubmit;
 @property (strong, nonatomic) IBOutlet UIButton *btnLeaveRqstCancel;
 @property (strong, nonatomic) IBOutlet UILabel *lblForNoOfDays;

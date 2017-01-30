@@ -9,5 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface MKAgentListCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UILabel *lblFieldAgentName;
+@property (weak, nonatomic) IBOutlet UILabel *lblStoreLocation;
+@property (weak, nonatomic) IBOutlet UILabel *lblStatus;
 
 @end

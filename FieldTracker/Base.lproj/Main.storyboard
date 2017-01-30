@@ -1794,9 +1794,67 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
-                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="IQ0-j5-ZHL">
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="55" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="IQ0-j5-ZHL">
                                         <rect key="frame" x="0.0" y="41" width="600" height="586"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <prototypes>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="70" id="KhI-D4-jS2" customClass="MKAgentListCell">
+                                                <rect key="frame" x="0.0" y="28" width="600" height="70"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KhI-D4-jS2" id="tHU-sk-eIz">
+                                                    <rect key="frame" x="0.0" y="0.0" width="567" height="70"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Agent Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DC4-4A-WI1">
+                                                            <rect key="frame" x="10" y="15" width="172" height="21"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="21" id="Djj-nF-BI4"/>
+                                                                <constraint firstAttribute="width" constant="172" id="HwP-Nx-oU3"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="0.2666666667" green="0.46666666670000001" blue="0.63137254899999995" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Store Location Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XR0-Cv-Qdh">
+                                                            <rect key="frame" x="10" y="36" width="174" height="21"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="21" id="O8H-bV-7tc"/>
+                                                                <constraint firstAttribute="width" constant="174" id="zGU-8S-333"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8hg-Y0-Y74">
+                                                            <rect key="frame" x="447" y="24" width="120" height="21"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="120" id="SrE-UB-qo2"/>
+                                                                <constraint firstAttribute="height" constant="21" id="TW1-yb-gLf"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="DC4-4A-WI1" firstAttribute="top" secondItem="tHU-sk-eIz" secondAttribute="top" constant="15" id="24w-cO-yOT"/>
+                                                        <constraint firstItem="8hg-Y0-Y74" firstAttribute="centerY" secondItem="tHU-sk-eIz" secondAttribute="centerY" id="2Pa-Xs-Onn"/>
+                                                        <constraint firstItem="DC4-4A-WI1" firstAttribute="leading" secondItem="tHU-sk-eIz" secondAttribute="leading" constant="10" id="CoN-FG-KUd"/>
+                                                        <constraint firstAttribute="trailing" secondItem="8hg-Y0-Y74" secondAttribute="trailing" id="HPU-mM-ZuH"/>
+                                                        <constraint firstItem="XR0-Cv-Qdh" firstAttribute="top" secondItem="DC4-4A-WI1" secondAttribute="bottom" id="K6y-4s-gRF"/>
+                                                        <constraint firstItem="XR0-Cv-Qdh" firstAttribute="leading" secondItem="tHU-sk-eIz" secondAttribute="leading" constant="10" id="s5V-UK-I8c"/>
+                                                    </constraints>
+                                                </tableViewCellContentView>
+                                                <connections>
+                                                    <outlet property="lblFieldAgentName" destination="DC4-4A-WI1" id="VW1-ZI-MwC"/>
+                                                    <outlet property="lblStatus" destination="8hg-Y0-Y74" id="KfQ-q4-Jo1"/>
+                                                    <outlet property="lblStoreLocation" destination="XR0-Cv-Qdh" id="coI-SF-tde"/>
+                                                </connections>
+                                            </tableViewCell>
+                                        </prototypes>
                                     </tableView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1988,7 +2046,7 @@
                                                             <constraint firstAttribute="height" constant="35" id="98F-Gx-273"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                        <textInputTraits key="textInputTraits"/>
+                                                        <textInputTraits key="textInputTraits" keyboardType="phonePad"/>
                                                         <variation key="default">
                                                             <mask key="constraints">
                                                                 <exclude reference="98F-Gx-273"/>
@@ -3189,9 +3247,13 @@
                         <outlet property="btnChangePwd" destination="sA0-CM-7QT" id="kkY-bf-Ppx"/>
                         <outlet property="btnForStoreAssignmtPopup" destination="gjg-Dj-9MO" id="3nP-s1-OQ6"/>
                         <outlet property="btnGetLocation" destination="Esu-qY-bYV" id="2gU-tX-VZM"/>
+                        <outlet property="btnLeaveEndDate" destination="Fwj-th-yPn" id="6lT-rE-YBc"/>
+                        <outlet property="btnLeaveReason" destination="2z1-oD-5EW" id="ZwT-xq-lfg"/>
                         <outlet property="btnLeaveRqst" destination="oay-Ja-8KW" id="HoS-j6-Rvs"/>
                         <outlet property="btnLeaveRqstCancel" destination="eWP-z9-GxB" id="rMR-oe-nES"/>
                         <outlet property="btnLeaveRqstSubmit" destination="DZ0-eK-HYL" id="vC7-2p-TSm"/>
+                        <outlet property="btnLeaveStartDate" destination="aai-q2-jJ8" id="x7m-gZ-ZXg"/>
+                        <outlet property="btnLeaveType" destination="KgK-N3-scv" id="n6L-mK-nKY"/>
                         <outlet property="btnPhotoPromoter" destination="G8X-FC-Vfl" id="1Kl-Vr-IUo"/>
                         <outlet property="cameraBtn" destination="Hj4-6H-2VE" id="kMK-Ju-7ft"/>
                         <outlet property="datePicker" destination="6jz-fX-4mr" id="cMT-AU-MzR"/>

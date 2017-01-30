@@ -11,13 +11,17 @@
 #import <AVFoundation/AVFoundation.h>
 #import "RSDFDatePickerView.h"
 #import "JSBadgeView.h"
+#import "MKAgentListCell.h"
+
 @interface MKMoreVC ()<RSDFDatePickerViewDelegate,RSDFDatePickerViewDataSource>
 {
     NSMutableArray *arrayForTableData;
     NSMutableArray *arrayForStoreList;
     NSMutableArray *arrayForPromoters;
     NSMutableArray *arrayForLeaveHistory;
-    NSInteger countForLeaveData,pageNumberForLeave,indexValueForLeaveEdit;
+    NSMutableArray *arrayForLeaveApprovalList;
+    
+    NSInteger countForLeaveData,pageNumberForLeave,indexValueForLeaveEdit,leaveApprovalListCount,pageNumberForLeaveApproval;
     BOOL isLeaveEditRNew;
     NSDictionary *dictForLeaveTypes;
     
@@ -71,12 +75,16 @@
         arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
     }
     
-    
     arrayForStoreList=[[NSMutableArray alloc] init];
     arrayForPromoters=[[NSMutableArray alloc] init];
     arrayForLeaveHistory = [[NSMutableArray alloc] init];
+    arrayForLeaveApprovalList=[[NSMutableArray alloc] init];
+    
     pageNumberForLeave = 0;
     countForLeaveData = 0;
+    
+    leaveApprovalListCount=0;
+    pageNumberForLeaveApproval=0;
     
     _tableVw.delegate = self;
     _tableVw.dataSource = self;
@@ -86,6 +94,7 @@
     _tableVwForStore.tableFooterView =[[UIView alloc] init];
     _tableVwForPromoters.tableFooterView =[[UIView alloc] init];
     _tableVwForLeaveRqst.tableFooterView=[[UIView alloc] init];
+    _tableVwForLeaveApproval.tableFooterView=[[UIView alloc] init];
     
     _vwForPromoters.hidden = YES;
     _vwForStore.hidden = YES;
@@ -151,7 +160,7 @@
     _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
     
     if (![APPDELEGATE connected]) {
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
     
@@ -458,7 +467,7 @@
                                        delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
         }
     }else{
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
 }
@@ -571,7 +580,7 @@
         _lblForStoreLocation.textColor=[UIColor whiteColor];
     }else{
         _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        //        _lblForStoreLocation.text=@"Off site";
+        //_lblForStoreLocation.text=@"Off site";
         _lblForStoreLocation.textColor=[UIColor darkGrayColor];
     }
     
@@ -622,10 +631,12 @@
     }else if (textField == _txtFieldStoreAsgnmntPromoter){
     }
 }
+
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
     if (textField == _txtFieldStoreAsgnmntPromoter){
     }
 }
+
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     
     if (textField == _txtFieldStoreAsgnmntPromoter || textField == _txtFieldSEAsgnmntPromoter){
@@ -633,6 +644,7 @@
     }
     return YES;
 }
+
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
     if ([textField isFirstResponder]){
         if ([[[textField textInputMode] primaryLanguage] isEqualToString:@"emoji"] || ![[textField textInputMode] primaryLanguage]){
@@ -641,6 +653,7 @@
     }
     return YES;
 }
+
 -(void)textFieldEdit:(UITextField*)txtField{
     txtField.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
     txtField.keyboardType=UIKeyboardTypeASCIICapable;
@@ -734,67 +747,74 @@
 }
 -(void)onClickStoreAddToServer:(UIButton*)sender
 {
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
-    
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    httpClient.parameterEncoding = AFFormURLParameterEncoding;
-    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    
-    NSString *str=[defaults valueForKey:@"BasicAuth"];
-    
-    [httpClient setDefaultHeader:@"Authorization" value:str];
-    //{"storeName":"OPPO Tirumalgherry","address":"Via Rest API","latitude":100.00,"longitude":100.00,"proximityRadius":200}
-    NSDictionary * json = @{@"storeName":_txtFieldStoreName.text,
-                            @"address":_txtVwStoreAddress.text,
-                            @"latitude":strForCurLatitude,
-                            @"longitude":strForCurLongitude,
-                            @"proximityRadius":_txtFieldSiteRadius.text,
-                            };
-    NSMutableURLRequest *request;
-    if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
-        request = [httpClient requestWithMethod:@"POST"
-                                           path:@"/rest/s1/ft/stores"
-                                     parameters:json];
-    }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
+    if ([APPDELEGATE connected]) {
         
-        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[[arrayForStoreList objectAtIndex:sender.tag] valueForKey:@"productStoreId"]];
-        request = [httpClient requestWithMethod:@"PUT"
-                                           path:strPath
-                                     parameters:json];
-    }
-    
-    //====================================================RESPONSE
-    [DejalBezelActivityView activityViewForView:self.view];
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
         
-    }];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSError *error = nil;
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        [DejalBezelActivityView removeView];
-        NSLog(@"Add Store Successfully==%@",JSON);
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
         
-        _vwForStoreAdd.hidden = YES;
-        _backBtn.hidden=NO;
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
         
+        NSString *str=[defaults valueForKey:@"BasicAuth"];
+        
+        [httpClient setDefaultHeader:@"Authorization" value:str];
+        //{"storeName":"OPPO Tirumalgherry","address":"Via Rest API","latitude":100.00,"longitude":100.00,"proximityRadius":200}
+        NSDictionary * json = @{@"storeName":_txtFieldStoreName.text,
+                                @"address":_txtVwStoreAddress.text,
+                                @"latitude":strForCurLatitude,
+                                @"longitude":strForCurLongitude,
+                                @"proximityRadius":_txtFieldSiteRadius.text,
+                                };
+        NSMutableURLRequest *request;
         if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
-            if ([[JSON objectForKey:@"productStoreId"] integerValue]>0) {
-                //                _vwForStoreAdd.hidden = YES;
-                //                _backBtn.hidden=NO;
-                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                [alert show];
+            request = [httpClient requestWithMethod:@"POST"
+                                               path:@"/rest/s1/ft/stores"
+                                         parameters:json];
+        }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
+            
+            NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/%@",[[arrayForStoreList objectAtIndex:sender.tag] valueForKey:@"productStoreId"]];
+            request = [httpClient requestWithMethod:@"PUT"
+                                               path:strPath
+                                         parameters:json];
+        }
+        
+        //====================================================RESPONSE
+        [DejalBezelActivityView activityViewForView:self.view];
+        
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            [DejalBezelActivityView removeView];
+            NSLog(@"Add Store Successfully==%@",JSON);
+            
+            _vwForStoreAdd.hidden = YES;
+            _backBtn.hidden=NO;
+            
+            if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
+                if ([[JSON objectForKey:@"productStoreId"] integerValue]>0) {
+                    //                _vwForStoreAdd.hidden = YES;
+                    //                _backBtn.hidden=NO;
+                    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [alert show];
+                }
             }
         }
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                         }];
+        [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     }
-     //==================================================ERROR
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                         [DejalBezelActivityView removeView];
-                                         NSLog(@"Error %@",[error description]);
-                                     }];
-    [operation start];
 }
 
 -(void)onClickCancel{
@@ -832,13 +852,10 @@
         //        NSLog(@"Map Location=====%@",JSON);
         if (getAddress.count!=0){
             //            self.textVwForAddress.text=[[getAddress objectAtIndex:0]objectAtIndex:0];
-            //
             //            CGRect frame = self.textVwForAddress.frame;
             //            frame.size.height = self.textVwForAddress.contentSize.height;
             //            self.textVwForAddress.frame=frame;
-            
             //            NSLog(@"Address==%@",[[getAddress objectAtIndex:0]objectAtIndex:0]);
-            
             _lblForLatLon.text=[NSString stringWithFormat:@"Lat: %f | Lon: %f",[strForCurLatitude floatValue],[strForCurLongitude floatValue]];
             
             _txtVwStoreAddress.text=[[getAddress objectAtIndex:0]objectAtIndex:0];
@@ -878,37 +895,62 @@
 
 -(void)getStores{
     
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
-    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
-    
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    httpClient.parameterEncoding = AFFormURLParameterEncoding;
-    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
-    
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:@"/rest/s1/ft/stores/user/list"
-                                                      parameters:nil];
-    //====================================================RESPONSE
-    [DejalBezelActivityView activityViewForView:self.view];
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-    }];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSError *error = nil;
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-        [DejalBezelActivityView removeView];
-        NSLog(@"Store List==%@",JSON);
-        arrayForStoreList=[JSON objectForKey:@"userStores"];
-        [_tableVwForStore reloadData];
+    if ([APPDELEGATE connected]) {
+        
+        
+        
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
+        
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                                path:@"/rest/s1/ft/stores/user/list"
+                                                          parameters:nil];
+        //====================================================RESPONSE
+        [DejalBezelActivityView activityViewForView:self.view];
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            [DejalBezelActivityView removeView];
+            NSLog(@"Store List==%@",JSON);
+            arrayForStoreList=[JSON objectForKey:@"userStores"];
+            [_tableVwForStore reloadData];
+        }
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                             
+                                             NSError *jsonError;
+                                             NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                             
+                                             if (objectData != nil) {
+                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                      options:NSJSONReadingMutableContainers
+                                                                                                        error:&jsonError];
+                                                 
+                                                 NSString *strError=[json valueForKey:@"errors"];
+                                                 [[[UIAlertView alloc] initWithTitle:@""
+                                                                             message:strError
+                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                             }
+                                             
+                                         }];
+        [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     }
-     //==================================================ERROR
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                         [DejalBezelActivityView removeView];
-                                         NSLog(@"Error %@",[error description]);
-                                     }];
-    [operation start];
 }
 
 
@@ -926,57 +968,80 @@
 
 -(void)getPromoters{
     
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
-    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
-    
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    httpClient.parameterEncoding = AFFormURLParameterEncoding;
-    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
-    
-    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/list?pageIndex=%i&pageSize=10",pageNumber];
-    NSLog(@"String Path for Get Promoters==%@",strPath);
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:strPath
-                                                      parameters:nil];
-    
-    //====================================================RESPONSE
-    
-    if (pageNumber==0) {
-        [DejalBezelActivityView activityViewForView:self.view];
-    }
-    
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    
-    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+    if ([APPDELEGATE connected]) {
         
-    }];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSError *error = nil;
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
+        
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/list?pageIndex=%i&pageSize=10",pageNumber];
+        NSLog(@"String Path for Get Promoters==%@",strPath);
+        NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                                path:strPath
+                                                          parameters:nil];
+        
+        //====================================================RESPONSE
         
         if (pageNumber==0) {
-            [DejalBezelActivityView removeView];
+            [DejalBezelActivityView activityViewForView:self.view];
         }
         
-        NSMutableArray *array=[[JSON objectForKey:@"requestList"] mutableCopy];
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         
-        //        arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
-        
-        for (NSDictionary *dict in array) {
-            [arrayForPromoters addObject:dict];
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            
+            if (pageNumber==0) {
+                [DejalBezelActivityView removeView];
+            }
+            
+            NSMutableArray *array=[[JSON objectForKey:@"requestList"] mutableCopy];
+            
+            //arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
+            
+            for (NSDictionary *dict in array) {
+                [arrayForPromoters addObject:dict];
+            }
+            NSLog(@"Promoter List===%@",JSON);
+            arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
+            [_tableVwForPromoters reloadData];
         }
-        NSLog(@"Promoter List===%@",JSON);
-        arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
-        [_tableVwForPromoters reloadData];
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                             NSError *jsonError;
+                                             NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                             
+                                             if (objectData != nil) {
+                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                      options:NSJSONReadingMutableContainers
+                                                                                                        error:&jsonError];
+                                                 
+                                                 NSString *strError=[json valueForKey:@"errors"];
+                                                 [[[UIAlertView alloc] initWithTitle:@""
+                                                                             message:strError
+                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                             }
+                                             
+                                         }];
+        [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     }
-     //==================================================ERROR
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                         [DejalBezelActivityView removeView];
-                                         NSLog(@"Error %@",[error description]);
-                                     }];
-    [operation start];
 }
 
 
@@ -1035,9 +1100,10 @@
             }else if ([promoterStatus containsString:@"Submitted"] || [promoterStatus containsString:@"Rejected"]){
                 [self enablePromoterView];
             }
+            [self disablePromoterView];
         }
         
-        [_btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
+        //        [_btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
         
         NSString *jsonString = [[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestJson"];
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
@@ -1065,15 +1131,23 @@
         strAddressProofPath=[[json objectForKey:@"requestInfo"] objectForKey:@"addressIdPath"];
         storeIDForPromoterAdd=productStoreId;
     }else{
+        [self enablePromoterView];
         strAadharIDPath=@"";
         strUserPhotoPath=@"";
         strAddressProofPath=@"";
         [_btnAddPromoterConfirm setTitle:@"Add" forState:UIControlStateNormal];
+        [_btnCancelPromoterAdd setTitle:@"Cancel" forState:UIControlStateNormal];
+        
+        _txtFieldPhonePromoter.keyboardType=UIKeyboardTypePhonePad;
         _txtFieldFNamePromoter.text=@"";
         _txtFieldLNamePromoter.text=@"";
         _txtFieldEmailPromoter.text=@"";
         _txtFieldPhonePromoter.text=@"";
         _txtVwAddressPromoter.text=@"Address";
+        _txtFieldSEAsgnmntPromoter.text=@"";
+        _txtFieldStoreAsgnmntPromoter.text=@"";
+        _btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
+        
     }
 }
 -(void)disablePromoterView{
@@ -1091,8 +1165,30 @@
     _btnPhotoPromoter.userInteractionEnabled = NO;
     _btnForStoreAssignmtPopup.userInteractionEnabled = NO;
     
-    _btnAddPromoterConfirm.alpha = 0.4;
+    if (![[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"statusId"] isKindOfClass:[NSNull class]]) {
+        NSString *promoterStatus=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"statusId"];
+        
+        if ([promoterStatus containsString:@"Completed"]) {
+            [_btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
+            [_btnCancelPromoterAdd setTitle:@"Cancel" forState:UIControlStateNormal];
+            _btnAddPromoterConfirm.alpha = 0.4;
+            _btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
+            //btnCancelPromoterAdd
+        }else if ([promoterStatus containsString:@"Submitted"] || [promoterStatus containsString:@"Rejected"]){
+            _backBtn.hidden = NO;
+            
+            //85,160,248
+            _btnAddPromoterConfirm.backgroundColor=[UIColor colorWithRed:(85/255.0) green:(160/255.0) blue:(248/255.0) alpha:1.0];
+            [_btnAddPromoterConfirm setTitle:@"Approve" forState:UIControlStateNormal];
+            [_btnCancelPromoterAdd setTitle:@"Reject" forState:UIControlStateNormal];
+            
+            _btnAddPromoterConfirm.alpha = 1;
+            _btnAddPromoterConfirm.userInteractionEnabled = YES;
+            //btnCancelPromoterAdd
+        }
+    }
 }
+
 -(void)enablePromoterView{
     _txtFieldFNamePromoter.userInteractionEnabled = YES;
     _txtFieldLNamePromoter.userInteractionEnabled = YES;
@@ -1109,6 +1205,8 @@
     _btnForStoreAssignmtPopup.userInteractionEnabled = YES;
     
     _btnAddPromoterConfirm.alpha = 1.0;
+    
+    _btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
 }
 -(void)addPromoterViewSetup{
     [self textFieldEdit:_txtFieldFNamePromoter];
@@ -1151,13 +1249,170 @@
 }
 
 -(void)onClickCancelOfAddPromoter{
-    _vwForPromoterAdd.hidden = YES;
-    _backBtn.hidden = NO;
+    
+    if ([_btnCancelPromoterAdd.titleLabel.text isEqualToString:@"Reject"]) {
+        [self promoterApproveOrReject:NO];
+    }else{
+        _vwForPromoterAdd.hidden = YES;
+        _backBtn.hidden = NO;
+    }
 }
 
 -(void)addPromoter:(UIButton*)sender
 {
-    if (sender.tag == 1 || sender.tag == 0) {
+    if ([APPDELEGATE connected]) {
+        
+        
+        
+        if ((sender.tag == 1 || sender.tag == 0) && ![sender.titleLabel.text isEqualToString:@"Approve"]) {
+            
+            if (_txtFieldFNamePromoter.text.length>0&&_txtFieldLNamePromoter.text.length>0&&_txtFieldEmailPromoter.text.length>0&&_txtVwAddressPromoter.text.length>0&&_txtFieldStoreAsgnmntPromoter.text.length>0&& (![[_txtVwAddressPromoter text] isEqualToString:@"Address"])) {
+                
+                if ([self isValidEmail:_txtFieldEmailPromoter.text]) {
+                    
+                    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+                    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+                    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
+                    
+                    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+                    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+                    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+                    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+                    
+                    //{"requestType":"RqtAddPromoter", "firstName":"James", "lastName":"Managalam","phone":"11111111","address":"eh hai address","emailId":"james@allsmart.in","productStoreId":"100000","statusId":"ReqSubmitted","requestTypeEnumId":"RqtAddPromoter","aadharIdPath":"/img/","userPhoto":"/img/","addressIdPath":"/img/"}
+                    /*
+                     @"aadharIdPath":strAadharIDPath,
+                     @"userPhoto":strUserPhotoPath,
+                     @"addressIdPath":strAddressProofPath,
+                     */
+                    
+                    if ([strAadharIDPath length]<=0||strAadharIDPath == nil) {
+                        strAadharIDPath=@"/img/";
+                    }
+                    if ([strUserPhotoPath length]<=0||strUserPhotoPath == nil){
+                        strUserPhotoPath=@"/img/";
+                    }
+                    if ([strAddressProofPath length]<=0||strAddressProofPath == nil){
+                        strAddressProofPath=@"/img/";
+                    }
+                    
+                    NSMutableURLRequest *request;
+                    
+                    if (sender.tag == 1){
+                        NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
+                                                @"firstName":_txtFieldFNamePromoter.text,
+                                                @"lastName":_txtFieldLNamePromoter.text,
+                                                @"phone":_txtFieldPhonePromoter.text,
+                                                @"address":_txtVwAddressPromoter.text,
+                                                @"emailId":_txtFieldEmailPromoter.text,
+                                                @"productStoreId":storeIDForPromoterAdd,
+                                                @"statusId":@"ReqSubmitted",
+                                                @"requestTypeEnumId":@"RqtAddPromoter",
+                                                @"aadharIdPath":strAadharIDPath,
+                                                @"userPhoto":strUserPhotoPath,
+                                                @"addressIdPath":strAddressProofPath,
+                                                @"description":@"Requesting new Promoter",
+                                                @"organizationId":@"ORG_OPPO",
+                                                };
+                        request = [httpClient requestWithMethod:@"POST"
+                                                           path:@"/rest/s1/ft/request/promoter"
+                                                     parameters:json];
+                    }else if (sender.tag == 0){
+                        
+                        NSString *rqstID=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestId"];
+                        NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
+                                                @"firstName":_txtFieldFNamePromoter.text,
+                                                @"lastName":_txtFieldLNamePromoter.text,
+                                                @"phone":_txtFieldPhonePromoter.text,
+                                                @"address":_txtVwAddressPromoter.text,
+                                                @"emailId":_txtFieldEmailPromoter.text,
+                                                @"productStoreId":storeIDForPromoterAdd,
+                                                @"statusId":@"ReqSubmitted",
+                                                @"requestTypeEnumId":@"RqtAddPromoter",
+                                                @"aadharIdPath":strAadharIDPath,
+                                                @"userPhoto":strUserPhotoPath,
+                                                @"addressIdPath":strAddressProofPath,
+                                                @"description":@"Requesting new Promoter",
+                                                @"requestId":rqstID,
+                                                };
+                        
+                        NSString *strEditPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/%@", rqstID];
+                        request = [httpClient requestWithMethod:@"PUT"
+                                                           path:strEditPath
+                                                     parameters:json];
+                    }
+                    
+                    //====================================================RESPONSE
+                    [DejalBezelActivityView activityViewForView:self.view];
+                    
+                    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+                    
+                    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+                        
+                    }];
+                    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                        NSError *error = nil;
+                        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+                        
+                        [DejalBezelActivityView removeView];
+                        NSLog(@"Add Store Successfully==%@",JSON);
+                        
+                        
+                        _vwForPromoterAdd.hidden = YES;
+                        _backBtn.hidden = NO;
+                        
+                        if (sender.tag == 1){
+                            if ([JSON objectForKey:@"request"]) {
+                                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                [alert show];
+                            }
+                        }else if (sender.tag == 0){
+                            if ([JSON objectForKey:@"request"]) {
+                                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Edited Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                [alert show];
+                            }
+                        }
+                    }
+                     //==================================================ERROR
+                                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                                         [DejalBezelActivityView removeView];
+                                                         NSLog(@"Error %@",[error description]);
+                                                     }];
+                    [operation start];
+                }else{
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [alert show];
+                    _txtFieldEmailPromoter.text=@"";
+                }
+                
+            }else{
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter All Details" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
+        }else if([sender.titleLabel.text isEqualToString:@"Approve"]){
+            
+            [self promoterApproveOrReject:YES];
+        }
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
+-(void)promoterApproveOrReject:(BOOL)isApprove{
+    
+    NSString *requestID;
+    
+    if ([APPDELEGATE connected]) {
+        
+        
+        
+        if (![[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"requestId"] isKindOfClass:[NSNull class]]) {
+            requestID=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"requestId"];
+            
+            NSLog(@"Request ID===%@",requestID);
+        }
+        
         
         if (_txtFieldFNamePromoter.text.length>0&&_txtFieldLNamePromoter.text.length>0&&_txtFieldEmailPromoter.text.length>0&&_txtVwAddressPromoter.text.length>0&&_txtFieldStoreAsgnmntPromoter.text.length>0&& (![[_txtVwAddressPromoter text] isEqualToString:@"Address"])) {
             
@@ -1172,67 +1427,25 @@
                 [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
                 [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
                 
-                //{"requestType":"RqtAddPromoter", "firstName":"James", "lastName":"Managalam","phone":"11111111","address":"eh hai address","emailId":"james@allsmart.in","productStoreId":"100000","statusId":"ReqSubmitted","requestTypeEnumId":"RqtAddPromoter","aadharIdPath":"/img/","userPhoto":"/img/","addressIdPath":"/img/"}
-                /*
-                 @"aadharIdPath":strAadharIDPath,
-                 @"userPhoto":strUserPhotoPath,
-                 @"addressIdPath":strAddressProofPath,
-                 */
+                //{"requestId":"100562"}
                 
-                if ([strAadharIDPath length]<=0||strAadharIDPath == nil) {
-                    strAadharIDPath=@"/img/";
-                }
-                if ([strUserPhotoPath length]<=0||strUserPhotoPath == nil){
-                    strUserPhotoPath=@"/img/";
-                }
-                if ([strAddressProofPath length]<=0||strAddressProofPath == nil){
-                    strAddressProofPath=@"/img/";
+                NSDictionary * json = @{@"requestId":requestID,
+                                        @"organizationId":@"ORG_OPPO",
+                                        };
+                
+                NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/reject"];
+                //rest/s1/ft/request/promoter/approve
+                //rest/s1/ft/request/promoter/reject
+                
+                if (isApprove) {
+                    strPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/approve"];
                 }
                 
-                NSMutableURLRequest *request;
+                NSLog(@"Json Request==%@",json);
+                NSMutableURLRequest *request = [httpClient requestWithMethod:@"PUT"
+                                                                        path:strPath
+                                                                  parameters:json];
                 
-                if (sender.tag == 1){
-                    NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
-                                            @"firstName":_txtFieldFNamePromoter.text,
-                                            @"lastName":_txtFieldLNamePromoter.text,
-                                            @"phone":_txtFieldPhonePromoter.text,
-                                            @"address":_txtVwAddressPromoter.text,
-                                            @"emailId":_txtFieldEmailPromoter.text,
-                                            @"productStoreId":storeIDForPromoterAdd,
-                                            @"statusId":@"ReqSubmitted",
-                                            @"requestTypeEnumId":@"RqtAddPromoter",
-                                            @"aadharIdPath":strAadharIDPath,
-                                            @"userPhoto":strUserPhotoPath,
-                                            @"addressIdPath":strAddressProofPath,
-                                            @"description":@"Requesting new Promoter",
-                                            };
-                    request = [httpClient requestWithMethod:@"POST"
-                                                       path:@"/rest/s1/ft/request/promoter"
-                                                 parameters:json];
-                }else if (sender.tag == 0){
-                    
-                    NSString *rqstID=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestId"];
-                    NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
-                                            @"firstName":_txtFieldFNamePromoter.text,
-                                            @"lastName":_txtFieldLNamePromoter.text,
-                                            @"phone":_txtFieldPhonePromoter.text,
-                                            @"address":_txtVwAddressPromoter.text,
-                                            @"emailId":_txtFieldEmailPromoter.text,
-                                            @"productStoreId":storeIDForPromoterAdd,
-                                            @"statusId":@"ReqSubmitted",
-                                            @"requestTypeEnumId":@"RqtAddPromoter",
-                                            @"aadharIdPath":strAadharIDPath,
-                                            @"userPhoto":strUserPhotoPath,
-                                            @"addressIdPath":strAddressProofPath,
-                                            @"description":@"Requesting new Promoter",
-                                            @"requestId":rqstID,
-                                            };
-                    
-                    NSString *strEditPath=[NSString stringWithFormat:@"/rest/s1/ft/request/promoter/%@", rqstID];
-                    request = [httpClient requestWithMethod:@"PUT"
-                                                       path:strEditPath
-                                                 parameters:json];
-                }
                 
                 //====================================================RESPONSE
                 [DejalBezelActivityView activityViewForView:self.view];
@@ -1247,28 +1460,42 @@
                     NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
                     
                     [DejalBezelActivityView removeView];
-                    NSLog(@"Add Store Successfully==%@",JSON);
+                    NSLog(@"Promoter Acceptance==%@",JSON);
                     
+                    if (isApprove) {
+                        [[[UIAlertView alloc] initWithTitle:@""
+                                                    message:@"promoter approved successfully"
+                                                   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                    }else{
+                        [[[UIAlertView alloc] initWithTitle:@""
+                                                    message:@"promoter rejected successfully"
+                                                   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                    }
                     
                     _vwForPromoterAdd.hidden = YES;
                     _backBtn.hidden = NO;
                     
-                    if (sender.tag == 1){
-                        if ([JSON objectForKey:@"request"]) {
-                            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                            [alert show];
-                        }
-                    }else if (sender.tag == 0){
-                        if ([JSON objectForKey:@"request"]) {
-                            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Promoter Edited Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                            [alert show];
-                        }
-                    }
                 }
                  //==================================================ERROR
                                                  failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                      [DejalBezelActivityView removeView];
                                                      NSLog(@"Error %@",[error description]);
+                                                     
+                                                     NSError *jsonError;
+                                                     NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                                     
+                                                     if (objectData != nil) {
+                                                         
+                                                         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                              options:NSJSONReadingMutableContainers
+                                                                                                                error:&jsonError];
+                                                         
+                                                         NSString *strError=[json valueForKey:@"errors"];
+                                                         [[[UIAlertView alloc] initWithTitle:@""
+                                                                                     message:strError
+                                                                                    delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                                     }
+                                                     
                                                  }];
                 [operation start];
             }else{
@@ -1281,6 +1508,9 @@
             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter All Details" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     }
 }
 
@@ -1532,7 +1762,99 @@
                                       });
                    });
 }
+#pragma mark - Leave Request List For Approval
+
+
+-(void)getLeaveListForApproval
+{
+    
+    if ([APPDELEGATE connected]) {
+        
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
+        
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/leaves/requisitions"];
+        NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                                path:strPath
+                                                          parameters:nil];
+        //====================================================RESPONSE
+        
+        [DejalBezelActivityView activityViewForView:self.view];
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            [DejalBezelActivityView removeView];
+            
+            leaveApprovalListCount = [[JSON valueForKey:@"totalEntries"] integerValue];
+            
+            if ([[JSON objectForKey:@"employeeLeavesList"] isKindOfClass:[NSArray class]]) {
+                if ([[JSON objectForKey:@"employeeLeavesList"] count]>0) {
+                    
+                    arrayForLeaveApprovalList=[[JSON objectForKey:@"employeeLeavesList"] mutableCopy];
+                    
+                    //                for (NSDictionary *dict in [JSON objectForKey:@"employeeLeavesList"]) {
+                    //                    [arrayForLeaveApprovalList addObject:dict];
+                    //                }
+                }
+            }
+            [_tableVwForLeaveApproval reloadData];
+            NSLog(@"Leave List==%@",arrayForLeaveApprovalList);
+        }
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                             NSError *jsonError;
+                                             NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                             
+                                             if (objectData != nil) {
+                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                      options:NSJSONReadingMutableContainers
+                                                                                                        error:&jsonError];
+                                                 
+                                                 NSString *strError=[json valueForKey:@"errors"];
+                                                 [[[UIAlertView alloc] initWithTitle:@""
+                                                                             message:strError
+                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                             }
+                                             
+                                         }];
+        [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
+
 #pragma mark - Leave Rqst
+
+-(void)enableLeaveRequestFields{
+    
+    _btnLeaveStartDate.userInteractionEnabled = YES;
+    _btnLeaveEndDate.userInteractionEnabled = YES;
+    _btnLeaveType.userInteractionEnabled = YES;
+    _btnLeaveReason.userInteractionEnabled = YES;
+}
+
+-(void)disableLeaveRequestFields{
+    _btnLeaveStartDate.userInteractionEnabled = NO;
+    _btnLeaveEndDate.userInteractionEnabled = NO;
+    _btnLeaveType.userInteractionEnabled = NO;
+    _btnLeaveReason.userInteractionEnabled = NO;
+}
 
 -(void)leaveRequestEdit:(NSInteger)indexValue{
     
@@ -1588,6 +1910,7 @@
         dictForLeaveTypes=[[NSDictionary alloc] init];
         dictForLeaveTypes=JSON;
         NSLog(@"Leave Types===%@",dictForLeaveTypes);
+        
         NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
         for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
             if ([strLeaveType isEqualToString:[dict valueForKey:@"enumId"]]) {
@@ -1632,54 +1955,75 @@
 
 -(void)getMyLeaveHistory
 {
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
-    NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
-    
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    httpClient.parameterEncoding = AFFormURLParameterEncoding;
-    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
-    
-    NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/leaves/my/list?pageIndex=%i&pageSize=10",pageNumberForLeave];
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                            path:strPath
-                                                      parameters:nil];
-    //====================================================RESPONSE
-    if (pageNumberForLeave == 0) {
-        [DejalBezelActivityView activityViewForView:self.view];
-    }
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+    if ([APPDELEGATE connected]) {
         
-    }];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSError *error = nil;
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
         
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/leaves/my/list?pageIndex=%i&pageSize=10",pageNumberForLeave];
+        NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                                path:strPath
+                                                          parameters:nil];
+        //====================================================RESPONSE
         if (pageNumberForLeave == 0) {
-            [DejalBezelActivityView removeView];
+            [DejalBezelActivityView activityViewForView:self.view];
         }
-        
-        countForLeaveData = [[JSON valueForKey:@"totalEntries"] integerValue];
-        
-        if ([[JSON objectForKey:@"employeeLeavesList"] isKindOfClass:[NSArray class]]) {
-            if ([[JSON objectForKey:@"employeeLeavesList"] count]>0) {
-                
-                for (NSDictionary *dict in [JSON objectForKey:@"employeeLeavesList"]) {
-                    [arrayForLeaveHistory addObject:dict];
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            
+            if (pageNumberForLeave == 0) {
+                [DejalBezelActivityView removeView];
+            }
+            
+            countForLeaveData = [[JSON valueForKey:@"totalEntries"] integerValue];
+            
+            if ([[JSON objectForKey:@"employeeLeavesList"] isKindOfClass:[NSArray class]]) {
+                if ([[JSON objectForKey:@"employeeLeavesList"] count]>0) {
+                    
+                    for (NSDictionary *dict in [JSON objectForKey:@"employeeLeavesList"]) {
+                        [arrayForLeaveHistory addObject:dict];
+                    }
                 }
             }
+            [_tableVwForLeaveRqst reloadData];
+            NSLog(@"Leave List==%@",arrayForLeaveHistory);
         }
-        [_tableVwForLeaveRqst reloadData];
-        NSLog(@"Leave List==%@",arrayForLeaveHistory);
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                             NSError *jsonError;
+                                             NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                             
+                                             if (objectData != nil) {
+                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                      options:NSJSONReadingMutableContainers
+                                                                                                        error:&jsonError];
+                                                 
+                                                 NSString *strError=[json valueForKey:@"errors"];
+                                                 [[[UIAlertView alloc] initWithTitle:@""
+                                                                             message:strError
+                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                             }
+                                             
+                                         }];
+        [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
     }
-     //==================================================ERROR
-                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                         [DejalBezelActivityView removeView];
-                                         NSLog(@"Error %@",[error description]);
-                                     }];
-    [operation start];
 }
 
 
@@ -1760,8 +2104,6 @@
                                              failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                  [DejalBezelActivityView removeView];
                                                  //                                         NSLog(@"Error %@",[error description]);
-                                                 
-                                                 
                                                  NSString *JSON = [[error userInfo] valueForKey:NSLocalizedRecoverySuggestionErrorKey] ;
                                                  
                                                  NSError *aerror = nil;
@@ -1791,7 +2133,7 @@
 
 -(void)onClickLeaveRqst:(UIButton*)btn{
     //        NSLog(@"On Click Leave Request");
-    
+    [self enableLeaveRequestFields];
     [_btnLeaveRqstSubmit setTitle:@"Submit" forState:UIControlStateNormal];
     [_btnLeaveRqstCancel setTitle:@"Cancel" forState:UIControlStateNormal];
     _backBtn.hidden = YES;
@@ -1965,7 +2307,7 @@
     }else if (tableView == _tableVwForLeaveRqst){
         return arrayForLeaveHistory.count;
     }else if (tableView == _tableVwForLeaveApproval){
-        return 10;
+        return arrayForLeaveApprovalList.count;
     }
     return arrayForTableData.count;
 }
@@ -1974,17 +2316,17 @@
     
     UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
-    if (tableView == _tableVwForLeaveApproval){
-        
-        MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
-        if (cellLeave == nil) {
-            cellLeave=[[MKCustomCellForLeave alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-        }
-        
-        return cell;
-    }
+    //    if (tableView == _tableVwForLeaveApproval){
+    //
+    //        MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    //        if (cellLeave == nil) {
+    //            cellLeave=[[MKCustomCellForLeave alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    //        }
+    //
+    //        return cell;
+    //    }
     
-    if (tableView == _tableVwForLeaveRqst){
+    if (tableView == _tableVwForLeaveRqst || tableView == _tableVwForLeaveApproval){
         
         MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cellLeave == nil) {
@@ -1992,24 +2334,52 @@
         }
         cellLeave.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
+        NSString *startDate;
+        NSString *endDate;
+        NSString *strLeaveApprove;
+        
+        if (tableView == _tableVwForLeaveApproval){
+            startDate=[[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
+            endDate=[[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
+            cellLeave.lblForTypeOfLeave.text=@"";
+            strLeaveApprove=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
+            NSString *strFirstName;
+            if (![[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"firstName"] isKindOfClass:[NSNull class]]) {
+                strFirstName=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"firstName"];
+            }
+            
+            NSString *strLastName;
+            if (![[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"lastName"] isKindOfClass:[NSNull class]]) {
+                strLastName=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"lastName"];
+            }
+            
+            cellLeave.lblForName.text=[NSString stringWithFormat:@"%@ %@",strFirstName,strLastName];
+            
+        }else{
+            startDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
+            endDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
+            cellLeave.lblForTypeOfLeave.text=[NSString stringWithFormat:@"%@",[[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] substringFromIndex:3]];
+            strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
+        }
+        
+        if (![strLeaveApprove isKindOfClass:[NSNull class]]) {
+            cellLeave.lblForStatusOfLeave.text=strLeaveApprove;
+        }else{
+            cellLeave.lblForStatusOfLeave.text=@"Pending";
+        }
+        
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd"];
         NSDate *date = [dateFormatter dateFromString:startDate];
         [dateFormatter setDateFormat:@"dd/MM/yyyy"];
         NSString *newDateString = [dateFormatter stringFromDate:date];
-        
         cellLeave.lblForStartDate.text=[NSString stringWithFormat:@"From: %@",newDateString];
-        NSString *endDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
         
         [dateFormatter setDateFormat:@"yyyy-MM-dd"];
         date = [dateFormatter dateFromString:endDate];
         [dateFormatter setDateFormat:@"dd/MM/yyyy"];
         newDateString = [dateFormatter stringFromDate:date];
-        
         cellLeave.lblForEndDate.text=[NSString stringWithFormat:@"To: %@",newDateString];
-        
-        cellLeave.lblForTypeOfLeave.text=[NSString stringWithFormat:@"%@",[[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] substringFromIndex:3]];
         
         NSDateFormatter *f = [[NSDateFormatter alloc] init];
         [f setDateFormat:@"yyyy-MM-dd"];
@@ -2029,12 +2399,6 @@
             }
         }
         
-        NSString *strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
-        
-        if (![strLeaveApprove isKindOfClass:[NSNull class]]) {
-            cellLeave.lblForStatusOfLeave.text=strLeaveApprove;
-        }
-        
         return cellLeave;
     }
     
@@ -2048,13 +2412,16 @@
     }
     else if (tableView == _tableVwForPromoters){
         // Prpomoter List
+        
+        MKAgentListCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        
         if (cell == nil){
-            cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+            cell=[[MKAgentListCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
         }
         NSString *jsonString = [[arrayForPromoters objectAtIndex:indexPath.row] objectForKey:@"requestJson"];
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        cell.textLabel.text=[NSString stringWithFormat:@"%@ %@",[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"],[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"]];
+        cell.lblFieldAgentName.text=[NSString stringWithFormat:@"%@ %@",[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"],[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"]];
         
         if (![[[arrayForPromoters objectAtIndex:indexPath.row] valueForKey:@"statusId"] isKindOfClass:[NSNull class]]) {
             
@@ -2062,18 +2429,27 @@
             
             if ([promoterStatus containsString:@"Completed"]) {
                 //Completed
-                cell.detailTextLabel.text=@"Approved";
-                
+                cell.lblStatus.text=@"Approved";
             }else if ([promoterStatus containsString:@"Submitted"]){
                 //Submitted
-                cell.detailTextLabel.text=@"Pending";
-                
+                cell.lblStatus.text=@"Pending";
             }else if ([promoterStatus containsString:@"Rejected"]){
-                
-                cell.detailTextLabel.text=@"Rejected";
+                //Rejected
+                cell.lblStatus.text=@"Rejected";
             }
         }
+        
+        NSString *productStoreId=[[json objectForKey:@"requestInfo"] objectForKey:@"productStoreId"];
+        
+        for (NSDictionary *dict in arrayForStoreList) {
+            if ([[dict valueForKey:@"productStoreId"] isEqualToString:productStoreId]) {
+                cell.lblStoreLocation.text=[dict valueForKey:@"storeName"];
+            }
+        }
+        
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
     }
     else if (tableView == _tableVw){
         
@@ -2114,6 +2490,9 @@
             [_tableVwForStore reloadData];
             
         }else if ([cell.textLabel.text isEqualToString:@"Promoters"]){
+            
+            arrayForPromoters=[[NSMutableArray alloc] init];
+            pageNumber = 0;
             [self getPromoters];
             _vwForPromoters.hidden =NO;
             _backBtn.hidden = NO;
@@ -2131,6 +2510,11 @@
             _tableVwForLeaveRqst.delegate = self;
             _tableVwForLeaveRqst.dataSource = self;
             [_tableVwForLeaveRqst reloadData];
+            [self enableLeaveRequestFields];
+            
+            [_btnLeaveRqstSubmit setTitle:@"Submit" forState:UIControlStateNormal];
+            [_btnLeaveRqstCancel setTitle:@"Cancel" forState:UIControlStateNormal];
+            
         }else if ([cell.textLabel.text isEqualToString:@"My Account"]){
             _vwForAccount.hidden =NO;
             _backBtn.hidden = NO;
@@ -2141,11 +2525,15 @@
             _vwForContact.hidden =NO;
             _backBtn.hidden = NO;
         }else if ([cell.textLabel.text isEqualToString:@"Leave Requisitions"]){
+            
+            [self getLeaveListForApproval];
+            
             _vwForLeaveRequestForApproval.hidden = NO;
             _tableVwForLeaveApproval.delegate = self;
             _tableVwForLeaveApproval.dataSource = self;
             [_tableVwForLeaveApproval reloadData];
             _backBtn.hidden = NO;
+            
         }
     }else if (tableView == _tableVwForStore){
         [[MKSharedClass shareManager] setValueForStoreEditVC:0];
@@ -2159,6 +2547,7 @@
         NSString *strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
         
         if ([strLeaveApprove isKindOfClass:[NSNull class]]) {
+            
             [self emptyLeaveRequestFields];
             [self getLeaveType:indexPath.row];
             indexValueForLeaveEdit=indexPath.row;
@@ -2166,13 +2555,19 @@
             _vwForLeaveRqstAdd.hidden = NO;
             isLeaveEditRNew=NO;
             [self leaveRequestEdit:indexPath.row];
+            
         }
     }else if (tableView == _tableVwForLeaveApproval){
+        
+        arrayForLeaveHistory=arrayForLeaveApprovalList;
         [self emptyLeaveRequestFields];
+        [self getLeaveType:indexPath.row];
         _backBtn.hidden = NO;
         _vwForLeaveRqstAdd.hidden = NO;
         [_btnLeaveRqstSubmit setTitle:@"Approve" forState:UIControlStateNormal];
         [_btnLeaveRqstCancel setTitle:@"Reject" forState:UIControlStateNormal];
+        [self leaveRequestEdit:indexPath.row];
+        [self disableLeaveRequestFields];
     }
 }
 
@@ -2210,36 +2605,55 @@
         if (![_vwForCamera isHidden]){
             //            _backBtn.hidden = NO;
             _vwForCamera.hidden = YES;
+        }else if (![_vwForPromoterAdd isHidden]){
+            _vwForPromoterAdd.hidden = YES;
+            _backBtn.hidden = NO;
         }else{
             _vwForPromoters.hidden= YES;
         }
     }
     else if (![_vwForLeaveRqst isHidden]){
         if (![_vwForCalendar isHidden]) {
+            
             _vwForCalendar.hidden = YES;
+            
         }else{
+            
             _vwForLeaveRqst.hidden =YES;
         }
     }else if (![_vwForCamera isHidden]){
+        
         _vwForCamera.hidden = YES;
+        
     }else if (![_vwForAccount isHidden]){
+        
         _vwForAccount.hidden=YES;
+        
     }else if (![_vwForChangePwd isHidden]){
+        
         _vwForChangePwd.hidden=YES;
         _textFieldCurrentPwd.text=@"";
         _textFieldNewPwd.text=@"";
         _textFieldConfirmNewPwd.text=@"";
+        
     }else if (![_vwForContact isHidden]){
+        
         _vwForContact.hidden=YES;
+        
     }else if (![_vwForLeaveRequestForApproval isHidden]){
+        
         if (![_vwForLeaveRqstAdd isHidden]) {
+            
             if (![_vwForCalendar isHidden]) {
+                
                 _vwForCalendar.hidden = YES;
                 _backBtn.hidden = NO;
+                
             }else{
                 _vwForLeaveRqstAdd.hidden = YES;
                 _backBtn.hidden = NO;
             }
+            
         }else{
             _vwForLeaveRequestForApproval.hidden = YES;
         }
