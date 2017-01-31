@@ -60,11 +60,6 @@
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
     }
     
-   // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChange:) name:UIApplicationSignificantTimeChangeNotification object:nil];
-    //NSSystemTimeZoneDidChangeNotification
-    //NSSystemClockDidChangeNotification
-    //name:UIApplicationSignificantTimeChangeNotification
-   // NSCurrentLocaleDidChangeNotification
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChangeGot:) name:NSSystemClockDidChangeNotification object:nil];
     

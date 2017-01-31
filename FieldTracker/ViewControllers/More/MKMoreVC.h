@@ -100,7 +100,8 @@
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveType;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveReason;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveDescription;
-
+@property (strong, nonatomic) IBOutlet UITextField *txtFieldLeaveComments;
+@property (strong, nonatomic) IBOutlet UIImageView *bottomImgForLeaveComments;
 
 @property (strong, nonatomic) IBOutlet UIView *vwForCalendar;
 @property (strong, nonatomic) IBOutlet UILabel *lblForDateStartEnd;
