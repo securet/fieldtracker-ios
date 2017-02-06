@@ -41,8 +41,8 @@
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",dict);
-    _lblFName.text=[dict valueForKey:@"firstName"];
-    _lblLName.text=[dict valueForKey:@"lastName"];
+    self.lblFName.text=[dict valueForKey:@"firstName"];
+    self.lblLName.text=[dict valueForKey:@"lastName"];
     
     if ([dict valueForKey:@"userPhotoPath"]) {
         NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
@@ -54,13 +54,13 @@
             NSData *data = [NSData dataWithContentsOfURL:imgUrl];
             UIImage *img = [[UIImage alloc] initWithData:data];
             dispatch_async(dispatch_get_main_queue(), ^{
-                _imgVwUser.image = img;
+                self.imgVwUser.image = img;
             });
         });
     }
     
-    _bottomVw.layer.cornerRadius = 10;
-    _bottomVw.layer.masksToBounds = YES;
+    self.bottomVw.layer.cornerRadius = 10;
+    self.bottomVw.layer.masksToBounds = YES;
     
     [self updateLocationManagerr];
     
@@ -82,40 +82,40 @@
     //    [CATransaction commit];
     //    markerCar.map = mapView;
     
-    _lblStoreName.text=@"";
+    self.lblStoreName.text=@"";
     
-    _vwForImgPreview.hidden = YES;
+    self.vwForImgPreview.hidden = YES;
     
     if (IS_IPHONE_4) {
-        _heightOfImgPrvw.constant = 200;
-        _widthOfImgPrvw.constant = 200;
+        self.heightOfImgPrvw.constant = 200;
+        self.widthOfImgPrvw.constant = 200;
     }
     
-    _vwForTimer.hidden = YES;
-    _tableVwForTimeline.hidden = YES;
-    _vwForCamera.hidden = YES;
-    _backBtn.hidden = YES;
-    _vwForAgentData.hidden = YES;
-    _vwForAgentIndividualData.hidden = YES;
+    self.vwForTimer.hidden = YES;
+    self.tableVwForTimeline.hidden = YES;
+    self.vwForCamera.hidden = YES;
+    self.backBtn.hidden = YES;
+    self.vwForAgentData.hidden = YES;
+    self.vwForAgentIndividualData.hidden = YES;
     
     
-    _cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
-    _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
-    _cameraBtn.layer.masksToBounds = YES;
+    self.cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
+    self.cameraBtn.layer.cornerRadius = self.cameraBtn.frame.size.height/2;
+    self.cameraBtn.layer.masksToBounds = YES;
     
-    _tableVwForTimeline.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _tableVwForTimeline.tableFooterView = [[UIView alloc] init];
+    self.tableVwForTimeline.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableVwForTimeline.tableFooterView = [[UIView alloc] init];
     
-    _vwForTimer.backgroundColor=[[UIColor whiteColor] colorWithAlphaComponent:0.7];
+    self.vwForTimer.backgroundColor=[[UIColor whiteColor] colorWithAlphaComponent:0.7];
     
-    _vwForManager.hidden = YES;
+    self.vwForManager.hidden = YES;
     
     if ([[dict valueForKey:@"roleTypeId"] isEqualToString:@"SalesExecutive"]){
         
-        _vwForManager.hidden = NO;
-        _tableVwForAgents.tableFooterView=[[UIView alloc] init];
-        _tableVwForAgents.delegate = self;
-        _tableVwForAgents.dataSource = self;
+        self.vwForManager.hidden = NO;
+        self.tableVwForAgents.tableFooterView=[[UIView alloc] init];
+        self.tableVwForAgents.delegate = self;
+        self.tableVwForAgents.dataSource = self;
         
     }else{
         
@@ -145,8 +145,8 @@
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
-    _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
+    self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
+    self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
     
     if (![APPDELEGATE connected]) {
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -257,7 +257,7 @@
         
         NSLog(@"Store Details==%@",JSON);
         dictForStoreDetails=[JSON mutableCopy];
-        _lblStoreName.text=[dictForStoreDetails valueForKey:@"storeName"];
+        self.lblStoreName.text=[dictForStoreDetails valueForKey:@"storeName"];
         CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
         CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
@@ -291,13 +291,13 @@
 #pragma mark - UITableView
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
-    if (tableView == _tableVwForAgents) {
+    if (tableView == self.tableVwForAgents) {
         return 10;
     }
-    if (tableView == _tableVwForHistoryOfAgent) {
+    if (tableView == self.tableVwForHistoryOfAgent) {
         return 10;
     }
-    if (tableView == _tableVwIndividualHistory) {
+    if (tableView == self.tableVwIndividualHistory) {
         return 10;
     }
     return arrayForStatusData.count;
@@ -305,7 +305,7 @@
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    if (tableView == _tableVwForAgents) {
+    if (tableView == self.tableVwForAgents) {
         MKAgentListCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cell==nil) {
             cell=[[MKAgentListCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
@@ -314,7 +314,7 @@
         return cell;
     }
     
-    if (tableView == _tableVwForHistoryOfAgent) {
+    if (tableView == self.tableVwForHistoryOfAgent) {
         MKHistoryCustomCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cell==nil) {
             cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
@@ -358,7 +358,7 @@
     
     cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
     
-    if (tableView == _tableVwIndividualHistory) {
+    if (tableView == self.tableVwIndividualHistory) {
         cell.lblForTime.text=@"06:30 AM";
         
         if (indexPath.row==9){
@@ -385,19 +385,19 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    if (tableView == _tableVwForAgents) {
-        _vwForAgentData.hidden = NO;
-        _backBtn.hidden = NO;
-        _tableVwForHistoryOfAgent.delegate = self;
-        _tableVwForHistoryOfAgent.dataSource = self;
-        [_tableVwForHistoryOfAgent reloadData];
+    if (tableView == self.tableVwForAgents) {
+        self.vwForAgentData.hidden = NO;
+        self.backBtn.hidden = NO;
+        self.tableVwForHistoryOfAgent.delegate = self;
+        self.tableVwForHistoryOfAgent.dataSource = self;
+        [self.tableVwForHistoryOfAgent reloadData];
     }
     
-    if (tableView == _tableVwForHistoryOfAgent) {
-        _vwForAgentIndividualData.hidden = NO;
-        _tableVwIndividualHistory.delegate = self;
-        _tableVwIndividualHistory.dataSource = self;
-        [_tableVwIndividualHistory reloadData];
+    if (tableView == self.tableVwForHistoryOfAgent) {
+        self.vwForAgentIndividualData.hidden = NO;
+        self.tableVwIndividualHistory.delegate = self;
+        self.tableVwIndividualHistory.dataSource = self;
+        [self.tableVwIndividualHistory reloadData];
     }
 }
 
@@ -457,10 +457,10 @@
                                                           longitude:longitude];
         NSString *storeName=[dictForStoreDetails valueForKey:@"storeName"];
         
-        //        CLLocationCoordinate2D coordinate = [self getLocation];
-        //        CLLocation *userLocation= [[CLLocation alloc] initWithLatitude:coordinate.latitude
-        //                                                             longitude:coordinate.longitude];
-        CLLocationDistance distance = [location distanceFromLocation:mapView.myLocation];
+                CLLocationCoordinate2D coordinate = [self getLocation];
+                CLLocation *userLocation= [[CLLocation alloc] initWithLatitude:coordinate.latitude
+                                                                     longitude:coordinate.longitude];
+        CLLocationDistance distance = [location distanceFromLocation:userLocation];
         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
         
         //SalesExecutive
@@ -468,21 +468,21 @@
         //FieldExectiveOffPremise
         
         if (distance <= radiusForStore && distance >= 0){
-            _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-            _lblForStoreLocation.text=[dictForStoreDetails valueForKey:@"storeName"];
-            _lblForStoreLocation.textColor=[UIColor whiteColor];
+            self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+            self.lblForStoreLocation.text=[dictForStoreDetails valueForKey:@"storeName"];
+            self.lblForStoreLocation.textColor=[UIColor whiteColor];
             [dictToSendLctnStatus setObject:@"1" forKey:@"LocationStatus"];
             storeName= [dictForStoreDetails valueForKey:@"storeName"];
             boolValueForInLocationOrNot = YES;
-            _lblStoreName.text=storeName;
+            self.lblStoreName.text=storeName;
         }else{
-            _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-            _lblForStoreLocation.text=@"Off site";
-            _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+            self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+            self.lblForStoreLocation.text=@"Off site";
+            self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
             [dictToSendLctnStatus setObject:@"0" forKey:@"LocationStatus"];
             storeName=@"Off site";
             boolValueForInLocationOrNot = NO;
-            _lblStoreName.text=@"(Not at location)";
+            self.lblStoreName.text=@"(Not at location)";
         }
         
         NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
@@ -715,8 +715,8 @@
 
 - (IBAction)onClickPhotoConfirmBtn:(UIButton *)sender {
     
-    _vwForImgPreview.hidden = YES;
-    _backBtn.hidden = YES;
+    self.vwForImgPreview.hidden = YES;
+    self.backBtn.hidden = YES;
     
     NSDictionary *statusData=[self getStatus];
     NSString *strMsg;
@@ -792,13 +792,13 @@
     stillImageOutput = newStillImageOutput;
     videoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
     [videoPreviewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    [videoPreviewLayer setFrame:_previewCamera.layer.bounds];
-    [_previewCamera.layer addSublayer:videoPreviewLayer];
+    [videoPreviewLayer setFrame:self.previewCamera.layer.bounds];
+    [self.previewCamera.layer addSublayer:videoPreviewLayer];
     [captureSession startRunning];
     
     self.tabBarController.tabBar.hidden =YES;
-    _vwForCamera.hidden = NO;
-    _backBtn.hidden = NO;
+    self.vwForCamera.hidden = NO;
+    self.backBtn.hidden = NO;
 }
 
 - (AVCaptureDevice *) frontFacingCamera
@@ -838,9 +838,9 @@
         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
         UIImage *image = [[UIImage alloc] initWithData:imageData];
         imgToSend=image;
-        _vwForImgPreview.hidden = NO;
-        _imgVwForPhotoPreview.image=imgToSend;
-        _vwForCamera.hidden = YES;
+        self.vwForImgPreview.hidden = NO;
+        self.imgVwForPhotoPreview.image=imgToSend;
+        self.vwForCamera.hidden = YES;
     }];
     
     self.tabBarController.tabBar.hidden =NO;
@@ -848,28 +848,26 @@
 
 - (IBAction)onClickBackBtn:(UIButton *)sender {
     
-    _backBtn.hidden = YES;
+    self.backBtn.hidden = YES;
     
-    if (![_vwForCamera isHidden]) {
-        if (![_vwForImgPreview isHidden]) {
-            _backBtn.hidden = NO;
+    if (![self.vwForCamera isHidden]) {
+        if (![self.vwForImgPreview isHidden]) {
+            self.backBtn.hidden = NO;
         }
-        _vwForCamera.hidden = YES;
-    }else if (![_vwForImgPreview isHidden]){
-        _vwForImgPreview.hidden = YES;
+        self.vwForCamera.hidden = YES;
+    }else if (![self.vwForImgPreview isHidden]){
+        self.vwForImgPreview.hidden = YES;
         imgToSend=nil;
     }
     
-    if (![_vwForAgentData isHidden]) {
-        
-        if (![_vwForAgentIndividualData isHidden]) {
-            _vwForAgentIndividualData.hidden=YES;
-            _backBtn.hidden = NO;
+    if (![self.vwForAgentData isHidden]) {
+        if (![self.vwForAgentIndividualData isHidden]) {
+            self.vwForAgentIndividualData.hidden=YES;
+            self.backBtn.hidden = NO;
         }else{
-            _vwForAgentData.hidden=YES;
+            self.vwForAgentData.hidden=YES;
         }
     }
-    
     
     self.tabBarController.tabBar.hidden =NO;
 }
@@ -881,8 +879,8 @@
         NSLog(@"Image Not Available");
     }else{
         imgToSend=[info valueForKey:UIImagePickerControllerOriginalImage];
-        _vwForImgPreview.hidden = NO;
-        _imgVwForPhotoPreview.image=imgToSend;
+        self.vwForImgPreview.hidden = NO;
+        self.imgVwForPhotoPreview.image=imgToSend;
     }
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
@@ -1278,22 +1276,22 @@
     NSDictionary *statusData=[self getStatus];
     
     if ([[statusData valueForKey:@"status"] length]<=0) {
-        _lblTimeInStatus.text=@"Time In";
-        _vwForTimer.hidden=YES;
+        self.lblTimeInStatus.text=@"Time In";
+        self.vwForTimer.hidden=YES;
         timerForShiftTime=nil;
         [timerForShiftTime invalidate];
         
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
-        _lblTimeInStatus.text=@"Time Out";
-        _vwForTimer.hidden=NO;
+        self.lblTimeInStatus.text=@"Time Out";
+        self.vwForTimer.hidden=NO;
         
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
         NSString *strTime=[defaults objectForKey:@"TimeIn"];
         [self getTimerForTimeIn:strTime];
         // [self getTimerForTimeIn:[statusData valueForKey:@"time"]];
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
-        _lblTimeInStatus.text=@"Time In";
-        _vwForTimer.hidden=YES;
+        self.lblTimeInStatus.text=@"Time In";
+        self.vwForTimer.hidden=YES;
         timerForShiftTime=nil;
         [timerForShiftTime invalidate];
     }
@@ -1334,8 +1332,8 @@
     
     NSString *timeString = [NSString stringWithFormat:@"%02d:%02d:%02d", hour, min, sec];
     
-    _lblForTimer.text=timeString;
-    _lblForTimer.textAlignment= NSTextAlignmentCenter;
+    self.lblForTimer.text=timeString;
+    self.lblForTimer.textAlignment= NSTextAlignmentCenter;
 }
 
 #pragma mark - Time Line Update
@@ -1452,20 +1450,19 @@
     // Dispose of any resources that can be recreated.
 }
 - (IBAction)onClickTimeline:(UIButton *)sender {
-    if ([_tableVwForTimeline isHidden]) {
+    if ([self.tableVwForTimeline isHidden]) {
         [self getHistory];
-        _tableVwForTimeline.hidden = NO;
-        _imgVwForTimeline.image=[UIImage imageNamed:@"Timer_Off"];
+        self.tableVwForTimeline.hidden = NO;
+        self.imgVwForTimeline.image=[UIImage imageNamed:@"Timer_Off"];
     }else{
-        _tableVwForTimeline.hidden = YES;
-        _imgVwForTimeline.image=[UIImage imageNamed:@"Timer_On"];
+        self.tableVwForTimeline.hidden = YES;
+        self.imgVwForTimeline.image=[UIImage imageNamed:@"Timer_On"];
     }
 }
 #pragma mark - Get History
 
 -(void)getHistory
 {
-    
     if ([APPDELEGATE connected]) {
         
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
@@ -1543,9 +1540,9 @@
             }
             
             arrayForStatusData = [correctOrderStringArray mutableCopy];
-            _tableVwForTimeline.delegate= self;
-            _tableVwForTimeline.dataSource = self;
-            [_tableVwForTimeline reloadData];
+            self.tableVwForTimeline.delegate= self;
+            self.tableVwForTimeline.dataSource = self;
+            [self.tableVwForTimeline reloadData];
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {

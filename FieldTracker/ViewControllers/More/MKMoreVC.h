@@ -14,7 +14,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <MessageUI/MessageUI.h>
 
-@interface MKMoreVC : UIViewController<UITableViewDelegate,UITableViewDataSource,CLLocationManagerDelegate,UITextViewDelegate,MultiSelectSegmentedControlDelegate,UITextFieldDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate>
+@interface MKMoreVC : UIViewController<UITableViewDelegate,UITableViewDataSource,CLLocationManagerDelegate,UITextViewDelegate,MultiSelectSegmentedControlDelegate,UITextFieldDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate,UIAlertViewDelegate>
 {
     CLLocationManager *locationManager;
 }
@@ -105,6 +105,7 @@
 
 @property (strong, nonatomic) IBOutlet UIView *vwForCalendar;
 @property (strong, nonatomic) IBOutlet UILabel *lblForDateStartEnd;
+@property (strong, nonatomic) IBOutlet UIButton *btnToday;
 
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfScrollVwForLeaveRqst;

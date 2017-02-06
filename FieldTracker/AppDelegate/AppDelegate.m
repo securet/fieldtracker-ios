@@ -25,7 +25,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-
     [Fabric with:@[[Crashlytics class]]];
     _Base_URL=@"http://ft.allsmart.in";
     
@@ -35,8 +34,6 @@
     [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topbar"] forBarMetrics:UIBarMetricsDefault];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
-    
-   
     _locationManager = [[CLLocationManager alloc] init];
     _locationManager.delegate=self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBest;
@@ -55,11 +52,9 @@
      _locationManager.allowsBackgroundLocationUpdates = YES;
      [_locationManager startUpdatingLocation];
     
-    
-    if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
-    }
-    
+//    if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
+//        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+//    }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChangeGot:) name:NSSystemClockDidChangeNotification object:nil];
     
@@ -68,10 +63,6 @@
     NSInteger is_Login=[[defaults valueForKey:@"Is_Login"] integerValue];
     
     if (is_Login == 1) {
-//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//        UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
-//        [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
-        
          self.window.rootViewController =[self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
     }else{
         

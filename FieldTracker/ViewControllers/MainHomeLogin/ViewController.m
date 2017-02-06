@@ -18,16 +18,16 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    //    _txtFieldForEmail.text=@"anand@securet.in";
-    //    _txtFieldForPassword.text=@"test@1234";
-    _txtFieldForEmail.text=@"";
-    _txtFieldForPassword.text=@"";
-    [self addPadding:_txtFieldForEmail];
-    [self addPadding:_txtFieldForPassword];
+    //    self.txtFieldForEmail.text=@"anand@securet.in";
+    //    self.txtFieldForPassword.text=@"test@1234";
+    self.txtFieldForEmail.text=@"";
+    self.txtFieldForPassword.text=@"";
+    [self addPadding:self.txtFieldForEmail];
+    [self addPadding:self.txtFieldForPassword];
     
-    _btnLogin.layer.cornerRadius = 5;
+    self.btnLogin.layer.cornerRadius = 5;
     
-    _txtFieldForEmail.keyboardType = UIKeyboardTypeEmailAddress;
+    self.txtFieldForEmail.keyboardType = UIKeyboardTypeEmailAddress;
     
     if (![APPDELEGATE connected]) {
         
@@ -56,10 +56,10 @@
     
     UIImageView *imgVw=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
     
-    if (txtField == _txtFieldForEmail){
+    if (txtField == self.txtFieldForEmail){
         imgVw.image=[UIImage imageNamed:@"email"];
     }
-    else if (txtField == _txtFieldForPassword){
+    else if (txtField == self.txtFieldForPassword){
         imgVw.image=[UIImage imageNamed:@"password"];
     }
     
@@ -90,9 +90,9 @@
 
 - (IBAction)onClickLogin:(UIButton *)sender{
     
-    if (_txtFieldForEmail.text.length>0 && _txtFieldForPassword.text.length>0) {
+    if (self.txtFieldForEmail.text.length>0 && self.txtFieldForPassword.text.length>0) {
         
-        if ([self isValidEmail:_txtFieldForEmail.text]) {
+        if ([self isValidEmail:self.txtFieldForEmail.text]) {
             
             if ([APPDELEGATE connected]) {
                 [self login];
@@ -103,16 +103,16 @@
         }else{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email ID" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
-            _txtFieldForEmail.text=@"";
+            self.txtFieldForEmail.text=@"";
         }
     }
     else{
         
-        if (_txtFieldForEmail.text.length <= 0) {
+        if (self.txtFieldForEmail.text.length <= 0) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Email ID" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
-        else if (_txtFieldForPassword.text.length <= 0){
+        else if (self.txtFieldForPassword.text.length <= 0){
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Password" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
@@ -121,8 +121,8 @@
 
 - (IBAction)onClickForgotPassword:(UIButton *)sender {
     
-    if (_txtFieldForEmail.text.length > 0) {
-        if ([self isValidEmail:_txtFieldForEmail.text]) {
+    if (self.txtFieldForEmail.text.length > 0) {
+        if ([self isValidEmail:self.txtFieldForEmail.text]) {
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKForgotPasswordVC"];
             
@@ -163,20 +163,15 @@
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
     
-    NSString *str=[NSString stringWithFormat:@"%@:%@",_txtFieldForEmail.text,_txtFieldForPassword.text];
-    
+    NSString *str=[NSString stringWithFormat:@"%@:%@",self.txtFieldForEmail.text,self.txtFieldForPassword.text];
     NSString *auth_String;
-    
     NSData *nsdata = [str
                       dataUsingEncoding:NSUTF8StringEncoding];
     
     NSString *base64Encoded = [nsdata base64EncodedStringWithOptions:0];
-    
     auth_String=[NSString stringWithFormat:@"Basic %@",base64Encoded];
-    
     [defaults setObject:auth_String forKey:@"BasicAuth"];
     [httpClient setDefaultHeader:@"Authorization" value:auth_String];
-    
     
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:@"/rest/s1/ft/user"
@@ -251,10 +246,7 @@
                                          }
                                      }];
     [operation start];
-    
 }
-
-
 
 - (NSString*)encodeStringTo64:(NSString*)fromString
 {

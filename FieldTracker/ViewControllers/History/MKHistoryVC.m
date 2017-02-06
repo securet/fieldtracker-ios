@@ -25,19 +25,14 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",dict);
-    _lblFName.text=[dict valueForKey:@"firstName"];
-    _lblLName.text=[dict valueForKey:@"lastName"];
-    
-    
+    self.lblFName.text=[dict valueForKey:@"firstName"];
+    self.lblLName.text=[dict valueForKey:@"lastName"];
+
     if ([dict valueForKey:@"userPhotoPath"]) {
         NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
-        
-        
-        
         NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
         NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
         dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
@@ -46,29 +41,29 @@
             NSData *data = [NSData dataWithContentsOfURL:imgUrl];
             UIImage *img = [[UIImage alloc] initWithData:data];
             dispatch_async(dispatch_get_main_queue(), ^{
-                _imgVwUser.image = img;
+                self.imgVwUser.image = img;
             });
         });
     }
     
-    _lblNodata.hidden = YES;
-    _tableVw.delegate = self;
-    _tableVw.dataSource = self;
-    _tableVw.tableFooterView = [[UIView alloc] init];
-    _tableVw.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.lblNodata.hidden = YES;
+    self.tableVw.delegate = self;
+    self.tableVw.dataSource = self;
+    self.tableVw.tableFooterView = [[UIView alloc] init];
+    self.tableVw.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     arrayForTableData=[[NSMutableArray alloc] init];
     
-    _tableVwForIndividual.delegate = self;
-    _tableVwForIndividual.dataSource = self;
-    _tableVwForIndividual.tableFooterView = [[UIView alloc] init];
-    _tableVwForIndividual.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableVwForIndividual.delegate = self;
+    self.tableVwForIndividual.dataSource = self;
+    self.tableVwForIndividual.tableFooterView = [[UIView alloc] init];
+    self.tableVwForIndividual.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    _vwForIndividualItem.hidden = YES;
-    _backBtn.hidden = YES;
+    self.vwForIndividualItem.hidden = YES;
+    self.backBtn.hidden = YES;
     
     pageNumber=0;
-    [_tableVw addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
+    [self.tableVw addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     
     //    [self getHistory];
     
@@ -84,35 +79,35 @@
     //    NSDictionary *dict=[userIn];
     
     if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-        _lblForStoreLocation.textColor=[UIColor whiteColor];
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        self.lblForStoreLocation.textColor=[UIColor whiteColor];
     }else{
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        //        _lblForStoreLocation.text=@"Off site";
-        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+        //        self.lblForStoreLocation.text=@"Off site";
+        self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
     }
     
-    _lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
+    self.lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
 }
 
 -(void)changeLocationStatus:(NSDictionary*)dictInfo{
     
     if ([[dictInfo valueForKey:@"LocationStatus"] integerValue]==1) {
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-        _lblForStoreLocation.textColor=[UIColor whiteColor];
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        self.lblForStoreLocation.textColor=[UIColor whiteColor];
     }else{
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        //        _lblForStoreLocation.text=@"Off site";
-        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+        //        self.lblForStoreLocation.text=@"Off site";
+        self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
     }
     
-    _lblForStoreLocation.text=[dictInfo valueForKey:@"StoreName"];
+    self.lblForStoreLocation.text=[dictInfo valueForKey:@"StoreName"];
 }
 
 
 -(void)viewWillAppear:(BOOL)animated{
     
-    _lblForStoreLocation.text=@"";
+    self.lblForStoreLocation.text=@"";
     [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
     
     self.navigationController.navigationBarHidden = YES;
@@ -126,10 +121,10 @@
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
-    _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
-    _tableVw.hidden = NO;
-    _lblNodata.hidden = YES;
+    self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
+    self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
+    self.tableVw.hidden = NO;
+    self.lblNodata.hidden = YES;
     
     if (arrayForTableData.count<=0) {
         arrayForTableData=[[NSMutableArray alloc] init];
@@ -137,7 +132,7 @@
         [self getHistory];
     }
     
-    [_tableVw reloadData];
+    [self.tableVw reloadData];
     
     if (![APPDELEGATE connected]) {
         
@@ -175,7 +170,7 @@
 #pragma mark- UITableView
 //-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 //{
-//    if (tableView == _tableVwForIndividual) {
+//    if (tableView == self.tableVwForIndividual) {
 //        CGFloat ht;
 //
 //        if (indexPath.row==0) {
@@ -198,7 +193,7 @@
 //}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (tableView == _tableVwForIndividual) {
+    if (tableView == self.tableVwForIndividual) {
         return arrayForStatusData.count;
     }
     return arrayForTableData.count;
@@ -209,7 +204,7 @@
     MKHistoryCustomCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
     //Individual View
-    if (tableView == _tableVwForIndividual) {
+    if (tableView == self.tableVwForIndividual) {
         MKIndividualHistoryCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cell == nil) {
             cell=[[MKIndividualHistoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -405,7 +400,7 @@
      }
      
      if ([timeString isEqualToString:@"0h 00m"]) {
-     _lblTotalTime.text=[NSString stringWithFormat:@"--"];
+     self.lblTotalTime.text=[NSString stringWithFormat:@"--"];
      }
      }else{
      cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
@@ -485,9 +480,9 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    if (tableView == _tableVw) {
-        _vwForIndividualItem.hidden = NO;
-        _backBtn.hidden = NO;
+    if (tableView == self.tableVw) {
+        self.vwForIndividualItem.hidden = NO;
+        self.backBtn.hidden = NO;
         
         arrayForStatusData=[[NSMutableArray alloc] init];
         
@@ -500,8 +495,8 @@
         
         arrayForStatusData = [self sortingArrayByDate:arrayForStatusData];
         
-        [_tableVwForIndividual reloadData];
-        [_tableVwForIndividual setContentOffset:CGPointZero animated:NO];
+        [self.tableVwForIndividual reloadData];
+        [self.tableVwForIndividual setContentOffset:CGPointZero animated:NO];
         
         ///Date Parsing
         NSString *strDate=[[arrayForTableData objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
@@ -512,7 +507,7 @@
         NSDate *date = [dateFormatter dateFromString:strDate];
         [dateFormatter setDateFormat:@"dd-MMM-yyyy"];
         NSString *newDateString = [dateFormatter stringFromDate:date];
-        _lblEntryDate.text=newDateString;
+        self.lblEntryDate.text=newDateString;
         //////
         
         if ([arrayForStatusData count]>0) {
@@ -522,7 +517,7 @@
                 newDateString = @"--";
             }
             
-            _lblTimeIn.text=[NSString stringWithFormat:@"Time In: %@",newDateString];
+            self.lblTimeIn.text=[NSString stringWithFormat:@"Time In: %@",newDateString];
             
             if (![[arrayForStatusData lastObject] isKindOfClass:[NSNull class]]) {
                 newDateString = [self getTimeIndividual:[arrayForStatusData lastObject]];
@@ -530,13 +525,13 @@
                 newDateString = @"--";
             }
             
-            _lblTimeOut.text=[NSString stringWithFormat:@"Time Out: %@",newDateString];
+            self.lblTimeOut.text=[NSString stringWithFormat:@"Time Out: %@",newDateString];
         }else{
-            _lblTimeIn.text=[NSString stringWithFormat:@"Time In: --"];
-            _lblTimeOut.text=[NSString stringWithFormat:@"Time Out: --"];
+            self.lblTimeIn.text=[NSString stringWithFormat:@"Time In: --"];
+            self.lblTimeOut.text=[NSString stringWithFormat:@"Time Out: --"];
         }
         MKHistoryCustomCell *cell=(MKHistoryCustomCell*)[tableView cellForRowAtIndexPath:indexPath];
-        _lblTotalTime.text = cell.lblTotalTime.text;
+        self.lblTotalTime.text = cell.lblTotalTime.text;
         
         /*
          NSArray *array=[[NSArray alloc] init];
@@ -575,13 +570,13 @@
          NSLog(@"Total Time: %@", timeString);
          
          if (hour<0) {
-         _lblTotalTime.text=[NSString stringWithFormat:@"--"];
+         self.lblTotalTime.text=[NSString stringWithFormat:@"--"];
          }else{
-         _lblTotalTime.text=timeString;
+         self.lblTotalTime.text=timeString;
          }
          
          if ([timeString isEqualToString:@"0h 00m"]) {
-         _lblTotalTime.text=[NSString stringWithFormat:@"--"];
+         self.lblTotalTime.text=[NSString stringWithFormat:@"--"];
          }         */
     }
 }
@@ -674,10 +669,10 @@
             arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
             
             if (arrayCountToCheck == 0) {
-                _lblNodata.hidden = NO;
-                _tableVw.hidden = YES;
+                self.lblNodata.hidden = NO;
+                self.tableVw.hidden = YES;
             }
-            [_tableVw reloadData];
+            [self.tableVw reloadData];
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -723,7 +718,7 @@
  */
 
 - (IBAction)onClickBackBtn:(UIButton *)sender {
-    _vwForIndividualItem.hidden = YES;
-    _backBtn.hidden = YES;
+    self.vwForIndividualItem.hidden = YES;
+    self.backBtn.hidden = YES;
 }
 @end

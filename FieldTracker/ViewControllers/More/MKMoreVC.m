@@ -68,8 +68,8 @@
     
     roleType=[dict valueForKey:@"roleTypeId"];
     
-    _lblFName.text=[dict valueForKey:@"firstName"];
-    _lblLName.text=[dict valueForKey:@"lastName"];
+    self.lblFName.text=[dict valueForKey:@"firstName"];
+    self.lblLName.text=[dict valueForKey:@"lastName"];
     
     if (![roleType isEqualToString:@"FieldExecutiveOnPremise"] && ![roleType isEqualToString:@"FieldExecutiveOffPremise"]) {
         arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Promoters Approval",@"Leaves",@"Leave Requisitions",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
@@ -88,39 +88,39 @@
     leaveApprovalListCount=0;
     pageNumberForLeaveApproval=0;
     
-    _tableVw.delegate = self;
-    _tableVw.dataSource = self;
-    _tableVw.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableVw.delegate = self;
+    self.tableVw.dataSource = self;
+    self.tableVw.separatorStyle = UITableViewCellSeparatorStyleNone;
     
-    _tableVw.tableFooterView=[[UIView alloc] init];
-    _tableVwForStore.tableFooterView =[[UIView alloc] init];
-    _tableVwForPromoters.tableFooterView =[[UIView alloc] init];
-    _tableVwForLeaveRqst.tableFooterView=[[UIView alloc] init];
-    _tableVwForLeaveApproval.tableFooterView=[[UIView alloc] init];
+    self.tableVw.tableFooterView=[[UIView alloc] init];
+    self.tableVwForStore.tableFooterView =[[UIView alloc] init];
+    self.tableVwForPromoters.tableFooterView =[[UIView alloc] init];
+    self.tableVwForLeaveRqst.tableFooterView=[[UIView alloc] init];
+    self.tableVwForLeaveApproval.tableFooterView=[[UIView alloc] init];
     
-    _vwForPromoters.hidden = YES;
-    _vwForStore.hidden = YES;
-    _vwForLeaveRqst.hidden= YES;
+    self.vwForPromoters.hidden = YES;
+    self.vwForStore.hidden = YES;
+    self.vwForLeaveRqst.hidden= YES;
     
-    _backBtn.hidden = YES;
+    self.backBtn.hidden = YES;
     
-    [_btnAddStore addTarget:self action:@selector(onClickAddStore:) forControlEvents:UIControlEventTouchUpInside];
-    [_btnAddPromoter addTarget:self action:@selector(onClickAddPromoter) forControlEvents:UIControlEventTouchUpInside];
-    [_btnLeaveRqst addTarget:self action:@selector(onClickLeaveRqst:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnAddStore addTarget:self action:@selector(onClickAddStore:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnAddPromoter addTarget:self action:@selector(onClickAddPromoter) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnLeaveRqst addTarget:self action:@selector(onClickLeaveRqst:) forControlEvents:UIControlEventTouchUpInside];
     
-    _vwForStoreAdd.hidden = YES;
-    _vwForPromoterAdd.hidden = YES;
-    _vwForLeaveRqstAdd.hidden = YES;
-    _vwForCamera.hidden = YES;
-    _vwForAccount.hidden = YES;
-    _vwForChangePwd.hidden = YES;
-    _vwForContact.hidden = YES;
-    _vwForCalendar.hidden = YES;
-    _vwForLeaveRequestForApproval.hidden = YES;
+    self.vwForStoreAdd.hidden = YES;
+    self.vwForPromoterAdd.hidden = YES;
+    self.vwForLeaveRqstAdd.hidden = YES;
+    self.vwForCamera.hidden = YES;
+    self.vwForAccount.hidden = YES;
+    self.vwForChangePwd.hidden = YES;
+    self.vwForContact.hidden = YES;
+    self.vwForCalendar.hidden = YES;
+    self.vwForLeaveRequestForApproval.hidden = YES;
     
-    _cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
-    _cameraBtn.layer.cornerRadius = _cameraBtn.frame.size.height/2;
-    _cameraBtn.layer.masksToBounds = YES;
+    self.cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
+    self.cameraBtn.layer.cornerRadius = self.cameraBtn.frame.size.height/2;
+    self.cameraBtn.layer.masksToBounds = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
     
@@ -130,8 +130,8 @@
     //rgb(84,138,176)
     //    UIColor *color=[UIColor colorWithRed:(84/255.0) green:(138/255.0) blue:(176/255.0) alpha:1.0];
     
-    [_tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
-    [_tableVwForLeaveRqst addFooterWithTarget:self action:@selector(refreshFooterForLeave) withIndicatorColor:TopColor];
+    [self.tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
+    [self.tableVwForLeaveRqst addFooterWithTarget:self action:@selector(refreshFooterForLeave) withIndicatorColor:TopColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveTypeSelected:) name:@"LeaveTypeSelected" object:nil];
@@ -142,7 +142,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     
-    _lblForStoreLocation.text=@"";
+    self.lblForStoreLocation.text=@"";
     [self changeLocationStatus:[[MKSharedClass shareManager] dictForCheckInLoctn]];
     [self disableMyAccountEdit];
     
@@ -158,8 +158,8 @@
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
-    _lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    _lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
+    self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
+    self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
     
     if (![APPDELEGATE connected]) {
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -182,16 +182,16 @@
 
 -(void)disableMyAccountEdit{
     
-    /* if (IS_IPHONE_4) {
-     _heightConstraintForMyTextFieldAccount.constant = 30;
-     _textFieldMyName.font = [UIFont systemFontOfSize:15];
-     _textFieldMyNumber.font = [UIFont systemFontOfSize:15];
-     _textFieldMyEmail.font = [UIFont systemFontOfSize:15];
-     _textFieldMyStore.font = [UIFont systemFontOfSize:15];
-     _textVwMyAddress.font = [UIFont systemFontOfSize:15];
-     _textFieldMyManagerName.font = [UIFont systemFontOfSize:15];
-     _textFieldMyManagerEmailID.font = [UIFont systemFontOfSize:15];
-     _textFieldMyManagerMobileNumber.font = [UIFont systemFontOfSize:15];
+    /* if (ISself.IPHONEself.4) {
+     self.heightConstraintForMyTextFieldAccount.constant = 30;
+     self.textFieldMyName.font = [UIFont systemFontOfSize:15];
+     self.textFieldMyNumber.font = [UIFont systemFontOfSize:15];
+     self.textFieldMyEmail.font = [UIFont systemFontOfSize:15];
+     self.textFieldMyStore.font = [UIFont systemFontOfSize:15];
+     self.textVwMyAddress.font = [UIFont systemFontOfSize:15];
+     self.textFieldMyManagerName.font = [UIFont systemFontOfSize:15];
+     self.textFieldMyManagerEmailID.font = [UIFont systemFontOfSize:15];
+     self.textFieldMyManagerMobileNumber.font = [UIFont systemFontOfSize:15];
      }*/
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
@@ -200,19 +200,19 @@
     // [defaults setObject:dictForStoreDetails forKey:@"StoreData"];
     //storeName
     
-    _textFieldMyName.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
-    _textFieldMyNumber.text = @"Mobile Number";
-    _textFieldMyEmail.text = [dict valueForKey:@"emailAddress"];
-    _textFieldMyStore.text = _lblForStoreLocation.text;
+    self.textFieldMyName.text=[NSString stringWithFormat:@"%@ %@",self.lblFName.text,self.lblLName.text];
+    self.textFieldMyNumber.text = @"Mobile Number";
+    self.textFieldMyEmail.text = [dict valueForKey:@"emailAddress"];
+    self.textFieldMyStore.text = self.lblForStoreLocation.text;
     
     if ([dict valueForKey:@"directions"]) {
-        _textVwMyAddress.text=[dict valueForKey:@"directions"];
+        self.textVwMyAddress.text=[dict valueForKey:@"directions"];
     }else{
-        _textVwMyAddress.text=@"NA";
+        self.textVwMyAddress.text=@"NA";
     }
     
     if ([dict valueForKey:@"contactNumber"]) {
-        _textFieldMyNumber.text = [dict valueForKey:@"contactNumber"];
+        self.textFieldMyNumber.text = [dict valueForKey:@"contactNumber"];
     }
     
     if ([dict valueForKey:@"userPhotoPath"]) {
@@ -225,145 +225,145 @@
             NSData *data = [NSData dataWithContentsOfURL:imgUrl];
             UIImage *img = [[UIImage alloc] initWithData:data];
             dispatch_async(dispatch_get_main_queue(), ^{
-                _imgVwUser.image = img;
+                self.imgVwUser.image = img;
             });
         });
     }
     
-    _textFieldMyName.userInteractionEnabled = NO;
-    _textFieldMyNumber.userInteractionEnabled = NO;
-    _textFieldMyEmail.userInteractionEnabled = NO;
-    _textFieldMyStore.userInteractionEnabled = NO;
-    _textVwMyAddress.userInteractionEnabled = NO;
-    _textFieldMyManagerName.userInteractionEnabled = NO;
-    _textFieldMyManagerEmailID.userInteractionEnabled = NO;
-    _textFieldMyManagerMobileNumber.userInteractionEnabled = NO;
+    self.textFieldMyName.userInteractionEnabled = NO;
+    self.textFieldMyNumber.userInteractionEnabled = NO;
+    self.textFieldMyEmail.userInteractionEnabled = NO;
+    self.textFieldMyStore.userInteractionEnabled = NO;
+    self.textVwMyAddress.userInteractionEnabled = NO;
+    self.textFieldMyManagerName.userInteractionEnabled = NO;
+    self.textFieldMyManagerEmailID.userInteractionEnabled = NO;
+    self.textFieldMyManagerMobileNumber.userInteractionEnabled = NO;
 }
 
 -(void)setupUIForAllViews{
     // For Store View
     
     if (IS_IPHONE_4) {
-        _heightOfTxtVwStoreAddress.constant = 50;
-        _txtVwStoreAddress.font = [UIFont systemFontOfSize:12];
+        self.heightOfTxtVwStoreAddress.constant = 50;
+        self.txtVwStoreAddress.font = [UIFont systemFontOfSize:12];
     }else{
-        _heightOfTxtFieldStorName.constant = 40;
+        self.heightOfTxtFieldStorName.constant = 40;
     }
     
-    [self textFieldEdit:_txtFieldStoreName];
-    [self textFieldEdit:_txtFieldSiteRadius];
+    [self textFieldEdit:self.txtFieldStoreName];
+    [self textFieldEdit:self.txtFieldSiteRadius];
     
-    _txtFieldSiteRadius.keyboardType = UIKeyboardTypeNumberPad;
+    self.txtFieldSiteRadius.keyboardType = UIKeyboardTypeNumberPad;
     
-    _txtVwStoreAddress.layer.cornerRadius = 5;
-    _txtVwStoreAddress.layer.masksToBounds = YES;
-    _txtVwStoreAddress.keyboardType=UIKeyboardTypeASCIICapable;
-    _txtVwStoreAddress.backgroundColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+    self.txtVwStoreAddress.layer.cornerRadius = 5;
+    self.txtVwStoreAddress.layer.masksToBounds = YES;
+    self.txtVwStoreAddress.keyboardType=UIKeyboardTypeASCIICapable;
+    self.txtVwStoreAddress.backgroundColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
     
-    _txtVwStoreAddress.autocorrectionType = UITextAutocorrectionTypeNo;
+    self.txtVwStoreAddress.autocorrectionType = UITextAutocorrectionTypeNo;
     
-    _btnGetLocation.layer.cornerRadius = 5;
-    _btnGetLocation.layer.masksToBounds = YES;
+    self.btnGetLocation.layer.cornerRadius = 5;
+    self.btnGetLocation.layer.masksToBounds = YES;
     
-    [self addShadow:_btnAdd];
-    [self addShadow:_btnCancel];
+    [self addShadow:self.btnAdd];
+    [self addShadow:self.btnCancel];
     
-    [_btnAdd addTarget:self action:@selector(onClickStoreAddToServer:) forControlEvents:UIControlEventTouchUpInside];
-    [_btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
-    [_btnGetLocation addTarget:self action:@selector(getLocation) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnAdd addTarget:self action:@selector(onClickStoreAddToServer:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnGetLocation addTarget:self action:@selector(getLocation) forControlEvents:UIControlEventTouchUpInside];
     
     //For Promoter View
     [self addPromoterViewSetup];
-    [self addShadow:_btnAddStore];
-    [self addShadow:_btnAddPromoter];
-    [self addShadow:_btnLeaveRqst];
+    [self addShadow:self.btnAddStore];
+    [self addShadow:self.btnAddPromoter];
+    [self addShadow:self.btnLeaveRqst];
     
     //For Change Password
-    [self textFieldEdit:_textFieldCurrentPwd];
-    [self textFieldEdit:_textFieldNewPwd];
-    [self textFieldEdit:_textFieldConfirmNewPwd];
-    [self addShadow:_btnChangePwd];
+    [self textFieldEdit:self.textFieldCurrentPwd];
+    [self textFieldEdit:self.textFieldNewPwd];
+    [self textFieldEdit:self.textFieldConfirmNewPwd];
+    [self addShadow:self.btnChangePwd];
     
-    [_btnChangePwd addTarget:self action:@selector(onClickChangePwd) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnChangePwd addTarget:self action:@selector(onClickChangePwd) forControlEvents:UIControlEventTouchUpInside];
     
-    _btnChangePwd.layer.cornerRadius = 5;
-    _btnChangePwd.layer.masksToBounds = YES;
+    self.btnChangePwd.layer.cornerRadius = 5;
+    self.btnChangePwd.layer.masksToBounds = YES;
     
     //Contact Support
     
     UITapGestureRecognizer *tapGestureRecognizerForOrgName = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(orgNameTapped)];
     tapGestureRecognizerForOrgName.numberOfTapsRequired = 1;
-    [_lblForOrgNameContact addGestureRecognizer:tapGestureRecognizerForOrgName];
-    _lblForOrgNameContact.userInteractionEnabled = YES;
+    [self.lblForOrgNameContact addGestureRecognizer:tapGestureRecognizerForOrgName];
+    self.lblForOrgNameContact.userInteractionEnabled = YES;
     
     
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(emailIDTapped)];
     tapGestureRecognizer.numberOfTapsRequired = 1;
-    [_lblForEmailContact addGestureRecognizer:tapGestureRecognizer];
-    _lblForEmailContact.userInteractionEnabled = YES;
+    [self.lblForEmailContact addGestureRecognizer:tapGestureRecognizer];
+    self.lblForEmailContact.userInteractionEnabled = YES;
     
     UITapGestureRecognizer *tapGestureRecognizerForNum = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(phoneNumTapped)];
     tapGestureRecognizerForNum.numberOfTapsRequired = 1;
-    [_lblForPhoneContact addGestureRecognizer:tapGestureRecognizerForNum];
-    _lblForPhoneContact.userInteractionEnabled = YES;
+    [self.lblForPhoneContact addGestureRecognizer:tapGestureRecognizerForNum];
+    self.lblForPhoneContact.userInteractionEnabled = YES;
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
     [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"Email:  "
                                                                              attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
     
-    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:_lblForEmailContact.text
+    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:self.lblForEmailContact.text
                                                                              attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
                                                                                           NSBackgroundColorAttributeName: [UIColor clearColor]}]];
     //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
-    _lblForEmailContact.attributedText = attributedString;
+    self.lblForEmailContact.attributedText = attributedString;
     
     NSMutableAttributedString *attributedStringForNumber = [[NSMutableAttributedString alloc] init];
     [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:@"Phone:  "
                                                                                       attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
     
-    [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:_lblForPhoneContact.text
+    [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:self.lblForPhoneContact.text
                                                                                       attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
                                                                                                    NSBackgroundColorAttributeName: [UIColor clearColor]}]];
     //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
-    _lblForPhoneContact.attributedText = attributedStringForNumber;
+    self.lblForPhoneContact.attributedText = attributedStringForNumber;
     
     ///Leave Request Calendar
     
     datePicker.delegate = self;
     datePicker.dataSource = self;
     
-    _heightOfScrollVwForLeaveRqst.constant = 330;
+    self.heightOfScrollVwForLeaveRqst.constant = 330;
     
-    [self textFieldEdit:_txtFieldStartDate];
-    [self textFieldEdit:_txtFieldEndDate];
-    [self textFieldEdit:_txtFieldLeaveType];
-    [self textFieldEdit:_txtFieldLeaveReason];
+    [self textFieldEdit:self.txtFieldStartDate];
+    [self textFieldEdit:self.txtFieldEndDate];
+    [self textFieldEdit:self.txtFieldLeaveType];
+    [self textFieldEdit:self.txtFieldLeaveReason];
     
-    _txtFieldStartDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
-    _txtFieldEndDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
-    _txtFieldLeaveType.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
-    _txtFieldLeaveReason.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    self.txtFieldStartDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    self.txtFieldEndDate.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    self.txtFieldLeaveType.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
+    self.txtFieldLeaveReason.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3];
     
-    [self addShadow:_btnLeaveRqstCancel];
-    [self addShadow:_btnLeaveRqstSubmit];
+    [self addShadow:self.btnLeaveRqstCancel];
+    [self addShadow:self.btnLeaveRqstSubmit];
     
-    _txtFieldLeaveDescription.backgroundColor=[UIColor clearColor];
-    _txtFieldLeaveDescription.delegate = self;
-    _txtFieldLeaveDescription.keyboardType=UIKeyboardTypeASCIICapable;
+    self.txtFieldLeaveDescription.backgroundColor=[UIColor clearColor];
+    self.txtFieldLeaveDescription.delegate = self;
+    self.txtFieldLeaveDescription.keyboardType=UIKeyboardTypeASCIICapable;
     
-    [_txtFieldLeaveDescription addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
+    [self.txtFieldLeaveDescription addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 
     
+    self.txtFieldLeaveComments.backgroundColor=[UIColor clearColor];
+    self.txtFieldLeaveComments.delegate = self;
+    self.txtFieldLeaveComments.keyboardType=UIKeyboardTypeASCIICapable;
     
-    _txtFieldLeaveComments.backgroundColor=[UIColor clearColor];
-    _txtFieldLeaveComments.delegate = self;
-    _txtFieldLeaveComments.keyboardType=UIKeyboardTypeASCIICapable;
-    
-    [_txtFieldLeaveComments addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
+    [self.txtFieldLeaveComments addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 
     
-    [_btnLeaveRqstCancel addTarget:self action:@selector(leaveRqstCancel:) forControlEvents:UIControlEventTouchUpInside];
-    [_btnLeaveRqstSubmit addTarget:self action:@selector(leaveRequestSubmit:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnLeaveRqstCancel addTarget:self action:@selector(leaveRqstCancel:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnLeaveRqstSubmit addTarget:self action:@selector(leaveRequestSubmit:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnToday addTarget:self action:@selector(onClickToday) forControlEvents:UIControlEventTouchUpInside];
 }
 
 
@@ -371,13 +371,13 @@
 
 
 -(void)leaveTypeSelected:(NSNotification*)userInfo{
-    _txtFieldLeaveType.text=[userInfo.userInfo valueForKey:@"description"];
+    self.txtFieldLeaveType.text=[userInfo.userInfo valueForKey:@"description"];
     NSLog(@"%@",userInfo.userInfo);
     leaveTypeEnumID=[userInfo.userInfo valueForKey:@"enumId"];
 }
 
 -(void)leaveReasonSelected:(NSNotification*)userInfo{
-    _txtFieldLeaveReason.text=[userInfo.userInfo valueForKey:@"description"];
+    self.txtFieldLeaveReason.text=[userInfo.userInfo valueForKey:@"description"];
     NSLog(@"%@",userInfo.userInfo);
     leaveReasonEnumID=[userInfo.userInfo valueForKey:@"enumId"];
 }
@@ -390,9 +390,9 @@
     
     if ([APPDELEGATE connected]) {
         
-        if (_textFieldCurrentPwd.text.length > 0 && _textFieldNewPwd.text.length>0 && _textFieldConfirmNewPwd.text.length>0) {
+        if (self.textFieldCurrentPwd.text.length > 0 && self.textFieldNewPwd.text.length>0 && self.textFieldConfirmNewPwd.text.length>0) {
             
-            if ([_textFieldNewPwd.text isEqualToString:_textFieldConfirmNewPwd.text]) {
+            if ([self.textFieldNewPwd.text isEqualToString:self.textFieldConfirmNewPwd.text]) {
                 NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
                 NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
                 
@@ -404,9 +404,9 @@
                 
                 [httpClient setDefaultHeader:@"Authorization" value:str];
                 //{"oldPassword":"test@123","newPassword":"test@1234","newPasswordVerify":"test@1234"}
-                NSDictionary * json = @{@"oldPassword":_textFieldCurrentPwd.text,
-                                        @"newPassword":_textFieldNewPwd.text,
-                                        @"newPasswordVerify":_textFieldConfirmNewPwd.text,
+                NSDictionary * json = @{@"oldPassword":self.textFieldCurrentPwd.text,
+                                        @"newPassword":self.textFieldNewPwd.text,
+                                        @"newPasswordVerify":self.textFieldConfirmNewPwd.text,
                                         };
                 NSMutableURLRequest *request;
                 
@@ -435,17 +435,17 @@
                     NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
                     NSString *userName=[dict valueForKey:@"username"];
                     
-                    NSString *str=[NSString stringWithFormat:@"%@:%@",userName,_textFieldNewPwd.text];
+                    NSString *str=[NSString stringWithFormat:@"%@:%@",userName,self.textFieldNewPwd.text];
                     NSString *auth_String;
                     NSData *nsdata = [str dataUsingEncoding:NSUTF8StringEncoding];
                     NSString *base64Encoded = [nsdata base64EncodedStringWithOptions:0];
                     auth_String=[NSString stringWithFormat:@"Basic %@",base64Encoded];
                     [defaults setObject:auth_String forKey:@"BasicAuth"];
                     
-                    _vwForChangePwd.hidden=YES;
-                    _textFieldCurrentPwd.text=@"";
-                    _textFieldNewPwd.text=@"";
-                    _textFieldConfirmNewPwd.text=@"";
+                    self.vwForChangePwd.hidden=YES;
+                    self.textFieldCurrentPwd.text=@"";
+                    self.textFieldNewPwd.text=@"";
+                    self.textFieldConfirmNewPwd.text=@"";
                 }
                  //==================================================ERROR
                                                  failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -467,8 +467,8 @@
                 [[[UIAlertView alloc] initWithTitle:@"Password was doesn't match"
                                             message:@""
                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
-                _textFieldConfirmNewPwd.text=@"";
-                _textFieldNewPwd.text=@"";
+                self.textFieldConfirmNewPwd.text=@"";
+                self.textFieldNewPwd.text=@"";
             }
         }else{
             [[[UIAlertView alloc] initWithTitle:@"Please Enter All Fields"
@@ -484,7 +484,7 @@
 #pragma mark - Contact Support
 -(void)orgNameTapped{
     
-    NSString *string=[NSString stringWithFormat:@"%@",_lblForOrgNameContact.attributedText.string];
+    NSString *string=[NSString stringWithFormat:@"%@",self.lblForOrgNameContact.attributedText.string];
     if (string.length > 0){
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.allsmart.in/"]];
     }
@@ -492,7 +492,7 @@
 
 -(void)emailIDTapped{
     
-    NSString *string=[NSString stringWithFormat:@"%@",_lblForEmailContact.attributedText.string];
+    NSString *string=[NSString stringWithFormat:@"%@",self.lblForEmailContact.attributedText.string];
     
     if ([self isValidEmail:[string substringFromIndex:8]]){
         //send mail
@@ -515,9 +515,9 @@
 }
 
 -(void)phoneNumTapped{
-    //    NSString *phNo = _lblForPhoneContact.text;
+    //    NSString *phNo = self.lblForPhoneContact.text;
     
-    NSString *string=[NSString stringWithFormat:@"%@",_lblForPhoneContact.attributedText.string];
+    NSString *string=[NSString stringWithFormat:@"%@",self.lblForPhoneContact.attributedText.string];
     NSURL *phoneUrl = [NSURL URLWithString:[NSString  stringWithFormat:@"telprompt:%@",[string substringFromIndex:8]]];
     if ([[UIApplication sharedApplication] canOpenURL:phoneUrl]) {
         [[UIApplication sharedApplication] openURL:phoneUrl];
@@ -563,15 +563,15 @@
         //    NSDictionary *dict=[userIn];
         
         if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
-            _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-            _lblForStoreLocation.textColor=[UIColor whiteColor];
+            self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+            self.lblForStoreLocation.textColor=[UIColor whiteColor];
         }else{
-            _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-            //        _lblForStoreLocation.text=@"Off site";
-            _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+            self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+            //        self.lblForStoreLocation.text=@"Off site";
+            self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
         }
-        _textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
-        _lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
+        self.textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
+        self.lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
     }
     @catch (NSException *exception) {
         NSLog(@"%@", exception.reason);
@@ -585,15 +585,15 @@
 -(void)changeLocationStatus:(NSDictionary*)dictInfo{
     
     if ([[dictInfo valueForKey:@"LocationStatus"] integerValue]==1) {
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-        _lblForStoreLocation.textColor=[UIColor whiteColor];
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        self.lblForStoreLocation.textColor=[UIColor whiteColor];
     }else{
-        _imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        //_lblForStoreLocation.text=@"Off site";
-        _lblForStoreLocation.textColor=[UIColor darkGrayColor];
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+        //self.lblForStoreLocation.text=@"Off site";
+        self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
     }
     
-    _lblForStoreLocation.text=[dictInfo valueForKey:@"StoreName"];
+    self.lblForStoreLocation.text=[dictInfo valueForKey:@"StoreName"];
 }
 
 - (void)refreshFooter
@@ -605,13 +605,13 @@
         [self getPromoters];
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [_tableVwForPromoters reloadData];
-            [_tableVwForPromoters footerEndRefreshing];
+            [self.tableVwForPromoters reloadData];
+            [self.tableVwForPromoters footerEndRefreshing];
             //        [self.tableVw removeFooter];
         });
     }else{
-        [_tableVwForPromoters footerEndRefreshing];
-        [_tableVwForPromoters headerEndRefreshing];
+        [self.tableVwForPromoters footerEndRefreshing];
+        [self.tableVwForPromoters headerEndRefreshing];
     }
 }
 
@@ -619,8 +619,8 @@
     NSDictionary *dict=[[NSMutableDictionary alloc] init];
     dict=[[MKSharedClass shareManager] dictForStoreSelected];
     NSLog(@"Selected Store Details===%@",dict);
-    _txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
-    _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
+    self.txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
+    self.txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",self.lblFName.text,self.lblLName.text];
     storeIDForPromoterAdd=[dict valueForKey:@"productStoreId"];
     
     NSLog(@"Selected Store ID===%@",storeIDForPromoterAdd);
@@ -635,20 +635,20 @@
 
 #pragma mark - TextField Delegate
 -(void)textFieldDidEndEditing:(UITextField *)textField{
-    if (textField == _txtFieldStoreName || textField == _txtFieldSiteRadius) {
+    if (textField == self.txtFieldStoreName || textField == self.txtFieldSiteRadius) {
         [self enableAddNewStoreBtn];
-    }else if (textField == _txtFieldStoreAsgnmntPromoter){
+    }else if (textField == self.txtFieldStoreAsgnmntPromoter){
     }
 }
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
-    if (textField == _txtFieldStoreAsgnmntPromoter){
+    if (textField == self.txtFieldStoreAsgnmntPromoter){
     }
 }
 
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     
-    if (textField == _txtFieldStoreAsgnmntPromoter || textField == _txtFieldSEAsgnmntPromoter){
+    if (textField == self.txtFieldStoreAsgnmntPromoter || textField == self.txtFieldSEAsgnmntPromoter){
         return NO;
     }
     return YES;
@@ -680,22 +680,22 @@
 
 -(void)textViewDidBeginEditing:(UITextView *)textView
 {
-    if (textView== _txtVwStoreAddress && [textView.text isEqualToString:@"Store Address"]){
+    if (textView== self.txtVwStoreAddress && [textView.text isEqualToString:@"Store Address"]){
         textView.text=@"";
-    }else if (textView== _txtVwAddressPromoter && [textView.text isEqualToString:@"Address"]){
+    }else if (textView== self.txtVwAddressPromoter && [textView.text isEqualToString:@"Address"]){
         textView.text=@"";
     }
 }
 
 -(void)textViewDidEndEditing:(UITextView *)textView
 {
-    if (textView== _txtVwStoreAddress && _txtVwStoreAddress.text.length<=0){
+    if (textView== self.txtVwStoreAddress && self.txtVwStoreAddress.text.length<=0){
         textView.text=@"Store Address";
     }else{
         [self enableAddNewStoreBtn];
     }
     
-    if (textView== _txtVwAddressPromoter && _txtVwAddressPromoter.text.length<=0){
+    if (textView== self.txtVwAddressPromoter && self.txtVwAddressPromoter.text.length<=0){
         textView.text=@"Address";
     }
 }
@@ -704,53 +704,53 @@
 
 -(void)setUpForAddStore:(NSInteger)indexValue{
     
-    _txtVwStoreAddress.delegate = self;
+    self.txtVwStoreAddress.delegate = self;
     
-    _txtVwStoreAddress.text=@"Store Address";
-    _backBtn.hidden=YES;
-    _lblForLatLon.text=@"";
-    _lblForLatLon.textAlignment = NSTextAlignmentCenter;
+    self.txtVwStoreAddress.text=@"Store Address";
+    self.backBtn.hidden=YES;
+    self.lblForLatLon.text=@"";
+    self.lblForLatLon.textAlignment = NSTextAlignmentCenter;
     
     if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
-        _lblForEditStore.text=@"Add Store";
-        [_btnAdd setTitle:@"Add" forState:UIControlStateNormal];
+        self.lblForEditStore.text=@"Add Store";
+        [self.btnAdd setTitle:@"Add" forState:UIControlStateNormal];
         
-        _btnAdd.enabled = NO;
-        _btnAdd.alpha = 0.6;
-        _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
-        _txtFieldStoreName.text=@"";
-        _txtFieldSiteRadius.text=@"";
+        self.btnAdd.enabled = NO;
+        self.btnAdd.alpha = 0.6;
+        self.btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
+        self.txtFieldStoreName.text=@"";
+        self.txtFieldSiteRadius.text=@"";
         
     }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
         
-        _lblForEditStore.text=@"Edit Store";
-        [_btnAdd setTitle:@"Edit" forState:UIControlStateNormal];
-        _btnAdd.backgroundColor=[[UIColor blueColor] colorWithAlphaComponent:0.6];
-        _btnAdd.enabled = YES;
-        _btnAdd.alpha = 1.0;
+        self.lblForEditStore.text=@"Edit Store";
+        [self.btnAdd setTitle:@"Edit" forState:UIControlStateNormal];
+        self.btnAdd.backgroundColor=[[UIColor blueColor] colorWithAlphaComponent:0.6];
+        self.btnAdd.enabled = YES;
+        self.btnAdd.alpha = 1.0;
         
-        _txtVwStoreAddress.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"address"];
-        _txtFieldStoreName.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"storeName"];
-        _txtFieldSiteRadius.text=[NSString stringWithFormat:@"%i",[[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] integerValue]];
+        self.txtVwStoreAddress.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"address"];
+        self.txtFieldStoreName.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"storeName"];
+        self.txtFieldSiteRadius.text=[NSString stringWithFormat:@"%i",[[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] integerValue]];
         
-        _lblForLatLon.text=[NSString stringWithFormat:@"Lat: %@ | Lon: %@",[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"],[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"]];
+        self.lblForLatLon.text=[NSString stringWithFormat:@"Lat: %@ | Lon: %@",[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"],[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"]];
         strForCurLatitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"];
         strForCurLongitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"];
-        _btnAdd.tag=indexValue;
+        self.btnAdd.tag=indexValue;
     }
 }
 
 -(void)enableAddNewStoreBtn
 {
     if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
-        if (_txtFieldStoreName.text.length>0&&_txtVwStoreAddress.text.length>0&&_txtFieldSiteRadius.text.length>0&& ![_txtVwStoreAddress.text isEqualToString:@"Store Address"]) {
-            _btnAdd.enabled = YES;
-            _btnAdd.alpha = 1;
-            _btnAdd.backgroundColor=[[UIColor darkGrayColor] colorWithAlphaComponent:1];
+        if (self.txtFieldStoreName.text.length>0&&self.txtVwStoreAddress.text.length>0&&self.txtFieldSiteRadius.text.length>0&& ![self.txtVwStoreAddress.text isEqualToString:@"Store Address"]) {
+            self.btnAdd.enabled = YES;
+            self.btnAdd.alpha = 1;
+            self.btnAdd.backgroundColor=[[UIColor darkGrayColor] colorWithAlphaComponent:1];
         }else{
-            _btnAdd.enabled = NO;
-            _btnAdd.alpha = 0.6;
-            _btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
+            self.btnAdd.enabled = NO;
+            self.btnAdd.alpha = 0.6;
+            self.btnAdd.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.6];
         }
     }
 }
@@ -770,11 +770,11 @@
         
         [httpClient setDefaultHeader:@"Authorization" value:str];
         //{"storeName":"OPPO Tirumalgherry","address":"Via Rest API","latitude":100.00,"longitude":100.00,"proximityRadius":200}
-        NSDictionary * json = @{@"storeName":_txtFieldStoreName.text,
-                                @"address":_txtVwStoreAddress.text,
+        NSDictionary * json = @{@"storeName":self.txtFieldStoreName.text,
+                                @"address":self.txtVwStoreAddress.text,
                                 @"latitude":strForCurLatitude,
                                 @"longitude":strForCurLongitude,
-                                @"proximityRadius":_txtFieldSiteRadius.text,
+                                @"proximityRadius":self.txtFieldSiteRadius.text,
                                 };
         NSMutableURLRequest *request;
         if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
@@ -802,13 +802,13 @@
             [DejalBezelActivityView removeView];
             NSLog(@"Add Store Successfully==%@",JSON);
             
-            _vwForStoreAdd.hidden = YES;
-            _backBtn.hidden=NO;
+            self.vwForStoreAdd.hidden = YES;
+            self.backBtn.hidden=NO;
             
             if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
                 if ([[JSON objectForKey:@"productStoreId"] integerValue]>0) {
-                    //                _vwForStoreAdd.hidden = YES;
-                    //                _backBtn.hidden=NO;
+                    //                self.vwForStoreAdd.hidden = YES;
+                    //                self.backBtn.hidden=NO;
                     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert show];
                 }
@@ -827,8 +827,8 @@
 }
 
 -(void)onClickCancel{
-    _vwForStoreAdd.hidden = YES;
-    _backBtn.hidden=NO;
+    self.vwForStoreAdd.hidden = YES;
+    self.backBtn.hidden=NO;
 }
 
 -(void)getLocation{
@@ -865,11 +865,11 @@
             //            frame.size.height = self.textVwForAddress.contentSize.height;
             //            self.textVwForAddress.frame=frame;
             //            NSLog(@"Address==%@",[[getAddress objectAtIndex:0]objectAtIndex:0]);
-            _lblForLatLon.text=[NSString stringWithFormat:@"Lat: %f | Lon: %f",[strForCurLatitude floatValue],[strForCurLongitude floatValue]];
+            self.lblForLatLon.text=[NSString stringWithFormat:@"Lat: %f | Lon: %f",[strForCurLatitude floatValue],[strForCurLongitude floatValue]];
             
-            _txtVwStoreAddress.text=[[getAddress objectAtIndex:0]objectAtIndex:0];
+            self.txtVwStoreAddress.text=[[getAddress objectAtIndex:0]objectAtIndex:0];
             
-            if (_txtFieldStoreName.text.length>0 && _txtFieldSiteRadius.text.length>0) {
+            if (self.txtFieldStoreName.text.length>0 && self.txtFieldSiteRadius.text.length>0) {
                 [self enableAddNewStoreBtn];
             }
         }
@@ -929,7 +929,7 @@
             [DejalBezelActivityView removeView];
             NSLog(@"Store List==%@",JSON);
             arrayForStoreList=[JSON objectForKey:@"userStores"];
-            [_tableVwForStore reloadData];
+            [self.tableVwForStore reloadData];
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -1017,7 +1017,7 @@
             }
             NSLog(@"Promoter List===%@",JSON);
             arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
-            [_tableVwForPromoters reloadData];
+            [self.tableVwForPromoters reloadData];
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -1093,7 +1093,7 @@
             }
             NSLog(@"Promoter List===%@",JSON);
             arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
-            [_tableVwForPromoters reloadData];
+            [self.tableVwForPromoters reloadData];
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -1138,19 +1138,19 @@
 
 -(void)onClickAddPromoter{
     
-    for (UIView *subview in [_btnPhotoPromoter subviews]) {
+    for (UIView *subview in [self.btnPhotoPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
     }
     
-    for (UIView *subview in [_btnAadharPromoter subviews]) {
+    for (UIView *subview in [self.btnAadharPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
     }
     
-    for (UIView *subview in [_btnAdressProofPromoter subviews]) {
+    for (UIView *subview in [self.btnAdressProofPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
@@ -1161,30 +1161,30 @@
 
 -(void)promoterDetails:(BOOL)isAddOrEdit{
     
-    for (UIView *subview in [_btnPhotoPromoter subviews]) {
+    for (UIView *subview in [self.btnPhotoPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
     }
     
-    for (UIView *subview in [_btnAadharPromoter subviews]) {
+    for (UIView *subview in [self.btnAadharPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
     }
     
-    for (UIView *subview in [_btnAdressProofPromoter subviews]) {
+    for (UIView *subview in [self.btnAdressProofPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
     }
     
-    _segmentControl.delegate = self;
-    [_btnCancelPromoterAdd addTarget:self action:@selector(onClickCancelOfAddPromoter) forControlEvents:UIControlEventTouchUpInside];
-    _btnAddPromoterConfirm.tag=isAddOrEdit;
-    [_btnAddPromoterConfirm addTarget:self action:@selector(addPromoter:) forControlEvents:UIControlEventTouchUpInside];
-    _vwForPromoterAdd.hidden = NO;
-    _backBtn.hidden = YES;
+    self.segmentControl.delegate = self;
+    [self.btnCancelPromoterAdd addTarget:self action:@selector(onClickCancelOfAddPromoter) forControlEvents:UIControlEventTouchUpInside];
+    self.btnAddPromoterConfirm.tag=isAddOrEdit;
+    [self.btnAddPromoterConfirm addTarget:self action:@selector(addPromoter:) forControlEvents:UIControlEventTouchUpInside];
+    self.vwForPromoterAdd.hidden = NO;
+    self.backBtn.hidden = YES;
     
     if (!isAddOrEdit) {
         
@@ -1201,7 +1201,7 @@
             }
         }
         
-        //[_btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
+        //[self.btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
         
         NSString *jsonString = [[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestJson"];
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
@@ -1209,155 +1209,155 @@
         
         NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
         
-        _txtFieldFNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"];
-        _txtFieldLNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"];
-        _txtFieldEmailPromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"emailId"];
-        _txtFieldPhonePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"phone"];
-        _txtVwAddressPromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"address"];
+        self.txtFieldFNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"];
+        self.txtFieldLNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"];
+        self.txtFieldEmailPromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"emailId"];
+        self.txtFieldPhonePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"phone"];
+        self.txtVwAddressPromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"address"];
         
         NSString *productStoreId=[[json objectForKey:@"requestInfo"] objectForKey:@"productStoreId"];
-        _txtFieldStoreAsgnmntPromoter.text=@"";
-        _txtFieldSEAsgnmntPromoter.text=@"";
+        self.txtFieldStoreAsgnmntPromoter.text=@"";
+        self.txtFieldSEAsgnmntPromoter.text=@"";
         for (NSDictionary *dict in arrayForStoreList) {
             if ([[dict valueForKey:@"productStoreId"] isEqualToString:productStoreId]) {
-                _txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
-                _txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",_lblFName.text,_lblLName.text];
+                self.txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
+                self.txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",self.lblFName.text,self.lblLName.text];
             }
         }
-        
         
         strAadharIDPath=[[json objectForKey:@"requestInfo"] objectForKey:@"aadharIdPath"];;
         strUserPhotoPath=[[json objectForKey:@"requestInfo"] objectForKey:@"userPhoto"];;
         strAddressProofPath=[[json objectForKey:@"requestInfo"] objectForKey:@"addressIdPath"];
         storeIDForPromoterAdd=productStoreId;
+        
     }else{
         [self enablePromoterView];
         strAadharIDPath=@"";
         strUserPhotoPath=@"";
         strAddressProofPath=@"";
-        [_btnAddPromoterConfirm setTitle:@"Add" forState:UIControlStateNormal];
-        [_btnCancelPromoterAdd setTitle:@"Cancel" forState:UIControlStateNormal];
+        [self.btnAddPromoterConfirm setTitle:@"Add" forState:UIControlStateNormal];
+        [self.btnCancelPromoterAdd setTitle:@"Cancel" forState:UIControlStateNormal];
         
-        _txtFieldPhonePromoter.keyboardType=UIKeyboardTypePhonePad;
-        _txtFieldFNamePromoter.text=@"";
-        _txtFieldLNamePromoter.text=@"";
-        _txtFieldEmailPromoter.text=@"";
-        _txtFieldPhonePromoter.text=@"";
-        _txtVwAddressPromoter.text=@"Address";
-        _txtFieldSEAsgnmntPromoter.text=@"";
-        _txtFieldStoreAsgnmntPromoter.text=@"";
-        _btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
-        
+        self.txtFieldPhonePromoter.keyboardType=UIKeyboardTypePhonePad;
+        self.txtFieldFNamePromoter.text=@"";
+        self.txtFieldLNamePromoter.text=@"";
+        self.txtFieldEmailPromoter.text=@"";
+        self.txtFieldPhonePromoter.text=@"";
+        self.txtVwAddressPromoter.text=@"Address";
+        self.txtFieldSEAsgnmntPromoter.text=@"";
+        self.txtFieldStoreAsgnmntPromoter.text=@"";
+        self.btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
     }
 }
 -(void)disablePromoterView{
-    _txtFieldFNamePromoter.userInteractionEnabled = NO;
-    _txtFieldLNamePromoter.userInteractionEnabled = NO;
-    _txtFieldEmailPromoter.userInteractionEnabled = NO;
-    _txtFieldPhonePromoter.userInteractionEnabled = NO;
-    _txtFieldSEAsgnmntPromoter.userInteractionEnabled = NO;
-    _txtFieldStoreAsgnmntPromoter.userInteractionEnabled = NO;
-    _txtVwAddressPromoter.userInteractionEnabled = NO;
-    _segmentControl.userInteractionEnabled = NO;
-    _btnAddPromoterConfirm.userInteractionEnabled = NO;
-    _btnAdressProofPromoter.userInteractionEnabled = NO;
-    _btnAadharPromoter.userInteractionEnabled = NO;
-    _btnPhotoPromoter.userInteractionEnabled = NO;
-    _btnForStoreAssignmtPopup.userInteractionEnabled = NO;
+    
+    self.txtFieldFNamePromoter.userInteractionEnabled = NO;
+    self.txtFieldLNamePromoter.userInteractionEnabled = NO;
+    self.txtFieldEmailPromoter.userInteractionEnabled = NO;
+    self.txtFieldPhonePromoter.userInteractionEnabled = NO;
+    self.txtFieldSEAsgnmntPromoter.userInteractionEnabled = NO;
+    self.txtFieldStoreAsgnmntPromoter.userInteractionEnabled = NO;
+    self.txtVwAddressPromoter.userInteractionEnabled = NO;
+    self.segmentControl.userInteractionEnabled = NO;
+    self.btnAddPromoterConfirm.userInteractionEnabled = NO;
+    self.btnAdressProofPromoter.userInteractionEnabled = NO;
+    self.btnAadharPromoter.userInteractionEnabled = NO;
+    self.btnPhotoPromoter.userInteractionEnabled = NO;
+    self.btnForStoreAssignmtPopup.userInteractionEnabled = NO;
     
     if (![[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"statusId"] isKindOfClass:[NSNull class]]) {
         NSString *promoterStatus=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] valueForKey:@"statusId"];
         
         if ([promoterStatus containsString:@"Completed"]) {
-            [_btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
-            [_btnCancelPromoterAdd setTitle:@"Cancel" forState:UIControlStateNormal];
-            _btnAddPromoterConfirm.alpha = 0.2;
-            _btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
+            [self.btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
+            [self.btnCancelPromoterAdd setTitle:@"Cancel" forState:UIControlStateNormal];
+            self.btnAddPromoterConfirm.alpha = 0.2;
+            self.btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
             //btnCancelPromoterAdd
 //             [self enablePromoterView];
             
         }else if ([promoterStatus containsString:@"Submitted"] || [promoterStatus containsString:@"Rejected"]){
-            _backBtn.hidden = NO;
+            self.backBtn.hidden = NO;
             
             //85,160,248
-            _btnAddPromoterConfirm.backgroundColor=[UIColor colorWithRed:(85/255.0) green:(160/255.0) blue:(248/255.0) alpha:1.0];
-            [_btnAddPromoterConfirm setTitle:@"Approve" forState:UIControlStateNormal];
-            [_btnCancelPromoterAdd setTitle:@"Reject" forState:UIControlStateNormal];
+            self.btnAddPromoterConfirm.backgroundColor=[UIColor colorWithRed:(85/255.0) green:(160/255.0) blue:(248/255.0) alpha:1.0];
+            [self.btnAddPromoterConfirm setTitle:@"Approve" forState:UIControlStateNormal];
+            [self.btnCancelPromoterAdd setTitle:@"Reject" forState:UIControlStateNormal];
             
-            _btnAddPromoterConfirm.alpha = 1;
-            _btnAddPromoterConfirm.userInteractionEnabled = YES;
+            self.btnAddPromoterConfirm.alpha = 1;
+            self.btnAddPromoterConfirm.userInteractionEnabled = YES;
             //btnCancelPromoterAdd
         }
     }
 }
 
 -(void)enablePromoterView{
-    _txtFieldFNamePromoter.userInteractionEnabled = YES;
-    _txtFieldLNamePromoter.userInteractionEnabled = YES;
-    _txtFieldEmailPromoter.userInteractionEnabled = YES;
-    _txtFieldPhonePromoter.userInteractionEnabled = YES;
-    _txtFieldSEAsgnmntPromoter.userInteractionEnabled = YES;
-    _txtFieldStoreAsgnmntPromoter.userInteractionEnabled = YES;
-    _txtVwAddressPromoter.userInteractionEnabled = YES;
-    _segmentControl.userInteractionEnabled = YES;
-    _btnAddPromoterConfirm.userInteractionEnabled = YES;
-    _btnAdressProofPromoter.userInteractionEnabled = YES;
-    _btnAadharPromoter.userInteractionEnabled = YES;
-    _btnPhotoPromoter.userInteractionEnabled = YES;
-    _btnForStoreAssignmtPopup.userInteractionEnabled = YES;
+    self.txtFieldFNamePromoter.userInteractionEnabled = YES;
+    self.txtFieldLNamePromoter.userInteractionEnabled = YES;
+    self.txtFieldEmailPromoter.userInteractionEnabled = YES;
+    self.txtFieldPhonePromoter.userInteractionEnabled = YES;
+    self.txtFieldSEAsgnmntPromoter.userInteractionEnabled = YES;
+    self.txtFieldStoreAsgnmntPromoter.userInteractionEnabled = YES;
+    self.txtVwAddressPromoter.userInteractionEnabled = YES;
+    self.segmentControl.userInteractionEnabled = YES;
+    self.btnAddPromoterConfirm.userInteractionEnabled = YES;
+    self.btnAdressProofPromoter.userInteractionEnabled = YES;
+    self.btnAadharPromoter.userInteractionEnabled = YES;
+    self.btnPhotoPromoter.userInteractionEnabled = YES;
+    self.btnForStoreAssignmtPopup.userInteractionEnabled = YES;
     
-    [_btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
-    [_btnCancelPromoterAdd setTitle:@"Cancel" forState:UIControlStateNormal];
-    _btnAddPromoterConfirm.alpha = 0.8;
-    _btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
+    [self.btnAddPromoterConfirm setTitle:@"Edit" forState:UIControlStateNormal];
+    [self.btnCancelPromoterAdd setTitle:@"Cancel" forState:UIControlStateNormal];
+    self.btnAddPromoterConfirm.alpha = 0.8;
+    self.btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
 }
 -(void)addPromoterViewSetup{
-    [self textFieldEdit:_txtFieldFNamePromoter];
-    [self textFieldEdit:_txtFieldLNamePromoter];
-    [self textFieldEdit:_txtFieldEmailPromoter];
-    [self textFieldEdit:_txtFieldPhonePromoter];
-    [self textFieldEdit:_txtFieldSEAsgnmntPromoter];
-    [self textFieldEdit:_txtFieldStoreAsgnmntPromoter];
+    [self textFieldEdit:self.txtFieldFNamePromoter];
+    [self textFieldEdit:self.txtFieldLNamePromoter];
+    [self textFieldEdit:self.txtFieldEmailPromoter];
+    [self textFieldEdit:self.txtFieldPhonePromoter];
+    [self textFieldEdit:self.txtFieldSEAsgnmntPromoter];
+    [self textFieldEdit:self.txtFieldStoreAsgnmntPromoter];
     
-    _txtFieldEmailPromoter.keyboardType = UIKeyboardTypeEmailAddress;
+    self.txtFieldEmailPromoter.keyboardType = UIKeyboardTypeEmailAddress;
     
-    _txtVwAddressPromoter.text=@"Address";
-    _txtVwAddressPromoter.layer.cornerRadius = 5;
-    _txtVwAddressPromoter.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
-    _txtVwAddressPromoter.keyboardType=UIKeyboardTypeASCIICapable;
-    _txtVwAddressPromoter.delegate = self;
-    _txtVwAddressPromoter.autocorrectionType = UITextAutocorrectionTypeNo;
+    self.txtVwAddressPromoter.text=@"Address";
+    self.txtVwAddressPromoter.layer.cornerRadius = 5;
+    self.txtVwAddressPromoter.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
+    self.txtVwAddressPromoter.keyboardType=UIKeyboardTypeASCIICapable;
+    self.txtVwAddressPromoter.delegate = self;
+    self.txtVwAddressPromoter.autocorrectionType = UITextAutocorrectionTypeNo;
     
-    //    _btnPhotoPromoter.layer.cornerRadius = 5;
-    //    _btnPhotoPromoter.layer.masksToBounds = YES;
-    _btnPhotoPromoter.tag=100;
+    //    self.btnPhotoPromoter.layer.cornerRadius = 5;
+    //    self.btnPhotoPromoter.layer.masksToBounds = YES;
+    self.btnPhotoPromoter.tag=100;
     
-    //    _btnAadharPromoter.layer.cornerRadius = 5;
-    //    _btnAadharPromoter.layer.masksToBounds =YES;
-    _btnAadharPromoter.tag = 200;
+    //    self.btnAadharPromoter.layer.cornerRadius = 5;
+    //    self.btnAadharPromoter.layer.masksToBounds =YES;
+    self.btnAadharPromoter.tag = 200;
     
-    //    _btnAdressProofPromoter.layer.cornerRadius = 5;
-    //    _btnAdressProofPromoter.layer.masksToBounds =YES;
-    _btnAdressProofPromoter.tag=300;
+    //    self.btnAdressProofPromoter.layer.cornerRadius = 5;
+    //    self.btnAdressProofPromoter.layer.masksToBounds =YES;
+    self.btnAdressProofPromoter.tag=300;
     
-    [self addShadow:_btnAddPromoterConfirm];
-    [self addShadow:_btnCancelPromoterAdd];
+    [self addShadow:self.btnAddPromoterConfirm];
+    [self addShadow:self.btnCancelPromoterAdd];
     
-    [_btnAdressProofPromoter setTitle:@"" forState:UIControlStateNormal];
-    [_btnAdressProofPromoter setImage:[UIImage imageNamed:@"id-card72"] forState:UIControlStateNormal];
+    [self.btnAdressProofPromoter setTitle:@"" forState:UIControlStateNormal];
+    [self.btnAdressProofPromoter setImage:[UIImage imageNamed:@"id-card72"] forState:UIControlStateNormal];
     
-    [_btnPhotoPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
-    [_btnAadharPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
-    [_btnAdressProofPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnPhotoPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnAadharPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
+    [self.btnAdressProofPromoter addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 -(void)onClickCancelOfAddPromoter{
     
-    if ([_btnCancelPromoterAdd.titleLabel.text isEqualToString:@"Reject"]) {
+    if ([self.btnCancelPromoterAdd.titleLabel.text isEqualToString:@"Reject"]) {
         [self promoterApproveOrReject:NO];
     }else{
-        _vwForPromoterAdd.hidden = YES;
-        _backBtn.hidden = NO;
+        self.vwForPromoterAdd.hidden = YES;
+        self.backBtn.hidden = NO;
     }
 }
 
@@ -1367,9 +1367,9 @@
     
         if ((sender.tag == 1 || sender.tag == 0) && ![sender.titleLabel.text isEqualToString:@"Approve"]) {
             
-            if (_txtFieldFNamePromoter.text.length>0&&_txtFieldLNamePromoter.text.length>0&&_txtFieldEmailPromoter.text.length>0&&_txtVwAddressPromoter.text.length>0&&_txtFieldStoreAsgnmntPromoter.text.length>0&& (![[_txtVwAddressPromoter text] isEqualToString:@"Address"])) {
+            if (self.txtFieldFNamePromoter.text.length>0&&self.txtFieldLNamePromoter.text.length>0&&self.txtFieldEmailPromoter.text.length>0&&self.txtVwAddressPromoter.text.length>0&&self.txtFieldStoreAsgnmntPromoter.text.length>0&& (![[self.txtVwAddressPromoter text] isEqualToString:@"Address"])) {
                 
-                if ([self isValidEmail:_txtFieldEmailPromoter.text]) {
+                if ([self isValidEmail:self.txtFieldEmailPromoter.text]) {
                     
                     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
                     NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
@@ -1401,11 +1401,11 @@
                     
                     if (sender.tag == 1){
                         NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
-                                                @"firstName":_txtFieldFNamePromoter.text,
-                                                @"lastName":_txtFieldLNamePromoter.text,
-                                                @"phone":_txtFieldPhonePromoter.text,
-                                                @"address":_txtVwAddressPromoter.text,
-                                                @"emailId":_txtFieldEmailPromoter.text,
+                                                @"firstName":self.txtFieldFNamePromoter.text,
+                                                @"lastName":self.txtFieldLNamePromoter.text,
+                                                @"phone":self.txtFieldPhonePromoter.text,
+                                                @"address":self.txtVwAddressPromoter.text,
+                                                @"emailId":self.txtFieldEmailPromoter.text,
                                                 @"productStoreId":storeIDForPromoterAdd,
                                                 @"statusId":@"ReqSubmitted",
                                                 @"requestTypeEnumId":@"RqtAddPromoter",
@@ -1422,11 +1422,11 @@
                         
                         NSString *rqstID=[[arrayForPromoters objectAtIndex:indexValueOfPromoterEdit] objectForKey:@"requestId"];
                         NSDictionary * json = @{@"requestType":@"RqtAddPromoter",
-                                                @"firstName":_txtFieldFNamePromoter.text,
-                                                @"lastName":_txtFieldLNamePromoter.text,
-                                                @"phone":_txtFieldPhonePromoter.text,
-                                                @"address":_txtVwAddressPromoter.text,
-                                                @"emailId":_txtFieldEmailPromoter.text,
+                                                @"firstName":self.txtFieldFNamePromoter.text,
+                                                @"lastName":self.txtFieldLNamePromoter.text,
+                                                @"phone":self.txtFieldPhonePromoter.text,
+                                                @"address":self.txtVwAddressPromoter.text,
+                                                @"emailId":self.txtFieldEmailPromoter.text,
                                                 @"productStoreId":storeIDForPromoterAdd,
                                                 @"statusId":@"ReqSubmitted",
                                                 @"requestTypeEnumId":@"RqtAddPromoter",
@@ -1458,9 +1458,8 @@
                         [DejalBezelActivityView removeView];
                         NSLog(@"Add Store Successfully==%@",JSON);
                         
-                        
-                        _vwForPromoterAdd.hidden = YES;
-                        _backBtn.hidden = NO;
+                        self.vwForPromoterAdd.hidden = YES;
+                        self.backBtn.hidden = NO;
                         
                         if (sender.tag == 1){
                             if ([JSON objectForKey:@"request"]) {
@@ -1483,7 +1482,7 @@
                 }else{
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert show];
-                    _txtFieldEmailPromoter.text=@"";
+                    self.txtFieldEmailPromoter.text=@"";
                 }
                 
             }else{
@@ -1511,9 +1510,9 @@
             NSLog(@"Request ID===%@",requestID);
         }
         
-        if (_txtFieldFNamePromoter.text.length>0&&_txtFieldLNamePromoter.text.length>0&&_txtFieldEmailPromoter.text.length>0&&_txtVwAddressPromoter.text.length>0&&_txtFieldStoreAsgnmntPromoter.text.length>0&& (![[_txtVwAddressPromoter text] isEqualToString:@"Address"])) {
+        if (self.txtFieldFNamePromoter.text.length>0&&self.txtFieldLNamePromoter.text.length>0&&self.txtFieldEmailPromoter.text.length>0&&self.txtVwAddressPromoter.text.length>0&&self.txtFieldStoreAsgnmntPromoter.text.length>0&& (![[self.txtVwAddressPromoter text] isEqualToString:@"Address"])) {
             
-            if ([self isValidEmail:_txtFieldEmailPromoter.text]) {
+            if ([self isValidEmail:self.txtFieldEmailPromoter.text]) {
                 
                 NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
                 NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
@@ -1567,8 +1566,8 @@
                                                    delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
                     }
                     
-                    _vwForPromoterAdd.hidden = YES;
-                    _backBtn.hidden = NO;
+                    self.vwForPromoterAdd.hidden = YES;
+                    self.backBtn.hidden = NO;
                     
                 }
                  //==================================================ERROR
@@ -1596,7 +1595,7 @@
             }else{
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Valid Email Id" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
-                _txtFieldEmailPromoter.text=@"";
+                self.txtFieldEmailPromoter.text=@"";
             }
             
         }else{
@@ -1693,12 +1692,12 @@
     stillImageOutput = newStillImageOutput;
     videoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
     [videoPreviewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    [videoPreviewLayer setFrame:_previewCamera.layer.bounds];
-    [_previewCamera.layer addSublayer:videoPreviewLayer];
+    [videoPreviewLayer setFrame:self.previewCamera.layer.bounds];
+    [self.previewCamera.layer addSublayer:videoPreviewLayer];
     [captureSession startRunning];
     self.tabBarController.tabBar.hidden =YES;
-    _vwForCamera.hidden = NO;
-    _backBtn.hidden = NO;
+    self.vwForCamera.hidden = NO;
+    self.backBtn.hidden = NO;
 }
 
 - (AVCaptureDevice *)frontFacingCamera
@@ -1744,8 +1743,8 @@
         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
         UIImage *image = [[UIImage alloc] initWithData:imageData];
         imgToSend=image;
-        _vwForCamera.hidden = YES;
-        _backBtn.hidden = YES;
+        self.vwForCamera.hidden = YES;
+        self.backBtn.hidden = YES;
         [self postImageDataToServer];
     }];
     
@@ -1839,17 +1838,17 @@
                                               //userPhoto aadharId addressProof
                                               if ([stringForImagePurpose isEqualToString:@"userPhoto"]) {
                                                   strUserPhotoPath=[jsonData valueForKey:@"savedFilename"];
-                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:_btnPhotoPromoter alignment:JSBadgeViewAlignmentTopRight];
+                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:self.btnPhotoPromoter alignment:JSBadgeViewAlignmentTopRight];
                                                   badgeView.badgeText = [NSString stringWithFormat:@" "];
                                                   
                                               }else if ([stringForImagePurpose isEqualToString:@"aadharId"]){
                                                   strAadharIDPath=[jsonData valueForKey:@"savedFilename"];
-                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:_btnAadharPromoter alignment:JSBadgeViewAlignmentTopRight];
+                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:self.btnAadharPromoter alignment:JSBadgeViewAlignmentTopRight];
                                                   badgeView.badgeText = [NSString stringWithFormat:@" "];
                                                   
                                               }else if ([stringForImagePurpose isEqualToString:@"addressProof"]){
                                                   strAddressProofPath=[jsonData valueForKey:@"savedFilename"];
-                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:_btnAdressProofPromoter alignment:JSBadgeViewAlignmentTopRight];
+                                                  JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:self.btnAdressProofPromoter alignment:JSBadgeViewAlignmentTopRight];
                                                   badgeView.badgeText = [NSString stringWithFormat:@" "];
                                               }
                                           }
@@ -1864,7 +1863,6 @@
 {
     
     if ([APPDELEGATE connected]) {
-        
         
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
         NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
@@ -1903,7 +1901,7 @@
                     //                }
                 }
             }
-            [_tableVwForLeaveApproval reloadData];
+            [self.tableVwForLeaveApproval reloadData];
             NSLog(@"Leave List==%@",arrayForLeaveApprovalList);
         }
          //==================================================ERROR
@@ -1933,40 +1931,57 @@
     }
 }
 
-
 #pragma mark - Leave Rqst
 
 -(void)enableLeaveRequestFields{
-    _heightOfScrollVwForLeaveRqst.constant = 330;
-    _btnLeaveStartDate.userInteractionEnabled = YES;
-    _btnLeaveEndDate.userInteractionEnabled = YES;
-    _btnLeaveType.userInteractionEnabled = YES;
-    _btnLeaveReason.userInteractionEnabled = YES;
-    _txtFieldLeaveDescription.userInteractionEnabled = YES;
-    _txtFieldLeaveComments.userInteractionEnabled = NO;
-    _txtFieldLeaveComments.hidden=YES;
-    _bottomImgForLeaveComments.hidden = YES;
+    self.heightOfScrollVwForLeaveRqst.constant = 330;
+    self.btnLeaveStartDate.userInteractionEnabled = YES;
+    self.btnLeaveEndDate.userInteractionEnabled = YES;
+    self.btnLeaveType.userInteractionEnabled = YES;
+    self.btnLeaveReason.userInteractionEnabled = YES;
+    self.txtFieldLeaveDescription.userInteractionEnabled = YES;
+    self.txtFieldLeaveComments.userInteractionEnabled = NO;
+    self.txtFieldLeaveComments.hidden=YES;
+    self.bottomImgForLeaveComments.hidden = YES;
 }
 
 -(void)disableLeaveRequestFields{
-    _heightOfScrollVwForLeaveRqst.constant = 380;
-    _btnLeaveStartDate.userInteractionEnabled = NO;
-    _btnLeaveEndDate.userInteractionEnabled = NO;
-    _btnLeaveType.userInteractionEnabled = NO;
-    _btnLeaveReason.userInteractionEnabled = NO;
-    _txtFieldLeaveDescription.userInteractionEnabled = NO;
-     _txtFieldLeaveComments.userInteractionEnabled = YES;
-    _txtFieldLeaveComments.hidden=NO;
-    _bottomImgForLeaveComments.hidden = NO;
+    self.heightOfScrollVwForLeaveRqst.constant = 380;
+    self.btnLeaveStartDate.userInteractionEnabled = NO;
+    self.btnLeaveEndDate.userInteractionEnabled = NO;
+    self.btnLeaveType.userInteractionEnabled = NO;
+    self.btnLeaveReason.userInteractionEnabled = NO;
+    self.txtFieldLeaveDescription.userInteractionEnabled = NO;
+     self.txtFieldLeaveComments.userInteractionEnabled = YES;
+    self.txtFieldLeaveComments.hidden=NO;
+    self.bottomImgForLeaveComments.hidden = NO;
 }
 
 -(void)leaveRequestEdit:(NSInteger)indexValue{
     
+    
+    
+    
     NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"fromDate"] substringToIndex:10];
-    _txtFieldStartDate.text=[NSString stringWithFormat:@"%@",startDate];
+    
     
     NSString *endDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"thruDate"] substringToIndex:10];
-    _txtFieldEndDate.text=[NSString stringWithFormat:@"%@",endDate];
+    
+    
+    if (![[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"fromDate"] isKindOfClass:[NSNull class]]) {
+        startDate=[self convertLeaveDate:[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"fromDate"]];
+    }
+    
+    if (![[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"thruDate"] isKindOfClass:[NSNull class]]) {
+        endDate=[self convertLeaveDate:[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"thruDate"]];
+    }
+    
+    startDate=[startDate substringToIndex:10];
+    endDate=[endDate substringToIndex:10];
+    
+    self.txtFieldStartDate.text=[NSString stringWithFormat:@"%@",startDate];
+    self.txtFieldEndDate.text=[NSString stringWithFormat:@"%@",endDate];
+    
     
     NSDateFormatter *f = [[NSDateFormatter alloc] init];
     [f setDateFormat:@"yyyy-MM-dd"];
@@ -1979,9 +1994,9 @@
                                                           toDate:end
                                                          options:0];
     if ([components day] >= 0){
-        _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
+        self.lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
     }
-    _txtFieldLeaveDescription.text=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"description"];
+    self.txtFieldLeaveDescription.text=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"description"];
 }
 
 
@@ -2018,7 +2033,7 @@
         NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
         for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
             if ([strLeaveType isEqualToString:[dict valueForKey:@"enumId"]]) {
-                _txtFieldLeaveType.text=[dict valueForKey:@"description"];
+                self.txtFieldLeaveType.text=[dict valueForKey:@"description"];
                 leaveTypeEnumID=[dict valueForKey:@"enumId"];
             }
         }
@@ -2026,7 +2041,7 @@
         
         for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveReasonEnumId"]) {
             if ([strLeaveReason isEqualToString:[dict valueForKey:@"enumId"]]) {
-                _txtFieldLeaveReason.text=[dict valueForKey:@"description"];
+                self.txtFieldLeaveReason.text=[dict valueForKey:@"description"];
                 leaveReasonEnumID=[dict valueForKey:@"enumId"];
             }
         }
@@ -2100,7 +2115,7 @@
                     }
                 }
             }
-            [_tableVwForLeaveRqst reloadData];
+            [self.tableVwForLeaveRqst reloadData];
             NSLog(@"Leave List==%@",arrayForLeaveHistory);
         }
          //==================================================ERROR
@@ -2129,7 +2144,9 @@
         [alert show];
     }
 }
-
+-(void)onClickToday{
+    [datePicker scrollToToday:YES];
+}
 
 -(void)leaveRequestSubmit:(UIButton*)sender{
     //{"leaveTypeEnumId":"EltEarned","leaveReasonEnumId":"ElrMedical","description":"Hau hona","fromDate":"2017-01-20","thruDate":"2017-01-25","organizationId":"ORG_OPPO"}
@@ -2137,48 +2154,69 @@
     
     if (![sender.titleLabel.text isEqualToString:@"Approve"]) {
         
-        if (_txtFieldStartDate.text.length>0 && _txtFieldEndDate.text.length>0&&_txtFieldLeaveReason.text.length>0 && _txtFieldLeaveType.text.length>0 && _txtFieldLeaveDescription.text.length>0) {
+        if (self.txtFieldStartDate.text.length>0 && self.txtFieldEndDate.text.length>0&&self.txtFieldLeaveReason.text.length>0 && self.txtFieldLeaveType.text.length>0 && self.txtFieldLeaveDescription.text.length>0) {
             
             NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
             NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
             NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
             
             AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-            httpClient.parameterEncoding = AFFormURLParameterEncoding;
+            httpClient.parameterEncoding = AFJSONParameterEncoding;
             [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
             [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
             
             NSDictionary * json;
             NSMutableURLRequest *request;
             
+            
+            NSDate *now = [NSDate date];
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
+            [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+            NSTimeZone *timeZone = [NSTimeZone localTimeZone];
+            NSString *tzName = [timeZone name];
+            
+            NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+            NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+            strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+            
+            
+            NSLog(@"%@",[strCurrentTime substringFromIndex:10]);
+            
+ NSString *strStartDate=[NSString stringWithFormat:@"%@%@",self.txtFieldStartDate.text,[strCurrentTime substringFromIndex:10]];
+ NSString *strEndDate=[NSString stringWithFormat:@"%@%@",self.txtFieldEndDate.text,[strCurrentTime substringFromIndex:10]];
+            
+            
             if (isLeaveEditRNew) {
-                
                 json = @{@"leaveTypeEnumId":leaveTypeEnumID,
                          @"leaveReasonEnumId":leaveReasonEnumID,
-                         @"description":_txtFieldLeaveDescription.text,
-                         @"fromDate":_txtFieldStartDate.text,
-                         @"thruDate":_txtFieldEndDate.text,
+                         @"description":self.txtFieldLeaveDescription.text,
+                         @"fromDate":strStartDate,
+                         @"thruDate":strEndDate,
                          @"organizationId":@"ORG_OPPO",
                          };
                 
                 request = [httpClient requestWithMethod:@"POST"
                                                    path:@"/rest/s1/ft/leaves"
                                              parameters:json];
+                
+                NSLog(@"Json URL---POST===%@",json);
             }else if (!isLeaveEditRNew){
                 
                 NSString *partyRelationshipId=[[arrayForLeaveHistory objectAtIndex:indexValueForLeaveEdit] valueForKey:@"partyRelationshipId"];
                 
                 json = @{@"leaveTypeEnumId":leaveTypeEnumID,
                          @"leaveReasonEnumId":leaveReasonEnumID,
-                         @"description":_txtFieldLeaveDescription.text,
-                         @"fromDate":_txtFieldStartDate.text,
-                         @"thruDate":_txtFieldEndDate.text,
+                         @"description":self.txtFieldLeaveDescription.text,
+                         @"fromDate":strStartDate,
+                         @"thruDate":strEndDate,
                          @"partyRelationshipId":partyRelationshipId,
                          };
                 
                 request = [httpClient requestWithMethod:@"PUT"
                                                    path:@"/rest/s1/ft/leaves"
                                              parameters:json];
+                NSLog(@"Json URL---PUT===%@",json);
             }
             
             //====================================================RESPONSE
@@ -2191,10 +2229,10 @@
                 NSError *error = nil;
                 NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
                 [DejalBezelActivityView removeView];
-                NSLog(@"Add Store Successfully==%@",JSON);
+                NSLog(@"Leave Request==%@ %ld",JSON,(long)[[operation response] statusCode]);
                 
-                _backBtn.hidden = NO;
-                _vwForLeaveRqstAdd.hidden = YES;
+                self.backBtn.hidden = NO;
+                self.vwForLeaveRqstAdd.hidden = YES;
                 if ([JSON objectForKey:@"employeeLeave"] && isLeaveEditRNew) {
                     
                     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave requested successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -2207,9 +2245,11 @@
              //==================================================ERROR
                                              failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                  [DejalBezelActivityView removeView];
-                                                 //                                         NSLog(@"Error %@",[error description]);
+                                                                                          NSLog(@"Error %@",[error description]);
                                                  NSString *JSON = [[error userInfo] valueForKey:NSLocalizedRecoverySuggestionErrorKey] ;
                                                  
+                                                 if (JSON.length>0) {
+                                    
                                                  NSError *aerror = nil;
                                                  NSDictionary *json = [NSJSONSerialization JSONObjectWithData: [JSON dataUsingEncoding:NSUTF8StringEncoding]
                                                                                                       options: NSJSONReadingMutableContainers
@@ -2225,6 +2265,7 @@
                                                  if (isLeaveEditRNew) {
                                                      
                                                  }
+                                                 }
                                                  //You have already applied a leave
                                              }];
             [operation start];
@@ -2238,28 +2279,28 @@
 -(void)onClickLeaveRqst:(UIButton*)btn{
     //        NSLog(@"On Click Leave Request");
     [self enableLeaveRequestFields];
-    [_btnLeaveRqstSubmit setTitle:@"Submit" forState:UIControlStateNormal];
-    [_btnLeaveRqstCancel setTitle:@"Cancel" forState:UIControlStateNormal];
-    _backBtn.hidden = YES;
-    _vwForLeaveRqstAdd.hidden = NO;
+    [self.btnLeaveRqstSubmit setTitle:@"Submit" forState:UIControlStateNormal];
+    [self.btnLeaveRqstCancel setTitle:@"Cancel" forState:UIControlStateNormal];
+    self.backBtn.hidden = YES;
+    self.vwForLeaveRqstAdd.hidden = NO;
     
     isLeaveEditRNew=YES;
     [self emptyLeaveRequestFields];
 }
 
 -(void)emptyLeaveRequestFields{
-    _lblForNoOfDays.text = 0;
-    _txtFieldStartDate.text=@"";
-    _txtFieldEndDate.text=@"";
-    _txtFieldLeaveType.text=@"";
-    _txtFieldLeaveReason.text=@"";
-    _txtFieldLeaveDescription.text=@"";
+    self.lblForNoOfDays.text = 0;
+    self.txtFieldStartDate.text=@"";
+    self.txtFieldEndDate.text=@"";
+    self.txtFieldLeaveType.text=@"";
+    self.txtFieldLeaveReason.text=@"";
+    self.txtFieldLeaveDescription.text=@"";
 }
 -(void)leaveRqstCancel:(UIButton*)sender{
     
     if (![sender.titleLabel.text isEqualToString:@"Reject"]) {
-        _backBtn.hidden = NO;
-        _vwForLeaveRqstAdd.hidden = YES;
+        self.backBtn.hidden = NO;
+        self.vwForLeaveRqstAdd.hidden = YES;
     }
 }
 
@@ -2269,17 +2310,17 @@
 
 - (IBAction)onClickLeaveStartDate:(UIButton *)sender{
     
-    _lblForDateStartEnd.text=@"Pick a Start Date";
-    _backBtn.hidden = NO;
+    self.lblForDateStartEnd.text=@"Pick a Start Date";
+    self.backBtn.hidden = NO;
     isStartOrEndDate = YES;
-    _vwForCalendar.hidden = NO;
+    self.vwForCalendar.hidden = NO;
 }
 
 - (IBAction)onClickLeaveEndDate:(UIButton *)sender{
-    _lblForDateStartEnd.text=@"Pick an End Date";
-    _backBtn.hidden = NO;
+    self.lblForDateStartEnd.text=@"Pick an End Date";
+    self.backBtn.hidden = NO;
     isStartOrEndDate = NO;
-    _vwForCalendar.hidden = NO;
+    self.vwForCalendar.hidden = NO;
 }
 
 - (void)hasDatePickerPickedDate:(NSDate *)date{
@@ -2292,15 +2333,15 @@
     self.tabBarController.tabBar.hidden =NO;
     
     if (isStartOrEndDate) {
-        _txtFieldStartDate.text=dateTime;
+        self.txtFieldStartDate.text=dateTime;
     }
     else{
-        _txtFieldEndDate.text = dateTime;
+        self.txtFieldEndDate.text = dateTime;
     }
     
-    if (_txtFieldStartDate.text.length > 0 && _txtFieldEndDate.text.length > 0){
-        NSString *start = _txtFieldStartDate.text;
-        NSString *end = _txtFieldEndDate.text;
+    if (self.txtFieldStartDate.text.length > 0 && self.txtFieldEndDate.text.length > 0){
+        NSString *start = self.txtFieldStartDate.text;
+        NSString *end = self.txtFieldEndDate.text;
         
         NSDateFormatter *f = [[NSDateFormatter alloc] init];
         [f setDateFormat:@"yyyy-MM-dd"];
@@ -2313,14 +2354,14 @@
                                                               toDate:endDate
                                                              options:0];
         // NSLog(@"Number Of Days===%i",[components day]);
-        _lblForNoOfDays.textAlignment =NSTextAlignmentCenter;
+        self.lblForNoOfDays.textAlignment =NSTextAlignmentCenter;
         if ([components day] >= 0){
-            _lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
+            self.lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
         }
     }
     
-    _vwForCalendar.hidden = YES;
-    _backBtn.hidden = YES;
+    self.vwForCalendar.hidden = YES;
+    self.backBtn.hidden = YES;
 }
 
 #pragma mark - Custom Calendar
@@ -2339,7 +2380,6 @@
     NSCalendar *theCalendar = [NSCalendar currentCalendar];
     NSDate *nextDate = [theCalendar dateByAddingComponents:dayComponent toDate:date options:0];
     NSString *selectedDate=[nextDate description];
-    //
     //    NSLog(@"%@", [selectedDate substringToIndex:10]);
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyy-MM-dd"];
@@ -2400,17 +2440,37 @@
     }
 }
 
+#pragma mark - Leave Dates Converted
+-(NSString*)convertLeaveDate:(NSString*)dateChange{
+    
+    
+    dateChange=[dateChange stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+    dateChange=[dateChange stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+    [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
+    NSDate *daate=[dateFormatter dateFromString:dateChange];
+    
+    NSTimeZone *tz = [NSTimeZone localTimeZone];
+    NSInteger seconds = [tz secondsFromGMTForDate:daate];
+    daate = [NSDate dateWithTimeInterval: seconds sinceDate: daate];
+    dateChange=[NSString stringWithFormat:@"%@",daate];
+    
+    return dateChange;
+}
+
+
 #pragma mark- UITableView
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
-    if (tableView==_tableVwForStore) {
+    if (tableView==self.tableVwForStore) {
         return arrayForStoreList.count;
-    }else if (tableView == _tableVwForPromoters){
+    }else if (tableView == self.tableVwForPromoters){
         return arrayForPromoters.count;
-    }else if (tableView == _tableVwForLeaveRqst){
+    }else if (tableView == self.tableVwForLeaveRqst){
         return arrayForLeaveHistory.count;
-    }else if (tableView == _tableVwForLeaveApproval){
+    }else if (tableView == self.tableVwForLeaveApproval){
         return arrayForLeaveApprovalList.count;
     }
     return arrayForTableData.count;
@@ -2420,7 +2480,7 @@
     
     UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
     
-    //    if (tableView == _tableVwForLeaveApproval){
+    //    if (tableView == self.tableVwForLeaveApproval){
     //
     //        MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
     //        if (cellLeave == nil) {
@@ -2430,7 +2490,7 @@
     //        return cell;
     //    }
     
-    if (tableView == _tableVwForLeaveRqst || tableView == _tableVwForLeaveApproval){
+    if (tableView == self.tableVwForLeaveRqst || tableView == self.tableVwForLeaveApproval){
         
         MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cellLeave == nil) {
@@ -2442,10 +2502,34 @@
         NSString *endDate;
         NSString *strLeaveApprove;
         
-        if (tableView == _tableVwForLeaveApproval){
+        if (tableView == self.tableVwForLeaveApproval){
             
-            startDate=[[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
-            endDate=[[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
+            
+//            NSString *strDateChange=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"];
+//            strDateChange=[strDateChange stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+//                        strDateChange=[strDateChange stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
+//            
+//            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//            dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+//            NSDate *daate=[dateFormatter dateFromString:strDateChange];
+//            
+//            NSLog(@"%@",daate);
+//            
+//            
+//            startDate=[[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
+//            endDate=[[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
+            
+            if (![[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"] isKindOfClass:[NSNull class]]) {
+                startDate=[self convertLeaveDate:[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"]];
+            }
+            
+            if (![[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"thruDate"] isKindOfClass:[NSNull class]]) {
+                endDate=[self convertLeaveDate:[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"thruDate"]];
+            }
+            
+            startDate=[startDate substringToIndex:10];
+            endDate=[endDate substringToIndex:10];
+            
             cellLeave.lblForTypeOfLeave.text=@"";
             strLeaveApprove=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
          
@@ -2462,8 +2546,19 @@
             cellLeave.lblForName.text=[NSString stringWithFormat:@"%@ %@",strFirstName,strLastName];
             
         }else{
-            startDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
-            endDate=[[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
+            
+            
+            if (![[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"] isKindOfClass:[NSNull class]]) {
+                startDate=[self convertLeaveDate:[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"]];
+            }
+            
+            if (![[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"thruDate"] isKindOfClass:[NSNull class]]) {
+                endDate=[self convertLeaveDate:[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"thruDate"]];
+            }
+            
+            startDate=[startDate substringToIndex:10];
+            endDate=[endDate substringToIndex:10];
+            
             cellLeave.lblForTypeOfLeave.text=[NSString stringWithFormat:@"%@",[[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] substringFromIndex:3]];
             strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
         }
@@ -2508,7 +2603,7 @@
         return cellLeave;
     }
     
-    if (tableView == _tableVwForStore){
+    if (tableView == self.tableVwForStore){
         //Store List
         if (cell == nil){
             cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -2516,7 +2611,7 @@
         cell.textLabel.text=[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"storeName"];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
-    else if (tableView == _tableVwForPromoters){
+    else if (tableView == self.tableVwForPromoters){
         // Prpomoter List
         
         MKAgentListCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
@@ -2557,7 +2652,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
-    else if (tableView == _tableVw){
+    else if (tableView == self.tableVw){
         
         if (cell == nil){
             cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
@@ -2571,29 +2666,36 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    if (tableView == _tableVw){
+    if (tableView == self.tableVw){
         //arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Leave Requisitions",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
         
         UITableViewCell *cell=[tableView cellForRowAtIndexPath:indexPath];
         
         if ([cell.textLabel.text isEqualToString:@"Log Off"]){
+
+//            [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
+//            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+//            [defaults removeObjectForKey:@"UserData"];
+//            [defaults removeObjectForKey:@"StoreData"];
+//            [defaults setObject:@"0" forKey:@"Is_Login"];
+//            [defaults synchronize];
+//            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//            UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
+//            [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
             
-            [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
-            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-            [defaults removeObjectForKey:@"UserData"];
-            [defaults removeObjectForKey:@"StoreData"];
-            [defaults setObject:@"0" forKey:@"Is_Login"];
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            UITabBarController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
-            [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
+            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Are You Sure Want To Log Off ?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+            alert.tag = 1001;
+            [alert show];
+            
+            return;
             
         }else if ([cell.textLabel.text isEqualToString:@"Stores"]){
             [self getStores];
-            _vwForStore.hidden =NO;
-            _backBtn.hidden = NO;
-            _tableVwForStore.delegate = self;
-            _tableVwForStore.dataSource = self;
-            [_tableVwForStore reloadData];
+            self.vwForStore.hidden =NO;
+            self.backBtn.hidden = NO;
+            self.tableVwForStore.delegate = self;
+            self.tableVwForStore.dataSource = self;
+            [self.tableVwForStore reloadData];
             
         }else if ([cell.textLabel.text isEqualToString:@"Promoters"]){
             
@@ -2601,68 +2703,67 @@
             arrayForPromoters=[[NSMutableArray alloc] init];
             pageNumber = 0;
             [self getPromoters];
-            _vwForPromoters.hidden =NO;
-            _backBtn.hidden = NO;
-            _tableVwForPromoters.delegate = self;
-            _tableVwForPromoters.dataSource = self;
-            [_tableVwForPromoters reloadData];
+            self.vwForPromoters.hidden =NO;
+            self.backBtn.hidden = NO;
+            self.tableVwForPromoters.delegate = self;
+            self.tableVwForPromoters.dataSource = self;
+            [self.tableVwForPromoters reloadData];
            
-            
         }else if ([cell.textLabel.text isEqualToString:@"Promoters Approval"]){
             
              isPromoterOrPromoterApprove=NO;
             arrayForPromoters=[[NSMutableArray alloc] init];
             pageNumber = 0;
             [self getPromotersApproval];
-            _vwForPromoters.hidden =NO;
-            _backBtn.hidden = NO;
-            _tableVwForPromoters.delegate = self;
-            _tableVwForPromoters.dataSource = self;
-            [_tableVwForPromoters reloadData];
+            self.vwForPromoters.hidden =NO;
+            self.backBtn.hidden = NO;
+            self.tableVwForPromoters.delegate = self;
+            self.tableVwForPromoters.dataSource = self;
+            [self.tableVwForPromoters reloadData];
         }
         else if ([cell.textLabel.text isEqualToString:@"Leaves"]){
             
             arrayForLeaveHistory=[[NSMutableArray alloc] init];
             pageNumberForLeave = 0;
             [self getMyLeaveHistory];
-            _vwForLeaveRqst.hidden =NO;
-            _backBtn.hidden = NO;
-            _tableVwForLeaveRqst.delegate = self;
-            _tableVwForLeaveRqst.dataSource = self;
-            [_tableVwForLeaveRqst reloadData];
+            self.vwForLeaveRqst.hidden =NO;
+            self.backBtn.hidden = NO;
+            self.tableVwForLeaveRqst.delegate = self;
+            self.tableVwForLeaveRqst.dataSource = self;
+            [self.tableVwForLeaveRqst reloadData];
             [self enableLeaveRequestFields];
             
-            [_btnLeaveRqstSubmit setTitle:@"Submit" forState:UIControlStateNormal];
-            [_btnLeaveRqstCancel setTitle:@"Cancel" forState:UIControlStateNormal];
+            [self.btnLeaveRqstSubmit setTitle:@"Submit" forState:UIControlStateNormal];
+            [self.btnLeaveRqstCancel setTitle:@"Cancel" forState:UIControlStateNormal];
             
         }else if ([cell.textLabel.text isEqualToString:@"My Account"]){
-            _vwForAccount.hidden =NO;
-            _backBtn.hidden = NO;
+            self.vwForAccount.hidden =NO;
+            self.backBtn.hidden = NO;
         }else if ([cell.textLabel.text isEqualToString:@"Change Password"]){
-            _vwForChangePwd.hidden =NO;
-            _backBtn.hidden = NO;
+            self.vwForChangePwd.hidden =NO;
+            self.backBtn.hidden = NO;
         }else if ([cell.textLabel.text isEqualToString:@"Contact Support"]){
-            _vwForContact.hidden =NO;
-            _backBtn.hidden = NO;
+            self.vwForContact.hidden =NO;
+            self.backBtn.hidden = NO;
         }else if ([cell.textLabel.text isEqualToString:@"Leave Requisitions"]){
             
             [self getLeaveListForApproval];
             
-            _vwForLeaveRequestForApproval.hidden = NO;
-            _tableVwForLeaveApproval.delegate = self;
-            _tableVwForLeaveApproval.dataSource = self;
-            [_tableVwForLeaveApproval reloadData];
-            _backBtn.hidden = NO;
+            self.vwForLeaveRequestForApproval.hidden = NO;
+            self.tableVwForLeaveApproval.delegate = self;
+            self.tableVwForLeaveApproval.dataSource = self;
+            [self.tableVwForLeaveApproval reloadData];
+            self.backBtn.hidden = NO;
             
         }
-    }else if (tableView == _tableVwForStore){
+    }else if (tableView == self.tableVwForStore){
         [[MKSharedClass shareManager] setValueForStoreEditVC:0];
         [self goToStorePopup:indexPath.row];
     }
-    else if (tableView == _tableVwForPromoters){
+    else if (tableView == self.tableVwForPromoters){
         indexValueOfPromoterEdit=indexPath.row;
         [self promoterDetails:NO];
-    }else if (tableView == _tableVwForLeaveRqst){
+    }else if (tableView == self.tableVwForLeaveRqst){
         
         NSString *strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
         
@@ -2671,33 +2772,52 @@
             [self emptyLeaveRequestFields];
             [self getLeaveType:indexPath.row];
             indexValueForLeaveEdit=indexPath.row;
-            _backBtn.hidden = YES;
-            _vwForLeaveRqstAdd.hidden = NO;
+            self.backBtn.hidden = YES;
+            self.vwForLeaveRqstAdd.hidden = NO;
             isLeaveEditRNew=NO;
             [self leaveRequestEdit:indexPath.row];
             
         }
-    }else if (tableView == _tableVwForLeaveApproval){
-        _txtFieldLeaveComments.text=@"";
+    }else if (tableView == self.tableVwForLeaveApproval){
+        self.txtFieldLeaveComments.text=@"";
         arrayForLeaveHistory=arrayForLeaveApprovalList;
         [self emptyLeaveRequestFields];
         [self getLeaveType:indexPath.row];
-        _backBtn.hidden = NO;
-        _vwForLeaveRqstAdd.hidden = NO;
-        [_btnLeaveRqstSubmit setTitle:@"Approve" forState:UIControlStateNormal];
-        [_btnLeaveRqstCancel setTitle:@"Reject" forState:UIControlStateNormal];
+        self.backBtn.hidden = NO;
+        self.vwForLeaveRqstAdd.hidden = NO;
+        [self.btnLeaveRqstSubmit setTitle:@"Approve" forState:UIControlStateNormal];
+        [self.btnLeaveRqstCancel setTitle:@"Reject" forState:UIControlStateNormal];
         [self leaveRequestEdit:indexPath.row];
         [self disableLeaveRequestFields];
     }
 }
 
-
 -(void)goToStorePopup:(NSInteger)indexValue{
     [self setUpForAddStore:indexValue];
-    _vwForStoreAdd.hidden = NO;
+    self.vwForStoreAdd.hidden = NO;
 }
 
 #pragma mark -
+
+-(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    
+    if (alertView.tag == 1001) {
+    
+        if (buttonIndex == 0) {
+        }else if (buttonIndex == 1){
+            
+            [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
+            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            [defaults removeObjectForKey:@"UserData"];
+            [defaults removeObjectForKey:@"StoreData"];
+            [defaults setObject:@"0" forKey:@"Is_Login"];
+//            [defaults synchronize];
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
+            [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
+        }
+    }
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -2716,67 +2836,61 @@
 #pragma mark - Back Button
 - (IBAction)onClickBackBtn:(UIButton *)sender{
     
-    _backBtn.hidden = YES;
+    self.backBtn.hidden = YES;
     
-    if (![_vwForStore isHidden]){
-        _vwForStore.hidden= YES;
+    if (![self.vwForStore isHidden]){
+        self.vwForStore.hidden= YES;
     }
-    else if (![_vwForPromoters isHidden]){
-        if (![_vwForCamera isHidden]){
-            //            _backBtn.hidden = NO;
+    else if (![self.vwForPromoters isHidden]){
+        if (![self.vwForCamera isHidden]){
+            //            self.backBtn.hidden = NO;
             self.tabBarController.tabBar.hidden =NO;
-            _vwForCamera.hidden = YES;
-        }else if (![_vwForPromoterAdd isHidden]){
-            _vwForPromoterAdd.hidden = YES;
-            _backBtn.hidden = NO;
+            self.vwForCamera.hidden = YES;
+        }else if (![self.vwForPromoterAdd isHidden]){
+            self.vwForPromoterAdd.hidden = YES;
+            self.backBtn.hidden = NO;
         }else{
-            _vwForPromoters.hidden= YES;
+            self.vwForPromoters.hidden= YES;
         }
     }
-    else if (![_vwForLeaveRqst isHidden]){
-        if (![_vwForCalendar isHidden]) {
+    else if (![self.vwForLeaveRqst isHidden]){
+        if (![self.vwForCalendar isHidden]) {
             
-            _vwForCalendar.hidden = YES;
+            self.vwForCalendar.hidden = YES;
             
         }else{
             
-            _vwForLeaveRqst.hidden =YES;
+            self.vwForLeaveRqst.hidden =YES;
         }
-    }else if (![_vwForCamera isHidden]){
+    }else if (![self.vwForCamera isHidden]){
         
-        _vwForCamera.hidden = YES;
+        self.vwForCamera.hidden = YES;
         
-    }else if (![_vwForAccount isHidden]){
+    }else if (![self.vwForAccount isHidden]){
         
-        _vwForAccount.hidden=YES;
+        self.vwForAccount.hidden=YES;
         
-    }else if (![_vwForChangePwd isHidden]){
+    }else if (![self.vwForChangePwd isHidden]){
         
-        _vwForChangePwd.hidden=YES;
-        _textFieldCurrentPwd.text=@"";
-        _textFieldNewPwd.text=@"";
-        _textFieldConfirmNewPwd.text=@"";
+        self.vwForChangePwd.hidden=YES;
+        self.textFieldCurrentPwd.text=@"";
+        self.textFieldNewPwd.text=@"";
+        self.textFieldConfirmNewPwd.text=@"";
         
-    }else if (![_vwForContact isHidden]){
-        
-        _vwForContact.hidden=YES;
-        
-    }else if (![_vwForLeaveRequestForApproval isHidden]){
-        
-        if (![_vwForLeaveRqstAdd isHidden]) {
-            
-            if (![_vwForCalendar isHidden]) {
-                
-                _vwForCalendar.hidden = YES;
-                _backBtn.hidden = NO;
-                
+    }else if (![self.vwForContact isHidden]){
+
+        self.vwForContact.hidden=YES;
+    }else if (![self.vwForLeaveRequestForApproval isHidden]){
+        if (![self.vwForLeaveRqstAdd isHidden]) {
+            if (![self.vwForCalendar isHidden]) {
+                self.vwForCalendar.hidden = YES;
+                self.backBtn.hidden = NO;
             }else{
-                _vwForLeaveRqstAdd.hidden = YES;
-                _backBtn.hidden = NO;
+                self.vwForLeaveRqstAdd.hidden = YES;
+                self.backBtn.hidden = NO;
             }
-            
         }else{
-            _vwForLeaveRequestForApproval.hidden = YES;
+            self.vwForLeaveRequestForApproval.hidden = YES;
         }
     }
 }
