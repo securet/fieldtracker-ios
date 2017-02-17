@@ -67,6 +67,26 @@
     }else{
         
     }
+    
+    
+    NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSString* appID = infoDictionary[@"CFBundleIdentifier"];
+    
+     NSLog(@"App ID%@", appID);
+    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@", appID]];
+    NSData* data = [NSData dataWithContentsOfURL:url];
+    NSDictionary* lookup = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    
+    NSLog(@"Look up==%@", lookup);
+    if ([lookup[@"resultCount"] integerValue] == 1){
+        NSString* appStoreVersion = lookup[@"results"][0][@"version"];
+        NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
+        if (![appStoreVersion isEqualToString:currentVersion]){
+            NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);
+    
+        }
+    }
+    
     return YES;
 }
 

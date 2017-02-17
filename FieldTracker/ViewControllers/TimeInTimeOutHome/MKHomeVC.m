@@ -98,7 +98,6 @@
     self.vwForAgentData.hidden = YES;
     self.vwForAgentIndividualData.hidden = YES;
     
-    
     self.cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
     self.cameraBtn.layer.cornerRadius = self.cameraBtn.frame.size.height/2;
     self.cameraBtn.layer.masksToBounds = YES;
@@ -112,10 +111,10 @@
     
     if ([[dict valueForKey:@"roleTypeId"] isEqualToString:@"SalesExecutive"]){
         
-        self.vwForManager.hidden = NO;
-        self.tableVwForAgents.tableFooterView=[[UIView alloc] init];
-        self.tableVwForAgents.delegate = self;
-        self.tableVwForAgents.dataSource = self;
+//        self.vwForManager.hidden = NO;
+//        self.tableVwForAgents.tableFooterView=[[UIView alloc] init];
+//        self.tableVwForAgents.delegate = self;
+//        self.tableVwForAgents.dataSource = self;
         
     }else{
         
@@ -461,6 +460,9 @@
                 CLLocation *userLocation= [[CLLocation alloc] initWithLatitude:coordinate.latitude
                                                                      longitude:coordinate.longitude];
         CLLocationDistance distance = [location distanceFromLocation:userLocation];
+        
+        NSLog(@"Accuracy Data=====%f",userLocation.verticalAccuracy);
+        
         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
         
         //SalesExecutive
@@ -531,13 +533,13 @@
 
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
     NSLog(@"Entered Region - %@", region.identifier);
-    [self showRegionAlert:@"Entering Region" forRegion:region.identifier];
+    //[self showRegionAlert:@"Entering Region" forRegion:region.identifier];
     //    [self checkLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
     NSLog(@"Exited Region - %@", region.identifier);
-    [self showRegionAlert:@"Exiting Region" forRegion:region.identifier];
+    //[self showRegionAlert:@"Exiting Region" forRegion:region.identifier];
     //    [self checkLocation];
 }
 
@@ -702,13 +704,20 @@
     
     if ([APPDELEGATE connected]) {
         if (boolValueForInLocationOrNot){
-            [self openCamera];
+            
+            if ([UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera]){
+                [self openCamera];
+            }else{
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"No Camera" message:@"Camera Is Not Available" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
+            
         }else{
             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Not at store location" message:@"Please go to the store location and try again!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
     }else{
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears there is no internet conection!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
 }
@@ -761,7 +770,10 @@
 
 
 - (IBAction)onClickRetakePhotoBtn:(UIButton *)sender {
-    [self openCamera];
+    
+    if ([UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera]){
+        [self openCamera];
+    }
 }
 
 -(void)openCamera{

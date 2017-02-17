@@ -9,9 +9,7 @@
 #import "MKMoreVC.h"
 #import "MKCustomCellForLeave.h"
 #import <AVFoundation/AVFoundation.h>
-#import "RSDFDatePickerView.h"
-#import "JSBadgeView.h"
-#import "MKAgentListCell.h"
+
 
 @interface MKMoreVC ()<RSDFDatePickerViewDelegate,RSDFDatePickerViewDataSource>
 {
@@ -72,7 +70,8 @@
     self.lblLName.text=[dict valueForKey:@"lastName"];
     
     if (![roleType isEqualToString:@"FieldExecutiveOnPremise"] && ![roleType isEqualToString:@"FieldExecutiveOffPremise"]) {
-        arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Promoters Approval",@"Leaves",@"Leave Requisitions",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
+        arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Promoters Approval",@"Leaves",@"Leave Requisitions",@"Reporties",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
+        [self getStores];
     }else{
         arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Leaves",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
     }
@@ -117,6 +116,9 @@
     self.vwForContact.hidden = YES;
     self.vwForCalendar.hidden = YES;
     self.vwForLeaveRequestForApproval.hidden = YES;
+    self.vwForReporties.hidden = YES;
+    self.vwForReportiesHistory.hidden = YES;
+    self.vwForReportiesIndividualHistory.hidden = YES;
     
     self.cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
     self.cameraBtn.layer.cornerRadius = self.cameraBtn.frame.size.height/2;
@@ -124,7 +126,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
     
-    [self getStores];
+    
     
     pageNumber=0;
     //rgb(84,138,176)
@@ -197,6 +199,8 @@
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     
+    NSLog(@"User Data==========%@",dict);
+    
     // [defaults setObject:dictForStoreDetails forKey:@"StoreData"];
     //storeName
     
@@ -208,7 +212,7 @@
     if ([dict valueForKey:@"directions"]) {
         self.textVwMyAddress.text=[dict valueForKey:@"directions"];
     }else{
-        self.textVwMyAddress.text=@"NA";
+        self.textVwMyAddress.text=@"Address";
     }
     
     if ([dict valueForKey:@"contactNumber"]) {
@@ -238,6 +242,28 @@
     self.textFieldMyManagerName.userInteractionEnabled = NO;
     self.textFieldMyManagerEmailID.userInteractionEnabled = NO;
     self.textFieldMyManagerMobileNumber.userInteractionEnabled = NO;
+    
+    
+    if ([dict objectForKey:@"reportingPerson"]) {
+        
+        if ([[dict objectForKey:@"reportingPerson"] valueForKey:@"emailAddress"] && ![[[dict objectForKey:@"reportingPerson"] valueForKey:@"emailAddress"] isKindOfClass:[NSNull class]]) {
+            self.textFieldMyManagerEmailID.text = [[dict objectForKey:@"reportingPerson"] valueForKey:@"emailAddress"];
+        }
+        
+        if ([[dict objectForKey:@"reportingPerson"] valueForKey:@"contactNumber"]&& ![[[dict objectForKey:@"reportingPerson"] valueForKey:@"contactNumber"] isKindOfClass:[NSNull class]]) {
+            self.textFieldMyManagerMobileNumber.text = [[dict objectForKey:@"reportingPerson"] valueForKey:@"contactNumber"];
+        }
+        
+       
+        NSString *firstName=[[dict objectForKey:@"reportingPerson"] valueForKey:@"firstName"];
+        NSString *lastName=[[dict objectForKey:@"reportingPerson"] valueForKey:@"lastName"];
+        
+        
+        self.textFieldMyManagerName.text=[NSString stringWithFormat:@"%@ %@",firstName,lastName];
+        self.textFieldMyManagerName.userInteractionEnabled = NO;
+        self.textFieldMyManagerEmailID.userInteractionEnabled = NO;
+        self.textFieldMyManagerMobileNumber.userInteractionEnabled = NO;
+    }
 }
 
 -(void)setupUIForAllViews{
@@ -352,14 +378,13 @@
     self.txtFieldLeaveDescription.keyboardType=UIKeyboardTypeASCIICapable;
     
     [self.txtFieldLeaveDescription addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
-
     
     self.txtFieldLeaveComments.backgroundColor=[UIColor clearColor];
     self.txtFieldLeaveComments.delegate = self;
     self.txtFieldLeaveComments.keyboardType=UIKeyboardTypeASCIICapable;
     
     [self.txtFieldLeaveComments addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
-
+    
     
     [self.btnLeaveRqstCancel addTarget:self action:@selector(leaveRqstCancel:) forControlEvents:UIControlEventTouchUpInside];
     [self.btnLeaveRqstSubmit addTarget:self action:@selector(leaveRequestSubmit:) forControlEvents:UIControlEventTouchUpInside];
@@ -413,7 +438,6 @@
                 request = [httpClient requestWithMethod:@"PUT"
                                                    path:@"/rest/s1/ft/user/changePassword"
                                              parameters:json];
-                
                 
                 //====================================================RESPONSE
                 [DejalBezelActivityView activityViewForView:self.view];
@@ -482,6 +506,61 @@
 }
 
 #pragma mark - Contact Support
+
+-(void)getContactSupport{
+    if ([APPDELEGATE connected]) {
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
+        
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                                path:@"/rest/s1/ft/CustomerSupportInfo"
+                                                          parameters:nil];
+        //====================================================RESPONSE
+        [DejalBezelActivityView activityViewForView:self.view];
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            [DejalBezelActivityView removeView];
+            NSLog(@"Contact Support==%@",JSON);
+        }
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                             
+                                             NSError *jsonError;
+                                             NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                             
+                                             if (objectData != nil) {
+                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                      options:NSJSONReadingMutableContainers
+                                                                                                        error:&jsonError];
+                                                 
+                                                 NSString *strError=[json valueForKey:@"errors"];
+                                                 [[[UIAlertView alloc] initWithTitle:@""
+                                                                             message:strError
+                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                             }
+                                             
+                                         }];
+        [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
 -(void)orgNameTapped{
     
     NSString *string=[NSString stringWithFormat:@"%@",self.lblForOrgNameContact.attributedText.string];
@@ -570,7 +649,7 @@
             //        self.lblForStoreLocation.text=@"Off site";
             self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
         }
-        self.textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
+       // self.textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
         self.lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
     }
     @catch (NSException *exception) {
@@ -754,11 +833,11 @@
         }
     }
 }
+
 -(void)onClickStoreAddToServer:(UIButton*)sender
 {
     if ([APPDELEGATE connected]) {
-        
-        
+    
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
         NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
         
@@ -806,12 +885,15 @@
             self.backBtn.hidden=NO;
             
             if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
-                if ([[JSON objectForKey:@"productStoreId"] integerValue]>0) {
+                if ([[[JSON objectForKey:@"productStoreId"] valueForKey:@"productStoreId"] integerValue]>0) {
                     //                self.vwForStoreAdd.hidden = YES;
                     //                self.backBtn.hidden=NO;
                     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Added Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert show];
                 }
+            }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Edited Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
             }
         }
          //==================================================ERROR
@@ -1274,7 +1356,7 @@
             self.btnAddPromoterConfirm.alpha = 0.2;
             self.btnAddPromoterConfirm.backgroundColor=[UIColor grayColor];
             //btnCancelPromoterAdd
-//             [self enablePromoterView];
+            //             [self enablePromoterView];
             
         }else if ([promoterStatus containsString:@"Submitted"] || [promoterStatus containsString:@"Rejected"]){
             self.backBtn.hidden = NO;
@@ -1364,7 +1446,7 @@
 -(void)addPromoter:(UIButton*)sender
 {
     if ([APPDELEGATE connected]) {
-    
+        
         if ((sender.tag == 1 || sender.tag == 0) && ![sender.titleLabel.text isEqualToString:@"Approve"]) {
             
             if (self.txtFieldFNamePromoter.text.length>0&&self.txtFieldLNamePromoter.text.length>0&&self.txtFieldEmailPromoter.text.length>0&&self.txtVwAddressPromoter.text.length>0&&self.txtFieldStoreAsgnmntPromoter.text.length>0&& (![[self.txtVwAddressPromoter text] isEqualToString:@"Address"])) {
@@ -1456,7 +1538,7 @@
                         NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
                         
                         [DejalBezelActivityView removeView];
-                        NSLog(@"Add Store Successfully==%@",JSON);
+                        NSLog(@"Add Promoter Successfully==%@",JSON);
                         
                         self.vwForPromoterAdd.hidden = YES;
                         self.backBtn.hidden = NO;
@@ -1952,15 +2034,12 @@
     self.btnLeaveType.userInteractionEnabled = NO;
     self.btnLeaveReason.userInteractionEnabled = NO;
     self.txtFieldLeaveDescription.userInteractionEnabled = NO;
-     self.txtFieldLeaveComments.userInteractionEnabled = YES;
+    self.txtFieldLeaveComments.userInteractionEnabled = YES;
     self.txtFieldLeaveComments.hidden=NO;
     self.bottomImgForLeaveComments.hidden = NO;
 }
 
 -(void)leaveRequestEdit:(NSInteger)indexValue{
-    
-    
-    
     
     NSString *startDate=[[[arrayForLeaveHistory objectAtIndex:indexValue]valueForKey:@"fromDate"] substringToIndex:10];
     
@@ -2183,8 +2262,8 @@
             
             NSLog(@"%@",[strCurrentTime substringFromIndex:10]);
             
- NSString *strStartDate=[NSString stringWithFormat:@"%@%@",self.txtFieldStartDate.text,[strCurrentTime substringFromIndex:10]];
- NSString *strEndDate=[NSString stringWithFormat:@"%@%@",self.txtFieldEndDate.text,[strCurrentTime substringFromIndex:10]];
+            NSString *strStartDate=[NSString stringWithFormat:@"%@%@",self.txtFieldStartDate.text,[strCurrentTime substringFromIndex:10]];
+            NSString *strEndDate=[NSString stringWithFormat:@"%@%@",self.txtFieldEndDate.text,[strCurrentTime substringFromIndex:10]];
             
             
             if (isLeaveEditRNew) {
@@ -2245,26 +2324,26 @@
              //==================================================ERROR
                                              failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                                  [DejalBezelActivityView removeView];
-                                                                                          NSLog(@"Error %@",[error description]);
+                                                 NSLog(@"Error %@",[error description]);
                                                  NSString *JSON = [[error userInfo] valueForKey:NSLocalizedRecoverySuggestionErrorKey] ;
                                                  
                                                  if (JSON.length>0) {
-                                    
-                                                 NSError *aerror = nil;
-                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData: [JSON dataUsingEncoding:NSUTF8StringEncoding]
-                                                                                                      options: NSJSONReadingMutableContainers
-                                                                                                        error: &aerror];
-                                                 
-                                                 NSLog(@"Error %@",json);
-                                                 
-                                                 if ([[operation response] statusCode] == 500) {
-                                                     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[json valueForKey:@"errors"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                                                     [alert show];
-                                                 }
-                                                 
-                                                 if (isLeaveEditRNew) {
                                                      
-                                                 }
+                                                     NSError *aerror = nil;
+                                                     NSDictionary *json = [NSJSONSerialization JSONObjectWithData: [JSON dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                                          options: NSJSONReadingMutableContainers
+                                                                                                            error: &aerror];
+                                                     
+                                                     NSLog(@"Error %@",json);
+                                                     
+                                                     if ([[operation response] statusCode] == 500) {
+                                                         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[json valueForKey:@"errors"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                                         [alert show];
+                                                     }
+                                                     
+                                                     if (isLeaveEditRNew) {
+                                                         
+                                                     }
                                                  }
                                                  //You have already applied a leave
                                              }];
@@ -2273,6 +2352,8 @@
             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter All Details" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
+    }else if ([sender.titleLabel.text isEqualToString:@"Approve"]){
+        [self approveOrRejectLeave:@"Y"];
     }
 }
 
@@ -2301,6 +2382,8 @@
     if (![sender.titleLabel.text isEqualToString:@"Reject"]) {
         self.backBtn.hidden = NO;
         self.vwForLeaveRqstAdd.hidden = YES;
+    }else if([sender.titleLabel.text isEqualToString:@"Reject"]){
+        [self approveOrRejectLeave:@"N"];
     }
 }
 
@@ -2362,6 +2445,105 @@
     
     self.vwForCalendar.hidden = YES;
     self.backBtn.hidden = YES;
+}
+
+
+-(void)approveOrRejectLeave:(NSString*)status{
+    
+    if ([APPDELEGATE connected]) {
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
+        
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFJSONParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        NSDictionary * json;
+        NSMutableURLRequest *request;
+        
+        NSDate *now = [NSDate date];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
+        [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+        NSTimeZone *timeZone = [NSTimeZone localTimeZone];
+        NSString *tzName = [timeZone name];
+        
+        NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+        NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+        strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+    
+        NSLog(@"%@",[strCurrentTime substringFromIndex:10]);
+        
+        //    NSString *strStartDate=[NSString stringWithFormat:@"%@%@",self.txtFieldStartDate.text,[strCurrentTime substringFromIndex:10]];
+        //    NSString *strEndDate=[NSString stringWithFormat:@"%@%@",self.txtFieldEndDate.text,[strCurrentTime substringFromIndex:10]];
+        
+        NSString *strStartDate=[NSString stringWithFormat:@"%@",self.txtFieldStartDate.text];
+        NSString *strEndDate=[NSString stringWithFormat:@"%@",self.txtFieldEndDate.text];
+        
+        NSString *partyRelationshipId=[[arrayForLeaveHistory objectAtIndex:indexValueForLeaveEdit] valueForKey:@"partyRelationshipId"];
+        
+        json = @{@"leaveTypeEnumId":leaveTypeEnumID,
+                 @"leaveReasonEnumId":leaveReasonEnumID,
+                 @"description":self.txtFieldLeaveDescription.text,
+                 @"fromDate":strStartDate,
+                 @"thruDate":strEndDate,
+                 @"partyRelationshipId":partyRelationshipId,
+                 @"leaveApproved":status
+                 };
+        //{"partyRelationshipId" : "100153",  "fromDate" : "1484245800000", "thruDate" : "2017-01-14", "leaveTypeEnumId" : "EltEarned", "leaveReasonEnumId" : "ElrMedical", "leaveApproved" : "Y", "description" : "Test" }
+        request = [httpClient requestWithMethod:@"PUT"
+                                           path:@"/rest/s1/ft/updateLeave"
+                                     parameters:json];
+        NSLog(@"Json URL---PUT===%@",json);
+        //====================================================RESPONSE
+        [DejalBezelActivityView activityViewForView:self.view];
+        
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            [DejalBezelActivityView removeView];
+            NSLog(@"Leave Request==%@ %ld",JSON,(long)[[operation response] statusCode]);
+            if ([[operation response] statusCode] == 200) {
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[json valueForKey:@"messages"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                [alert show];
+            }
+            self.backBtn.hidden = NO;
+            self.vwForLeaveRqstAdd.hidden = YES;
+        }
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                             NSString *JSON = [[error userInfo] valueForKey:NSLocalizedRecoverySuggestionErrorKey] ;
+                                             
+                                             if (JSON.length>0) {
+                                                 
+                                                 NSError *aerror = nil;
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData: [JSON dataUsingEncoding:NSUTF8StringEncoding]
+                                                                                                      options: NSJSONReadingMutableContainers
+                                                                                                        error: &aerror];
+                                                 NSLog(@"Error %@",json);
+                                                 //                                             if ([[operation response] statusCode] == 500) {
+                                                 UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[json valueForKey:@"errors"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                                 [alert show];
+                                                 if (isLeaveEditRNew) {
+                                                     
+                                                 }
+                                             }
+                                             //You have already applied a leave
+                                         }];
+        [operation start];
+    }else{
+        
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
 #pragma mark - Custom Calendar
@@ -2443,7 +2625,6 @@
 #pragma mark - Leave Dates Converted
 -(NSString*)convertLeaveDate:(NSString*)dateChange{
     
-    
     dateChange=[dateChange stringByReplacingOccurrencesOfString:@"T" withString:@" "];
     dateChange=[dateChange stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -2472,6 +2653,12 @@
         return arrayForLeaveHistory.count;
     }else if (tableView == self.tableVwForLeaveApproval){
         return arrayForLeaveApprovalList.count;
+    }else if (tableView == self.tableVwForReporties) {
+        return 10;
+    }else if (tableView == self.tableVwForReportiesHistory) {
+        return 10;
+    }else if (tableView == self.tableVwForIndividualHistory){
+        return 10;
     }
     return arrayForTableData.count;
 }
@@ -2490,6 +2677,85 @@
     //        return cell;
     //    }
     
+    if (tableView == self.tableVwForReporties) {
+        MKAgentListCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        if (cell==nil) {
+            cell=[[MKAgentListCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+    
+    if (tableView == self.tableVwForReportiesHistory) {
+        MKHistoryCustomCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        if (cell==nil) {
+            cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+
+    if (tableView == self.tableVwForIndividualHistory) {
+        MKIndividualHistoryCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        if (cell == nil) {
+            cell=[[MKIndividualHistoryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        /*
+         ////Image Names
+         dot_login
+         dot_inlocation
+         dot_outlocation
+         dot_timeout
+         */
+        if (indexPath.row==0) {
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_login"];
+            cell.lblForStatus.text=@"Time In";
+            cell.centerConstraint.constant = 0;
+            cell.imgVwForTopVerticalLine.hidden=YES;
+            cell.imgVwForBtmVerticalLine.hidden=NO;
+        }else{
+            if (indexPath.row % 2 == 0) {
+                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_inlocation"];
+                cell.lblForStatus.text=@"In location";
+                cell.centerConstraint.constant = -5;
+            }else{
+                cell.centerConstraint.constant = 5;
+                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_outlocation"];
+                cell.lblForStatus.text=@"Out of location";
+            }
+            cell.imgVwForTopVerticalLine.hidden=NO;
+            cell.imgVwForBtmVerticalLine.hidden=NO;
+        }
+        
+        cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
+        
+//        if (tableView == self.tableVwIndividualHistory) {
+            cell.lblForTime.text=@"06:30 AM";
+            
+            if (indexPath.row==9){
+                cell.centerConstraint.constant = 0;
+                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
+                cell.lblForStatus.text=@"Time Out";
+                cell.imgVwForTopVerticalLine.hidden=NO;
+                cell.imgVwForBtmVerticalLine.hidden=YES;
+            }
+            
+//        }else{
+//            
+//            if (![[arrayForStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
+//                cell.lblForTime.text= [self getTimeIndividual:[arrayForStatusData objectAtIndex:indexPath.row]];
+//            }else{
+//                cell.lblForTime.text=@"";
+//                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+//                cell.lblForStatus.text=@"";
+//                cell.imgVwForLine.backgroundColor=[UIColor clearColor];
+//            }
+//        }
+        return cell;
+    }
+    
     if (tableView == self.tableVwForLeaveRqst || tableView == self.tableVwForLeaveApproval){
         
         MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
@@ -2504,21 +2770,6 @@
         
         if (tableView == self.tableVwForLeaveApproval){
             
-            
-//            NSString *strDateChange=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"];
-//            strDateChange=[strDateChange stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-//                        strDateChange=[strDateChange stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
-//            
-//            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//            dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
-//            NSDate *daate=[dateFormatter dateFromString:strDateChange];
-//            
-//            NSLog(@"%@",daate);
-//            
-//            
-//            startDate=[[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"] substringToIndex:10];
-//            endDate=[[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"thruDate"] substringToIndex:10];
-            
             if (![[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"] isKindOfClass:[NSNull class]]) {
                 startDate=[self convertLeaveDate:[[arrayForLeaveApprovalList objectAtIndex:indexPath.row]valueForKey:@"fromDate"]];
             }
@@ -2532,7 +2783,7 @@
             
             cellLeave.lblForTypeOfLeave.text=@"";
             strLeaveApprove=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
-         
+            
             NSString *strFirstName;
             if (![[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"firstName"] isKindOfClass:[NSNull class]]) {
                 strFirstName=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"firstName"];
@@ -2564,7 +2815,9 @@
         }
         
         if (![strLeaveApprove isKindOfClass:[NSNull class]]) {
-            cellLeave.lblForStatusOfLeave.text=strLeaveApprove;
+            if ([strLeaveApprove isEqualToString:@"Y"]) {
+                cellLeave.lblForStatusOfLeave.text=@"Approved";
+            }
         }else{
             cellLeave.lblForStatusOfLeave.text=@"Pending";
         }
@@ -2672,16 +2925,16 @@
         UITableViewCell *cell=[tableView cellForRowAtIndexPath:indexPath];
         
         if ([cell.textLabel.text isEqualToString:@"Log Off"]){
-
-//            [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
-//            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-//            [defaults removeObjectForKey:@"UserData"];
-//            [defaults removeObjectForKey:@"StoreData"];
-//            [defaults setObject:@"0" forKey:@"Is_Login"];
-//            [defaults synchronize];
-//            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//            UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
-//            [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
+            
+            //            [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
+            //            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            //            [defaults removeObjectForKey:@"UserData"];
+            //            [defaults removeObjectForKey:@"StoreData"];
+            //            [defaults setObject:@"0" forKey:@"Is_Login"];
+            //            [defaults synchronize];
+            //            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            //            UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
+            //            [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
             
             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Are You Sure Want To Log Off ?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
             alert.tag = 1001;
@@ -2699,7 +2952,7 @@
             
         }else if ([cell.textLabel.text isEqualToString:@"Promoters"]){
             
-             isPromoterOrPromoterApprove=YES;
+            isPromoterOrPromoterApprove=YES;
             arrayForPromoters=[[NSMutableArray alloc] init];
             pageNumber = 0;
             [self getPromoters];
@@ -2708,10 +2961,10 @@
             self.tableVwForPromoters.delegate = self;
             self.tableVwForPromoters.dataSource = self;
             [self.tableVwForPromoters reloadData];
-           
+            
         }else if ([cell.textLabel.text isEqualToString:@"Promoters Approval"]){
             
-             isPromoterOrPromoterApprove=NO;
+            isPromoterOrPromoterApprove=NO;
             arrayForPromoters=[[NSMutableArray alloc] init];
             pageNumber = 0;
             [self getPromotersApproval];
@@ -2736,13 +2989,21 @@
             [self.btnLeaveRqstSubmit setTitle:@"Submit" forState:UIControlStateNormal];
             [self.btnLeaveRqstCancel setTitle:@"Cancel" forState:UIControlStateNormal];
             
-        }else if ([cell.textLabel.text isEqualToString:@"My Account"]){
+        }else if ([cell.textLabel.text isEqualToString:@"Reporties"]){
+            self.vwForReporties.hidden = NO;
+            self.backBtn.hidden = NO;
+            self.tableVwForReporties.delegate=self;
+            self.tableVwForReporties.dataSource=self;
+            [self.tableVwForReporties reloadData];
+        }
+        else if ([cell.textLabel.text isEqualToString:@"My Account"]){
             self.vwForAccount.hidden =NO;
             self.backBtn.hidden = NO;
         }else if ([cell.textLabel.text isEqualToString:@"Change Password"]){
             self.vwForChangePwd.hidden =NO;
             self.backBtn.hidden = NO;
         }else if ([cell.textLabel.text isEqualToString:@"Contact Support"]){
+            [self getContactSupport];
             self.vwForContact.hidden =NO;
             self.backBtn.hidden = NO;
         }else if ([cell.textLabel.text isEqualToString:@"Leave Requisitions"]){
@@ -2779,6 +3040,7 @@
             
         }
     }else if (tableView == self.tableVwForLeaveApproval){
+        indexValueForLeaveEdit=indexPath.row;
         self.txtFieldLeaveComments.text=@"";
         arrayForLeaveHistory=arrayForLeaveApprovalList;
         [self emptyLeaveRequestFields];
@@ -2789,6 +3051,17 @@
         [self.btnLeaveRqstCancel setTitle:@"Reject" forState:UIControlStateNormal];
         [self leaveRequestEdit:indexPath.row];
         [self disableLeaveRequestFields];
+    }else if (tableView == self.tableVwForReporties){
+        self.vwForReportiesHistory.hidden = NO;
+        self.tableVwForReportiesHistory.delegate=self;
+        self.tableVwForReportiesHistory.dataSource=self;
+        [self.tableVwForReportiesHistory reloadData];
+    }else if(tableView == self.tableVwForReportiesHistory){
+        self.vwForReportiesIndividualHistory.hidden=NO;
+        self.tableVwForIndividualHistory.delegate=self;
+        self.tableVwForIndividualHistory.dataSource=self;
+        [self.tableVwForIndividualHistory reloadData];
+
     }
 }
 
@@ -2802,7 +3075,7 @@
 -(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
     
     if (alertView.tag == 1001) {
-    
+        
         if (buttonIndex == 0) {
         }else if (buttonIndex == 1){
             
@@ -2811,7 +3084,7 @@
             [defaults removeObjectForKey:@"UserData"];
             [defaults removeObjectForKey:@"StoreData"];
             [defaults setObject:@"0" forKey:@"Is_Login"];
-//            [defaults synchronize];
+            //            [defaults synchronize];
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
             [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
@@ -2878,7 +3151,7 @@
         self.textFieldConfirmNewPwd.text=@"";
         
     }else if (![self.vwForContact isHidden]){
-
+        
         self.vwForContact.hidden=YES;
     }else if (![self.vwForLeaveRequestForApproval isHidden]){
         if (![self.vwForLeaveRqstAdd isHidden]) {
@@ -2891,6 +3164,17 @@
             }
         }else{
             self.vwForLeaveRequestForApproval.hidden = YES;
+        }
+    }else if (![self.vwForReporties isHidden]){
+        if (![self.vwForReportiesHistory isHidden]) {
+            if (![self.vwForReportiesIndividualHistory isHidden]) {
+                self.vwForReportiesIndividualHistory.hidden = YES;
+            }else{
+                self.vwForReportiesHistory.hidden = YES;
+            }
+            self.backBtn.hidden = NO;
+        }else{
+                 self.vwForReporties.hidden = YES;
         }
     }
 }

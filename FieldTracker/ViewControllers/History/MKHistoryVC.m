@@ -328,7 +328,7 @@
                     cell.lblTotalTime.text=timeString;
                 }
                 if ([timeString isEqualToString:@"0h 00m"]) {
-                    cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
+                    cell.lblTotalTime.text=[NSString stringWithFormat:@"0h 01m"];
                 }
             }else{
                 cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];

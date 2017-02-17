@@ -155,6 +155,14 @@
 @property (strong, nonatomic) IBOutlet UIView *vwForLeaveRequestForApproval;
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForLeaveApproval;
 
+
+#pragma mark - Reporties
+@property (strong, nonatomic) IBOutlet UIView *vwForReporties;
+@property (strong, nonatomic) IBOutlet UIView *vwForReportiesHistory;
+@property (strong, nonatomic) IBOutlet UIView *vwForReportiesIndividualHistory;
+@property (strong, nonatomic) IBOutlet UITableView *tableVwForReporties;
+@property (strong, nonatomic) IBOutlet UITableView *tableVwForReportiesHistory;
+@property (strong, nonatomic) IBOutlet UITableView *tableVwForIndividualHistory;
 - (IBAction)onClickCamera:(UIButton *)sender;
 
 
