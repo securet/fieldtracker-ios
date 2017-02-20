@@ -163,6 +163,15 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForReporties;
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForReportiesHistory;
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForIndividualHistory;
+@property (strong, nonatomic) IBOutlet UILabel *lblEntryDate;
+@property (strong, nonatomic) IBOutlet UILabel *lblTimeIn;
+@property (strong, nonatomic) IBOutlet UILabel *lblTimeOut;
+@property (strong, nonatomic) IBOutlet UILabel *lblTotalTime;
+
+
+
+
+
 - (IBAction)onClickCamera:(UIButton *)sender;
 
 

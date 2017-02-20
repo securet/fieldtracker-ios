@@ -2864,13 +2864,13 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dkH-4D-dKb">
-                                <rect key="frame" x="0.0" y="94" width="600" height="707"/>
+                                <rect key="frame" x="0.0" y="174" width="600" height="627"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L7p-dk-Tha">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="80"/>
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L7p-dk-Tha">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="1"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="canvas" translatesAutoresizingMaskIntoConstraints="NO" id="kGt-Ge-EXE">
-                                                <rect key="frame" x="0.0" y="0.0" width="600" height="80"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="1"/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Field Agent Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZJG-iq-9hP">
                                                 <rect key="frame" x="8" y="4" width="584" height="21"/>
@@ -2902,7 +2902,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3rg-eM-kic">
-                                                <rect key="frame" x="472" y="56" width="120" height="21"/>
+                                                <rect key="frame" x="472" y="-23" width="120" height="21"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="21" id="bi5-yo-6lJ"/>
                                                     <constraint firstAttribute="width" constant="120" id="cPE-FR-PPS"/>
@@ -2912,7 +2912,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ATc-hC-C58">
-                                                <rect key="frame" x="8" y="56" width="150" height="21"/>
+                                                <rect key="frame" x="8" y="-23" width="150" height="21"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="150" id="BgQ-vn-O6h"/>
                                                     <constraint firstAttribute="height" constant="21" id="qvA-o4-XEa"/>
@@ -2927,7 +2927,7 @@
                                             <constraint firstAttribute="bottom" secondItem="kGt-Ge-EXE" secondAttribute="bottom" id="1l7-gJ-awl"/>
                                             <constraint firstItem="kGt-Ge-EXE" firstAttribute="top" secondItem="L7p-dk-Tha" secondAttribute="top" id="46K-U3-xhn"/>
                                             <constraint firstItem="0Ut-2G-rcK" firstAttribute="leading" secondItem="L7p-dk-Tha" secondAttribute="leading" constant="8" id="9wD-py-SxJ"/>
-                                            <constraint firstAttribute="height" constant="80" id="DxW-ot-Y4q"/>
+                                            <constraint firstAttribute="height" constant="1" id="DxW-ot-Y4q"/>
                                             <constraint firstAttribute="trailing" secondItem="ZJG-iq-9hP" secondAttribute="trailing" constant="8" id="MSu-Z3-cTN"/>
                                             <constraint firstItem="ZJG-iq-9hP" firstAttribute="leading" secondItem="L7p-dk-Tha" secondAttribute="leading" constant="8" id="OHZ-bC-nlU"/>
                                             <constraint firstItem="ZJG-iq-9hP" firstAttribute="top" secondItem="L7p-dk-Tha" secondAttribute="top" constant="4" id="PNj-ut-uzk"/>
@@ -2943,7 +2943,7 @@
                                         </constraints>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="81" sectionHeaderHeight="1" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Svc-Ee-Zj5">
-                                        <rect key="frame" x="0.0" y="80" width="600" height="627"/>
+                                        <rect key="frame" x="0.0" y="1" width="600" height="626"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="81" id="PNk-9x-7yO" customClass="MKHistoryCustomCell">
@@ -3014,7 +3014,7 @@
                                         </prototypes>
                                     </tableView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dOO-0R-VHC">
-                                        <rect key="frame" x="0.0" y="80" width="600" height="627"/>
+                                        <rect key="frame" x="0.0" y="1" width="600" height="626"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2f-UF-Pg3">
                                                 <rect key="frame" x="0.0" y="0.0" width="600" height="81"/>
@@ -3073,7 +3073,7 @@
                                                 </constraints>
                                             </view>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="1" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="iB2-Kf-1Xv">
-                                                <rect key="frame" x="0.0" y="81" width="600" height="546"/>
+                                                <rect key="frame" x="0.0" y="81" width="600" height="545"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <prototypes>
                                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" id="sq6-in-xeh" customClass="MKIndividualHistoryCell">
@@ -3643,6 +3643,7 @@
                             <constraint firstItem="M5X-YI-KNW" firstAttribute="leading" secondItem="1I4-S8-zBy" secondAttribute="leading" id="CJn-eH-9Oi"/>
                             <constraint firstItem="DEG-sg-XT5" firstAttribute="top" secondItem="RpL-Y3-tug" secondAttribute="bottom" id="ClG-KD-Q6s"/>
                             <constraint firstAttribute="trailing" secondItem="FsY-tI-3lp" secondAttribute="trailing" id="DHw-Va-Tj0"/>
+                            <constraint firstItem="dkH-4D-dKb" firstAttribute="top" secondItem="RpL-Y3-tug" secondAttribute="bottom" id="DoO-oK-c8T"/>
                             <constraint firstAttribute="trailing" secondItem="02n-up-BKm" secondAttribute="trailing" id="Dy6-XK-wvE"/>
                             <constraint firstItem="RpL-Y3-tug" firstAttribute="top" secondItem="xp1-Sp-wFE" secondAttribute="bottom" id="EtR-Tw-Ays"/>
                             <constraint firstAttribute="trailing" secondItem="l15-PH-GyL" secondAttribute="trailing" id="G6F-k0-1xk"/>
@@ -3677,7 +3678,6 @@
                             <constraint firstItem="mrC-Qb-d2B" firstAttribute="top" secondItem="M5X-YI-KNW" secondAttribute="bottom" id="dIO-m7-2Dl"/>
                             <constraint firstAttribute="trailing" secondItem="AJz-qk-g2w" secondAttribute="trailing" id="dkY-Ko-FeF"/>
                             <constraint firstItem="c6K-Gc-aqe" firstAttribute="leading" secondItem="1I4-S8-zBy" secondAttribute="leading" id="eiq-xN-mcp"/>
-                            <constraint firstItem="dkH-4D-dKb" firstAttribute="top" secondItem="xp1-Sp-wFE" secondAttribute="bottom" id="g8o-YL-XTe"/>
                             <constraint firstItem="mrC-Qb-d2B" firstAttribute="top" secondItem="eHs-te-JxE" secondAttribute="bottom" id="hok-Zh-ggK"/>
                             <constraint firstAttribute="trailing" secondItem="M5X-YI-KNW" secondAttribute="trailing" id="jB4-s3-8IK"/>
                             <constraint firstItem="FsY-tI-3lp" firstAttribute="top" secondItem="RpL-Y3-tug" secondAttribute="bottom" id="kId-OK-azM"/>
@@ -3736,6 +3736,7 @@
                         <outlet property="imgVwLogoConatact" destination="6nX-4f-wNK" id="bL8-Af-Hi9"/>
                         <outlet property="imgVwUser" destination="azd-yz-vME" id="eBi-GV-lCp"/>
                         <outlet property="lblAMOrPM" destination="ifK-zK-H8r" id="IPb-Xl-nkB"/>
+                        <outlet property="lblEntryDate" destination="sFc-GZ-VdE" id="JeF-Rf-wQh"/>
                         <outlet property="lblFName" destination="n9S-kn-aCs" id="690-hs-v1L"/>
                         <outlet property="lblForDateStartEnd" destination="gYd-7e-12C" id="Pv3-UQ-Kjl"/>
                         <outlet property="lblForEditStore" destination="hhE-RE-fmG" id="ArK-DY-gpn"/>
@@ -3747,6 +3748,9 @@
                         <outlet property="lblForStoreLocation" destination="Mey-95-dDe" id="fKn-Ih-1gh"/>
                         <outlet property="lblLName" destination="P9a-GI-d5G" id="Zwh-eg-z6X"/>
                         <outlet property="lblTime" destination="rld-Bz-HUF" id="Rdw-1a-jIc"/>
+                        <outlet property="lblTimeIn" destination="O2M-4g-VrM" id="vYD-0P-HX8"/>
+                        <outlet property="lblTimeOut" destination="aAr-uF-CAE" id="UhD-Tf-DCH"/>
+                        <outlet property="lblTotalTime" destination="auy-gk-hE9" id="BMV-aM-IF4"/>
                         <outlet property="previewCamera" destination="iZe-Gp-Q6U" id="jON-Ne-rBZ"/>
                         <outlet property="segmentControl" destination="kO5-1u-cl1" id="8T2-Uc-xn9"/>
                         <outlet property="tableVw" destination="5xz-km-jdT" id="8uU-86-7VW"/>

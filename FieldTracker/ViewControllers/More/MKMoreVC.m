@@ -19,6 +19,11 @@
     NSMutableArray *arrayForLeaveHistory;
     NSMutableArray *arrayForLeaveApprovalList;
     NSMutableArray *arrayForReportee;
+    NSMutableArray *arrayForReporteeHistory;
+    NSMutableArray *arrayForReporteeStatusData;
+
+    NSInteger countForReporteeHistory;
+    
     NSString *strForReporteeUserName;
     
     NSInteger countForLeaveData,pageNumberForLeave,indexValueForLeaveEdit,leaveApprovalListCount,pageNumberForLeaveApproval;
@@ -98,6 +103,10 @@
     self.tableVwForPromoters.tableFooterView =[[UIView alloc] init];
     self.tableVwForLeaveRqst.tableFooterView=[[UIView alloc] init];
     self.tableVwForLeaveApproval.tableFooterView=[[UIView alloc] init];
+    self.tableVwForReporties.tableFooterView=[[UIView alloc] init];
+    self.tableVwForReportiesHistory.tableFooterView=[[UIView alloc] init];
+    self.tableVwForIndividualHistory.tableFooterView=[[UIView alloc] init];
+
     
     self.vwForPromoters.hidden = YES;
     self.vwForStore.hidden = YES;
@@ -1753,7 +1762,6 @@
     }else if (sender.tag == 300){
         //            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
     }
-    
     //        [self presentViewController:imagePickerController animated:YES completion:^{
     //
     //        }];
@@ -2674,9 +2682,9 @@
     }else if (tableView == self.tableVwForReporties) {
         return arrayForReportee.count;
     }else if (tableView == self.tableVwForReportiesHistory) {
-        return 10;
+        return arrayForReporteeHistory.count;
     }else if (tableView == self.tableVwForIndividualHistory){
-        return 10;
+        return arrayForReporteeStatusData.count;
     }
     return arrayForTableData.count;
 }
@@ -2684,17 +2692,7 @@
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
-    
-    //    if (tableView == self.tableVwForLeaveApproval){
-    //
-    //        MKCustomCellForLeave *cellLeave=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
-    //        if (cellLeave == nil) {
-    //            cellLeave=[[MKCustomCellForLeave alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-    //        }
-    //
-    //        return cell;
-    //    }
-    
+   
     if (tableView == self.tableVwForReporties) {
         MKAgentListCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cell==nil) {
@@ -2706,8 +2704,6 @@
         if ([[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"]) {
             if (![[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"] isKindOfClass:[NSNull class]]) {
                 cell.lblFieldAgentName.text=[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"];
-             
-//                NSLog(@"----->>%@",[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"]);
             }
         }
        
@@ -2717,11 +2713,96 @@
     }
     
     if (tableView == self.tableVwForReportiesHistory) {
+        
         MKHistoryCustomCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        
         if (cell==nil) {
             cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+        
+        NSMutableArray *array=[[NSMutableArray alloc] init];
+        NSInteger   hoursBetweenDates = 0;
+
+        ///Date Parsing
+        NSString *strDate=[[arrayForReporteeHistory objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
+        NSRange range = [strDate rangeOfString:@"T"];
+        strDate=[strDate substringToIndex:NSMaxRange(range)-1];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+        NSDate *date = [dateFormatter dateFromString:strDate];
+        [dateFormatter setDateFormat:@"dd-MMM-yyyy"];
+        NSString *newDateString = [dateFormatter stringFromDate:date];
+        cell.lblDate.text=newDateString;
+        
+        
+        if ([[[arrayForReporteeHistory objectAtIndex:indexPath.row]objectForKey:@"timeEntryList"] isKindOfClass:[NSArray class]]) {
+            
+            if ([[[arrayForReporteeHistory objectAtIndex:indexPath.row]objectForKey:@"timeEntryList"] count]>0) {
+                
+                for (NSDictionary *dict in [[arrayForReporteeHistory objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"]) {
+                    [array addObject:[dict valueForKey:@"fromDate"]];
+                    [array addObject:[dict valueForKey:@"thruDate"]];
+                }
+                
+                array =  [self sortingArrayByDate:array];
+                
+                if (![[array objectAtIndex:0] isKindOfClass:[NSNull class]]) {
+                    cell.lblInTime.text=[NSString stringWithFormat:@"Time In: %@",[self getTimeIndividual:[array objectAtIndex:0] ]];
+                }
+                else{
+                    cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
+                }
+                
+                if (![[array lastObject]  isKindOfClass:[NSNull class]] ) {
+                    cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: %@",[self getTimeIndividual:[array lastObject] ]];
+                }else{
+                    cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
+                }
+                
+                if (![[array objectAtIndex:0] isKindOfClass:[NSNull class]] && ![[array lastObject] isKindOfClass:[NSNull class]]){
+                 
+                    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+
+                    NSString *firstViewd;
+                    firstViewd=[NSString stringWithFormat:@"%@",[array objectAtIndex:0]];
+                    NSString *lastViewedString;
+                    lastViewedString=[NSString stringWithFormat:@"%@",[array lastObject]];
+                    [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss xxxx"];
+                    NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
+                    NSDate *now = [dateFormatter dateFromString:firstViewd];
+                    NSTimeInterval distanceBetweenDates = [lastViewed timeIntervalSinceDate:now];
+                    double minutesInAnHour = 60;
+                    hoursBetweenDates = hoursBetweenDates + (distanceBetweenDates / minutesInAnHour);
+                    int hour = hoursBetweenDates / 60;
+                    int min = hoursBetweenDates % 60;
+                    hour=abs(hour);
+                    min = abs(min);
+                    NSString *timeString = [NSString stringWithFormat:@"%dh %02dm", hour, min];
+                    //    NSLog(@"Total Time: %@", timeString);
+                    if (hour<0) {
+                        cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
+                    }else{
+                        cell.lblTotalTime.text=timeString;
+                    }
+                    if ([timeString isEqualToString:@"0h 00m"]) {
+                        cell.lblTotalTime.text=[NSString stringWithFormat:@"0h 01m"];
+                    }
+                }else{
+                    cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
+                }
+            }else{
+                cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
+                cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
+                cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
+            }
+        }else{
+            cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
+            cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
+            cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
+        }
+
         return cell;
     }
 
@@ -2739,6 +2820,7 @@
          dot_outlocation
          dot_timeout
          */
+       
         if (indexPath.row==0) {
             cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_login"];
             cell.lblForStatus.text=@"Time In";
@@ -2759,30 +2841,26 @@
             cell.imgVwForBtmVerticalLine.hidden=NO;
         }
         
+        if (indexPath.row==arrayForReporteeStatusData.count-1){
+            cell.centerConstraint.constant = 0;
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
+            cell.lblForStatus.text=@"Time Out";
+            cell.imgVwForTopVerticalLine.hidden=NO;
+            cell.imgVwForBtmVerticalLine.hidden=YES;
+        }
+        
         cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
         
-//        if (tableView == self.tableVwIndividualHistory) {
-            cell.lblForTime.text=@"06:30 AM";
-            
-            if (indexPath.row==9){
-                cell.centerConstraint.constant = 0;
-                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
-                cell.lblForStatus.text=@"Time Out";
-                cell.imgVwForTopVerticalLine.hidden=NO;
-                cell.imgVwForBtmVerticalLine.hidden=YES;
-            }
-            
-//        }else{
-//            
-//            if (![[arrayForStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
-//                cell.lblForTime.text= [self getTimeIndividual:[arrayForStatusData objectAtIndex:indexPath.row]];
-//            }else{
-//                cell.lblForTime.text=@"";
-//                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
-//                cell.lblForStatus.text=@"";
-//                cell.imgVwForLine.backgroundColor=[UIColor clearColor];
-//            }
-//        }
+        if (![[arrayForReporteeStatusData objectAtIndex:indexPath.row] isKindOfClass:[NSNull class]]) {
+            cell.lblForTime.text= [self getTimeIndividual:[arrayForReporteeStatusData objectAtIndex:indexPath.row]];
+        }else{
+            cell.lblForTime.text=@"";
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+            cell.lblForStatus.text=@"";
+            cell.imgVwForLine.backgroundColor=[UIColor clearColor];
+        }
+
+        
         return cell;
     }
     
@@ -3086,12 +3164,64 @@
     }else if (tableView == self.tableVwForReporties){
         
         strForReporteeUserName=[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"username"];
+        
+        arrayForReporteeHistory=[[NSMutableArray alloc] init];
+        
         [self getReporteeHistory];
         
         self.tableVwForReportiesHistory.delegate=self;
         self.tableVwForReportiesHistory.dataSource=self;
         
     }else if(tableView == self.tableVwForReportiesHistory){
+        
+        arrayForReporteeStatusData=[[NSMutableArray alloc] init];
+        
+        for (NSDictionary *dict in [[arrayForReporteeHistory objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"])
+        {
+            [arrayForReporteeStatusData addObject:[dict valueForKey:@"fromDate"]];
+            [arrayForReporteeStatusData addObject:[dict valueForKey:@"thruDate"]];
+        }
+        
+        arrayForReporteeStatusData = [self sortingArrayByDate:arrayForReporteeStatusData];
+        
+        [self.tableVwForIndividualHistory reloadData];
+        [self.tableVwForIndividualHistory setContentOffset:CGPointZero animated:NO];
+        
+        ///Date Parsing
+        NSString *strDate=[[arrayForReporteeHistory objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
+        NSRange range = [strDate rangeOfString:@"T"];
+        strDate=[strDate substringToIndex:NSMaxRange(range)-1];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+        NSDate *date = [dateFormatter dateFromString:strDate];
+        [dateFormatter setDateFormat:@"dd-MMM-yyyy"];
+        NSString *newDateString = [dateFormatter stringFromDate:date];
+        self.lblEntryDate.text=newDateString;
+        //////
+        
+        if ([arrayForReporteeStatusData count]>0) {
+            if (![[arrayForReporteeStatusData objectAtIndex:0] isKindOfClass:[NSNull class]]) {
+                newDateString = [self getTimeIndividual:[arrayForReporteeStatusData objectAtIndex:0]];
+            }else{
+                newDateString = @"--";
+            }
+            
+            self.lblTimeIn.text=[NSString stringWithFormat:@"Time In: %@",newDateString];
+            
+            if (![[arrayForReporteeStatusData lastObject] isKindOfClass:[NSNull class]]) {
+                newDateString = [self getTimeIndividual:[arrayForReporteeStatusData lastObject]];
+            }else{
+                newDateString = @"--";
+            }
+            
+            self.lblTimeOut.text=[NSString stringWithFormat:@"Time Out: %@",newDateString];
+        }else{
+            self.lblTimeIn.text=[NSString stringWithFormat:@"Time In: --"];
+            self.lblTimeOut.text=[NSString stringWithFormat:@"Time Out: --"];
+        }
+        MKHistoryCustomCell *cell=(MKHistoryCustomCell*)[tableView cellForRowAtIndexPath:indexPath];
+        self.lblTotalTime.text = cell.lblTotalTime.text;
+
         self.vwForReportiesIndividualHistory.hidden=NO;
         self.tableVwForIndividualHistory.delegate=self;
         self.tableVwForIndividualHistory.dataSource=self;
@@ -3224,21 +3354,18 @@
         NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
         
         AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        httpClient.parameterEncoding = AFJSONParameterEncoding;
         [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
         ///rest/s1/ft/attendance/${username}/log?pageIndex&pageSize=10&estimatedStartDate=2016-12-11 00:00:00&estimatedCompletionDate=2016-12-11 23:50:59
         
-        NSString *strPath=[NSString stringWithFormat:@"rest/s1/ft/attendance/%@/log?pageIndex=0&pageSize=10",strForReporteeUserName];
-        //NSLog(@"String Path for Get Promoters==%@",strPath);
-        
-        NSString *strURL=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        
-//        strURL=[strURL stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
+        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/%@/log?pageIndex=0&pageSize=10",strForReporteeUserName];
+
+        strPath=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                                path:strURL
+                                                                path:strPath
                                                           parameters:nil];
         
         //====================================================RESPONSE
@@ -3268,6 +3395,14 @@
                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
             }else{
                 self.vwForReportiesHistory.hidden = NO;
+                
+                NSMutableArray *array=[[JSON objectForKey:@"userTimeLog"] mutableCopy];
+                for (NSDictionary *dict in array) {
+                    [arrayForReporteeHistory addObject:dict];
+                }
+
+                countForReporteeHistory = [[JSON objectForKey:@"totalEntries"] integerValue];;
+                
                 [self.tableVwForReportiesHistory reloadData];
             }
         }
@@ -3299,6 +3434,85 @@
     
 }
 
+-(NSMutableArray*)sortingArrayByDate:(NSMutableArray*)array{
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ssZ"];
+    NSMutableArray *tempArray = [NSMutableArray array];
+    // fast enumeration of the array
+    for (NSString *dateString in array) {
+        if (![dateString isKindOfClass:[NSNull class]]){
+            NSString *str=dateString;
+            str = [str stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+            str = [str stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
+            NSDate *date = [formatter dateFromString:str];
+            [tempArray addObject:date];
+        }
+    }
+    // NSLog(@"%@", tempArray);
+    // sort the array of dates
+    [tempArray sortUsingComparator:^NSComparisonResult(NSDate *date1, NSDate *date2) {
+        // return date2 compare date1 for descending. Or reverse the call for ascending.
+        return [date2 compare:date1];
+    }];
+    
+    tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
+    NSMutableArray *correctOrderStringArray = [NSMutableArray array];
+    for (NSDate *date_1 in tempArray) {
+        //        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        //        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss xxxx"];
+        //        NSString *dateString = [formatter stringFromDate:date_1];
+        [correctOrderStringArray addObject:date_1.description];
+    }
+    //  NSLog(@"%@", correctOrderStringArray);
+    return correctOrderStringArray;
+}
+-(NSString*)getTimeIndividual:(NSString*)strDate
+{
+    if ([strDate isKindOfClass:[NSNull class]]) {
+        return @"--";
+    }
+    //   NSLog(@"Time===%@",strDate);
+    NSString *strDateChange=strDate;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+    NSDateFormatter *dateFormatter1 = [[NSDateFormatter alloc] init];
+    dateFormatter1.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+    NSDate *daate=[dateFormatter1 dateFromString:strDateChange];
+    
+    NSTimeZone *tz = [NSTimeZone localTimeZone];
+    NSInteger seconds = [tz secondsFromGMTForDate:daate];
+    daate = [NSDate dateWithTimeInterval: seconds sinceDate: daate];
+    
+    /* NSTimeZone *timeZone = [NSTimeZone localTimeZone];
+     NSString *tzName = [timeZone name];
+     NSLog(@"Time Zone===%@",daate.description);
+     
+     if (![tzName containsString:@"Asia"]) {
+     NSDateFormatter * format = [[NSDateFormatter alloc] init];
+     [format setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+     NSDate * dateTemp = [format dateFromString:strDateChange];
+     [format setDateFormat:@"hh:mm a"];
+     NSTimeZone *currentTimeZone = [NSTimeZone localTimeZone];
+     NSTimeZone *utcTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
+     NSInteger currentGMTOffset = [currentTimeZone secondsFromGMTForDate:dateTemp];
+     NSInteger gmtOffset = [utcTimeZone secondsFromGMTForDate:dateTemp];
+     NSTimeInterval gmtInterval = currentGMTOffset - gmtOffset;
+     NSDate *destinationDate = [[NSDate alloc] initWithTimeInterval:gmtInterval sinceDate:dateTemp];
+     NSString *dateStr = [format stringFromDate:destinationDate];
+     NSLog(@"Converted Time===%@",dateStr);
+     return dateStr;
+     }*/
+    
+    NSDate *date_1 = [dateFormatter dateFromString:strDateChange];
+    dateFormatter.dateFormat = @"hh:mm a";
+    //    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:[NSTimeZone localTimeZone].secondsFromGMT];
+    strDateChange = [dateFormatter stringFromDate:date_1];
+    
+    //    NSLog(@"Converted Time===%@",strDateChange);
+    return strDateChange;
+}
 #pragma mark - Back Button
 - (IBAction)onClickBackBtn:(UIButton *)sender{
     
