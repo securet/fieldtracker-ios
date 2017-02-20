@@ -1398,28 +1398,28 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="i6A-sy-Woq">
-                                                            <rect key="frame" x="34" y="0.0" width="2" height="15"/>
+                                                            <rect key="frame" x="32" y="0.0" width="2" height="17"/>
                                                             <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="2" id="J0u-UX-JUL"/>
                                                             </constraints>
                                                         </imageView>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rWi-6Y-jo7">
-                                                            <rect key="frame" x="34" y="28" width="2" height="15"/>
+                                                            <rect key="frame" x="32" y="25" width="2" height="18"/>
                                                             <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="2" id="JJZ-0P-0k7"/>
                                                             </constraints>
                                                         </imageView>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dot_login" translatesAutoresizingMaskIntoConstraints="NO" id="nyh-7R-PMv">
-                                                            <rect key="frame" x="20" y="7" width="30" height="30"/>
+                                                            <rect key="frame" x="20" y="9" width="25" height="25"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="30" id="GYE-mQ-2zQ"/>
-                                                                <constraint firstAttribute="width" constant="30" id="bCF-QI-gch"/>
+                                                                <constraint firstAttribute="height" constant="25" id="GYE-mQ-2zQ"/>
+                                                                <constraint firstAttribute="width" constant="25" id="bCF-QI-gch"/>
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:45 am" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IXD-to-GbC">
-                                                            <rect key="frame" x="58" y="11" width="80" height="21"/>
+                                                            <rect key="frame" x="53" y="11" width="80" height="21"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="80" id="AIb-7B-Z78"/>
                                                                 <constraint firstAttribute="height" constant="21" id="fLI-AF-4v1"/>
@@ -1429,7 +1429,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="So5-0U-gPe">
-                                                            <rect key="frame" x="146" y="12" width="1" height="20"/>
+                                                            <rect key="frame" x="141" y="12" width="1" height="20"/>
                                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="20" id="STj-bV-94P"/>
@@ -1437,7 +1437,7 @@
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time In" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Peg-dK-wjd">
-                                                            <rect key="frame" x="155" y="11" width="437" height="21"/>
+                                                            <rect key="frame" x="150" y="11" width="442" height="21"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="21" id="b0M-Vb-FXs"/>
                                                             </constraints>
@@ -3084,28 +3084,28 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dcc-3N-LGE">
-                                                                    <rect key="frame" x="34" y="0.0" width="2" height="15"/>
+                                                                    <rect key="frame" x="32" y="0.0" width="2" height="18"/>
                                                                     <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="2" id="G1o-g2-hbz"/>
                                                                     </constraints>
                                                                 </imageView>
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KQ4-x1-Jzg">
-                                                                    <rect key="frame" x="34" y="28" width="2" height="16"/>
+                                                                    <rect key="frame" x="32" y="26" width="2" height="18"/>
                                                                     <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="2" id="KlH-uF-0ji"/>
                                                                     </constraints>
                                                                 </imageView>
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="dot_login" translatesAutoresizingMaskIntoConstraints="NO" id="eSd-8z-NG5">
-                                                                    <rect key="frame" x="20" y="7" width="30" height="30"/>
+                                                                    <rect key="frame" x="20" y="10" width="25" height="25"/>
                                                                     <constraints>
-                                                                        <constraint firstAttribute="width" constant="30" id="JNs-i4-wkm"/>
-                                                                        <constraint firstAttribute="height" constant="30" id="m4w-pw-xyI"/>
+                                                                        <constraint firstAttribute="width" constant="25" id="JNs-i4-wkm"/>
+                                                                        <constraint firstAttribute="height" constant="25" id="m4w-pw-xyI"/>
                                                                     </constraints>
                                                                 </imageView>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:45 am" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DwL-tr-caU">
-                                                                    <rect key="frame" x="58" y="11" width="80" height="21"/>
+                                                                    <rect key="frame" x="53" y="12" width="80" height="21"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="80" id="etr-6T-QrN"/>
                                                                         <constraint firstAttribute="height" constant="21" id="qCP-Z2-h2l"/>
@@ -3115,7 +3115,7 @@
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4ys-YS-6wg">
-                                                                    <rect key="frame" x="146" y="12" width="1" height="20"/>
+                                                                    <rect key="frame" x="141" y="13" width="1" height="20"/>
                                                                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="1" id="5bd-TM-Cdp"/>
@@ -3123,7 +3123,7 @@
                                                                     </constraints>
                                                                 </imageView>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time In" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4ES-Il-PIH">
-                                                                    <rect key="frame" x="155" y="11" width="437" height="21"/>
+                                                                    <rect key="frame" x="150" y="12" width="442" height="21"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="21" id="BT1-X2-i4T"/>
                                                                     </constraints>

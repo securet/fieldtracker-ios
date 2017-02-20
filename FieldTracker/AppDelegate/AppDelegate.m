@@ -42,19 +42,19 @@
         [_locationManager setAllowsBackgroundLocationUpdates:YES];
     }
 #ifdef __IPHONE_8_0
-//      if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-//     Use one or the other, not both. Depending on what you put in info.plist
-//    [self.locationManager requestWhenInUseAuthorization];
+    //      if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+    //     Use one or the other, not both. Depending on what you put in info.plist
+    //    [self.locationManager requestWhenInUseAuthorization];
     
-//      }
+    //      }
 #endif
     [_locationManager requestAlwaysAuthorization];
-     _locationManager.allowsBackgroundLocationUpdates = YES;
-     [_locationManager startUpdatingLocation];
+    _locationManager.allowsBackgroundLocationUpdates = YES;
+    [_locationManager startUpdatingLocation];
     
-//    if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
-//        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
-//    }
+    //    if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
+    //        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+    //    }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChangeGot:) name:NSSystemClockDidChangeNotification object:nil];
     
@@ -63,36 +63,37 @@
     NSInteger is_Login=[[defaults valueForKey:@"Is_Login"] integerValue];
     
     if (is_Login == 1) {
-         self.window.rootViewController =[self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
+        self.window.rootViewController =[self.window.rootViewController.storyboard instantiateViewControllerWithIdentifier:@"HomeRoot"];
     }else{
         
     }
     
-   /*
+    
     NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString* appID = infoDictionary[@"CFBundleIdentifier"];
     
-     NSLog(@"App ID%@", appID);
+    NSLog(@"App ID%@", appID);
     NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@", appID]];
     NSData* data = [NSData dataWithContentsOfURL:url];
-    NSDictionary* lookup = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
-    NSLog(@"Look up==%@", lookup);
-    if ([lookup[@"resultCount"] integerValue] == 1){
-        NSString* appStoreVersion = lookup[@"results"][0][@"version"];
-        NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
-        if (![appStoreVersion isEqualToString:currentVersion]){
-            NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);
-    
+    if (data) {
+        NSDictionary* lookup = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        NSLog(@"Look up==%@", lookup);
+        if ([lookup[@"resultCount"] integerValue] == 1){
+            NSString* appStoreVersion = lookup[@"results"][0][@"version"];
+            NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
+            if (![appStoreVersion isEqualToString:currentVersion]){
+                NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);
+            }
         }
     }
     
-    */
+    
     return YES;
 }
 
 -(void)timeChangeGot:(NSNotification*)notifi{
-     NSLog(@"Time Changed===%@",notifi.userInfo);
+    NSLog(@"Time Changed===%@",notifi.userInfo);
 }
 -(void)timeChange:(NSNotification*)notifi{
     NSLog(@"Time Changed===%@",notifi.userInfo);
@@ -106,9 +107,9 @@
 
 - (BOOL)connected
 {
-        Reachability *reachability = [Reachability reachabilityForInternetConnection];
-        NetworkStatus networkStatus = [reachability currentReachabilityStatus];
-        return networkStatus != NotReachable;
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+    return networkStatus != NotReachable;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

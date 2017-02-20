@@ -21,7 +21,7 @@
     NSMutableArray *arrayForReportee;
     NSMutableArray *arrayForReporteeHistory;
     NSMutableArray *arrayForReporteeStatusData;
-
+    
     NSInteger countForReporteeHistory;
     
     NSString *strForReporteeUserName;
@@ -106,7 +106,7 @@
     self.tableVwForReporties.tableFooterView=[[UIView alloc] init];
     self.tableVwForReportiesHistory.tableFooterView=[[UIView alloc] init];
     self.tableVwForIndividualHistory.tableFooterView=[[UIView alloc] init];
-
+    
     
     self.vwForPromoters.hidden = YES;
     self.vwForStore.hidden = YES;
@@ -145,6 +145,7 @@
     
     [self.tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     [self.tableVwForLeaveRqst addFooterWithTarget:self action:@selector(refreshFooterForLeave) withIndicatorColor:TopColor];
+    [self.tableVwForReportiesHistory addFooterWithTarget:self action:@selector(refreshFooterForReportees) withIndicatorColor:TopColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveTypeSelected:) name:@"LeaveTypeSelected" object:nil];
@@ -265,7 +266,7 @@
             self.textFieldMyManagerMobileNumber.text = [[dict objectForKey:@"reportingPerson"] valueForKey:@"contactNumber"];
         }
         
-       
+        
         NSString *firstName=[[dict objectForKey:@"reportingPerson"] valueForKey:@"firstName"];
         NSString *lastName=[[dict objectForKey:@"reportingPerson"] valueForKey:@"lastName"];
         
@@ -527,7 +528,7 @@
         NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
         
         AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-       // httpClient.parameterEncoding = AFJSONParameterEncoding;
+        // httpClient.parameterEncoding = AFJSONParameterEncoding;
         [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
@@ -676,7 +677,7 @@
             //        self.lblForStoreLocation.text=@"Off site";
             self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
         }
-       // self.textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
+        // self.textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
         self.lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
     }
     @catch (NSException *exception) {
@@ -864,7 +865,7 @@
 -(void)onClickStoreAddToServer:(UIButton*)sender
 {
     if ([APPDELEGATE connected]) {
-    
+        
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
         NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
         
@@ -2500,7 +2501,7 @@
         NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
         NSString *strCurrentTime=[dateFormatter stringFromDate:now];
         strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-    
+        
         NSLog(@"%@",[strCurrentTime substringFromIndex:10]);
         
         //    NSString *strStartDate=[NSString stringWithFormat:@"%@%@",self.txtFieldStartDate.text,[strCurrentTime substringFromIndex:10]];
@@ -2692,7 +2693,7 @@
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
-   
+    
     if (tableView == self.tableVwForReporties) {
         MKAgentListCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cell==nil) {
@@ -2706,8 +2707,13 @@
                 cell.lblFieldAgentName.text=[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"];
             }
         }
-       
         cell.lblStoreLocation.text=@"";
+        if ([[arrayForReportee objectAtIndex:indexPath.row] objectForKey:@"locations"]) {
+            if (![[[arrayForReportee objectAtIndex:indexPath.row] objectForKey:@"locations"] isKindOfClass:[NSNull class]]) {
+                cell.lblStoreLocation.text=[[[arrayForReportee objectAtIndex:indexPath.row] objectForKey:@"locations"] objectAtIndex:0];
+            }
+        }
+        
         cell.lblStatus.text=@"";
         return cell;
     }
@@ -2720,11 +2726,11 @@
             cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
+        
         
         NSMutableArray *array=[[NSMutableArray alloc] init];
         NSInteger   hoursBetweenDates = 0;
-
+        
         ///Date Parsing
         NSString *strDate=[[arrayForReporteeHistory objectAtIndex:indexPath.row]valueForKey:@"estimatedCompletionDate"];
         NSRange range = [strDate rangeOfString:@"T"];
@@ -2762,9 +2768,9 @@
                 }
                 
                 if (![[array objectAtIndex:0] isKindOfClass:[NSNull class]] && ![[array lastObject] isKindOfClass:[NSNull class]]){
-                 
+                    
                     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-
+                    
                     NSString *firstViewd;
                     firstViewd=[NSString stringWithFormat:@"%@",[array objectAtIndex:0]];
                     NSString *lastViewedString;
@@ -2802,10 +2808,10 @@
             cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
             cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
         }
-
+        
         return cell;
     }
-
+    
     if (tableView == self.tableVwForIndividualHistory) {
         MKIndividualHistoryCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cell == nil) {
@@ -2815,26 +2821,34 @@
         
         /*
          ////Image Names
-         dot_login
-         dot_inlocation
-         dot_outlocation
-         dot_timeout
+         dot_login rgb(48,174,242)
+         dot_inlocation rgb(78,242,48)
+         dot_outlocation  rgb(242,105,48)
+         dot_timeout rgb(90,90,90)
          */
-       
+        
+        cell.imgVwForStatusIcon.layer.cornerRadius = cell.imgVwForStatusIcon.frame.size.height/2;
+        cell.imgVwForStatusIcon.layer.masksToBounds = YES;
+        
         if (indexPath.row==0) {
-            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_login"];
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+            cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(48/255.0) green:(174/255.0) blue:(242/255.0) alpha:1.0];
+            
             cell.lblForStatus.text=@"Time In";
             cell.centerConstraint.constant = 0;
             cell.imgVwForTopVerticalLine.hidden=YES;
             cell.imgVwForBtmVerticalLine.hidden=NO;
         }else{
             if (indexPath.row % 2 == 0) {
-                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_inlocation"];
+                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+                cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(78/255.0) green:(242/255.0) blue:(48/255.0) alpha:1.0];
+                
                 cell.lblForStatus.text=@"In location";
-                cell.centerConstraint.constant = -5;
+                cell.centerConstraint.constant = -2;
             }else{
-                cell.centerConstraint.constant = 5;
-                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_outlocation"];
+                cell.centerConstraint.constant = 2;
+                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+                cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(242/255.0) green:(105/255.0) blue:(48/255.0) alpha:1.0];
                 cell.lblForStatus.text=@"Out of location";
             }
             cell.imgVwForTopVerticalLine.hidden=NO;
@@ -2843,7 +2857,9 @@
         
         if (indexPath.row==arrayForReporteeStatusData.count-1){
             cell.centerConstraint.constant = 0;
-            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+            cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(90/255.0) green:(90/255.0) blue:(90/255.0) alpha:1.0];
+            
             cell.lblForStatus.text=@"Time Out";
             cell.imgVwForTopVerticalLine.hidden=NO;
             cell.imgVwForBtmVerticalLine.hidden=YES;
@@ -2859,7 +2875,7 @@
             cell.lblForStatus.text=@"";
             cell.imgVwForLine.backgroundColor=[UIColor clearColor];
         }
-
+        
         
         return cell;
     }
@@ -3164,13 +3180,12 @@
     }else if (tableView == self.tableVwForReporties){
         
         strForReporteeUserName=[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"username"];
-        
         arrayForReporteeHistory=[[NSMutableArray alloc] init];
-        
-        [self getReporteeHistory];
-        
+        pageNumber = 0;
         self.tableVwForReportiesHistory.delegate=self;
         self.tableVwForReportiesHistory.dataSource=self;
+        [self getReporteeHistory];
+        
         
     }else if(tableView == self.tableVwForReportiesHistory){
         
@@ -3221,12 +3236,12 @@
         }
         MKHistoryCustomCell *cell=(MKHistoryCustomCell*)[tableView cellForRowAtIndexPath:indexPath];
         self.lblTotalTime.text = cell.lblTotalTime.text;
-
+        
         self.vwForReportiesIndividualHistory.hidden=NO;
         self.tableVwForIndividualHistory.delegate=self;
         self.tableVwForIndividualHistory.dataSource=self;
         [self.tableVwForIndividualHistory reloadData];
-
+        
     }
 }
 
@@ -3274,6 +3289,23 @@
 
 
 #pragma mark - Reportees
+
+- (void)refreshFooterForReportees
+{
+    if(pageNumber < countForReporteeHistory){
+        pageNumber++;
+        [self getReporteeHistory];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableVwForReportiesHistory reloadData];
+            [self.tableVwForReportiesHistory footerEndRefreshing];
+            //        [self.tableVw removeFooter];
+        });
+    }else{
+        [self.tableVwForReportiesHistory footerEndRefreshing];
+        [self.tableVwForReportiesHistory headerEndRefreshing];
+    }
+}
 -(void)getReportee{
     if ([APPDELEGATE connected]) {
         
@@ -3287,16 +3319,16 @@
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
         NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/user/reportees"];
-       // NSLog(@"String Path for Get Promoters==%@",strPath);
+        // NSLog(@"String Path for Get Promoters==%@",strPath);
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                                 path:strPath
                                                           parameters:nil];
         
         //====================================================RESPONSE
         
-//        if (pageNumber==0) {
-            [DejalBezelActivityView activityViewForView:self.view];
-//        }
+        //        if (pageNumber==0) {
+        [DejalBezelActivityView activityViewForView:self.view];
+        //        }
         
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         
@@ -3307,13 +3339,13 @@
             NSError *error = nil;
             NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
             
-//            if (pageNumber==0) {
-                [DejalBezelActivityView removeView];
-//             }
-          
-             arrayForReportee=[[JSON objectForKey:@"reporteeList"] mutableCopy];
+            //            if (pageNumber==0) {
+            [DejalBezelActivityView removeView];
+            //             }
             
-//            arrayForReportee=array;
+            arrayForReportee=[[JSON objectForKey:@"reporteeList"] mutableCopy];
+            
+            //            arrayForReportee=array;
             
             [self.tableVwForReporties reloadData];
             NSLog(@"Reportee List===%@",arrayForReportee);
@@ -3343,7 +3375,7 @@
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
-
+    
 }
 -(void)getReporteeHistory{
     
@@ -3359,20 +3391,28 @@
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
         ///rest/s1/ft/attendance/${username}/log?pageIndex&pageSize=10&estimatedStartDate=2016-12-11 00:00:00&estimatedCompletionDate=2016-12-11 23:50:59
+        //reportee/log?username=
+        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/reportee/log?username=%@&pageIndex=%li&pageSize=10",strForReporteeUserName,(long)pageNumber];
         
-        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/%@/log?pageIndex=0&pageSize=10",strForReporteeUserName];
-
-        strPath=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+       
+        NSString *strURL=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        
+        strURL=[strURL stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
+        
+        
+        NSString *urlEncoded = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,(CFStringRef)strPath,NULL,(CFStringRef)@"+",kCFStringEncodingUTF8));
+        NSLog(@"Encoded String===%@",urlEncoded);
+        
         
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                                path:strPath
+                                                                path:urlEncoded
                                                           parameters:nil];
         
         //====================================================RESPONSE
         
-        //        if (pageNumber==0) {
-        [DejalBezelActivityView activityViewForView:self.view];
-        //        }
+        if (pageNumber==0) {
+            [DejalBezelActivityView activityViewForView:self.view];
+        }
         
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         
@@ -3383,9 +3423,10 @@
             NSError *error = nil;
             NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
             
-            //            if (pageNumber==0) {
-            [DejalBezelActivityView removeView];
-            //             }
+            if (pageNumber==0) {
+                [DejalBezelActivityView removeView];
+            }
+            
             NSLog(@"Reportee History===%@",JSON);
             
             if ([[JSON valueForKey:@"totalEntries"] integerValue] == 0) {
@@ -3400,7 +3441,7 @@
                 for (NSDictionary *dict in array) {
                     [arrayForReporteeHistory addObject:dict];
                 }
-
+                
                 countForReporteeHistory = [[JSON objectForKey:@"totalEntries"] integerValue];;
                 
                 [self.tableVwForReportiesHistory reloadData];
@@ -3581,7 +3622,7 @@
             }
             self.backBtn.hidden = NO;
         }else{
-                 self.vwForReporties.hidden = YES;
+            self.vwForReporties.hidden = YES;
         }
     }
 }

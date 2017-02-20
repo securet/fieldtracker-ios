@@ -213,25 +213,34 @@
         
         /*
          ////Image Names
-         dot_login
-         dot_inlocation
-         dot_outlocation
-         dot_timeout
+         dot_login rgb(48,174,242)
+         dot_inlocation rgb(78,242,48)
+         dot_outlocation  rgb(242,105,48)
+         dot_timeout rgb(90,90,90)
          */
+        
+        cell.imgVwForStatusIcon.layer.cornerRadius = cell.imgVwForStatusIcon.frame.size.height/2;
+        cell.imgVwForStatusIcon.layer.masksToBounds = YES;
+        
         if (indexPath.row==0) {
-            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_login"];
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+            cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(48/255.0) green:(174/255.0) blue:(242/255.0) alpha:1.0];
+            
             cell.lblForStatus.text=@"Time In";
             cell.centerConstraint.constant = 0;
             cell.imgVwForTopVerticalLine.hidden=YES;
             cell.imgVwForBtmVerticalLine.hidden=NO;
         }else{
             if (indexPath.row % 2 == 0) {
-                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_inlocation"];
+                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+                cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(78/255.0) green:(242/255.0) blue:(48/255.0) alpha:1.0];
+                
                 cell.lblForStatus.text=@"In location";
-                cell.centerConstraint.constant = -5;
+                cell.centerConstraint.constant = -2;
             }else{
-                cell.centerConstraint.constant = 5;
-                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_outlocation"];
+                cell.centerConstraint.constant = 2;
+                cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+                 cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(242/255.0) green:(105/255.0) blue:(48/255.0) alpha:1.0];
                 cell.lblForStatus.text=@"Out of location";
             }
             cell.imgVwForTopVerticalLine.hidden=NO;
@@ -240,11 +249,15 @@
         
         if (indexPath.row==arrayForStatusData.count-1){
             cell.centerConstraint.constant = 0;
-            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@"dot_timeout"];
+            cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
+             cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(90/255.0) green:(90/255.0) blue:(90/255.0) alpha:1.0];
+            
             cell.lblForStatus.text=@"Time Out";
             cell.imgVwForTopVerticalLine.hidden=NO;
             cell.imgVwForBtmVerticalLine.hidden=YES;
         }
+        
+        
         
         cell.imgVwForLine.backgroundColor=[UIColor lightGrayColor];
         
