@@ -144,6 +144,7 @@
         [alert show];
     }
 }
+
 -(void)forgotPassword{
     
     if ([APPDELEGATE connected]) {

@@ -68,7 +68,7 @@
         
     }
     
-    
+   /*
     NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString* appID = infoDictionary[@"CFBundleIdentifier"];
     
@@ -87,6 +87,7 @@
         }
     }
     
+    */
     return YES;
 }
 

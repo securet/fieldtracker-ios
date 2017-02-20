@@ -18,6 +18,8 @@
     NSMutableArray *arrayForPromoters;
     NSMutableArray *arrayForLeaveHistory;
     NSMutableArray *arrayForLeaveApprovalList;
+    NSMutableArray *arrayForReportee;
+    NSString *strForReporteeUserName;
     
     NSInteger countForLeaveData,pageNumberForLeave,indexValueForLeaveEdit,leaveApprovalListCount,pageNumberForLeaveApproval;
     BOOL isLeaveEditRNew;
@@ -322,7 +324,6 @@
     [self.lblForOrgNameContact addGestureRecognizer:tapGestureRecognizerForOrgName];
     self.lblForOrgNameContact.userInteractionEnabled = YES;
     
-    
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(emailIDTapped)];
     tapGestureRecognizer.numberOfTapsRequired = 1;
     [self.lblForEmailContact addGestureRecognizer:tapGestureRecognizer];
@@ -333,25 +334,7 @@
     [self.lblForPhoneContact addGestureRecognizer:tapGestureRecognizerForNum];
     self.lblForPhoneContact.userInteractionEnabled = YES;
     
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
-    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"Email:  "
-                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
-    
-    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:self.lblForEmailContact.text
-                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
-                                                                                          NSBackgroundColorAttributeName: [UIColor clearColor]}]];
-    //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
-    self.lblForEmailContact.attributedText = attributedString;
-    
-    NSMutableAttributedString *attributedStringForNumber = [[NSMutableAttributedString alloc] init];
-    [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:@"Phone:  "
-                                                                                      attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
-    
-    [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:self.lblForPhoneContact.text
-                                                                                      attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
-                                                                                                   NSBackgroundColorAttributeName: [UIColor clearColor]}]];
-    //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
-    self.lblForPhoneContact.attributedText = attributedStringForNumber;
+    [self setupContactSupport];
     
     ///Leave Request Calendar
     
@@ -390,7 +373,27 @@
     [self.btnLeaveRqstSubmit addTarget:self action:@selector(leaveRequestSubmit:) forControlEvents:UIControlEventTouchUpInside];
     [self.btnToday addTarget:self action:@selector(onClickToday) forControlEvents:UIControlEventTouchUpInside];
 }
-
+-(void)setupContactSupport{
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
+    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"Email:  "
+                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
+    
+    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:self.lblForEmailContact.text
+                                                                             attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+                                                                                          NSBackgroundColorAttributeName: [UIColor clearColor]}]];
+    //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
+    self.lblForEmailContact.attributedText = attributedString;
+    
+    NSMutableAttributedString *attributedStringForNumber = [[NSMutableAttributedString alloc] init];
+    [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:@"Phone:  "
+                                                                                      attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone),NSForegroundColorAttributeName: [UIColor blackColor]}]];
+    
+    [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:self.lblForPhoneContact.text
+                                                                                      attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
+                                                                                                   NSBackgroundColorAttributeName: [UIColor clearColor]}]];
+    //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
+    self.lblForPhoneContact.attributedText = attributedStringForNumber;
+}
 
 #pragma mark - NSNotifications
 
@@ -515,12 +518,12 @@
         NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
         
         AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+       // httpClient.parameterEncoding = AFJSONParameterEncoding;
         [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                                path:@"/rest/s1/ft/CustomerSupportInfo"
+                                                                path:@"http://ft.allsmart.in/rest/s1/ft/customerSupportInfo"
                                                           parameters:nil];
         //====================================================RESPONSE
         [DejalBezelActivityView activityViewForView:self.view];
@@ -532,6 +535,21 @@
             NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
             [DejalBezelActivityView removeView];
             NSLog(@"Contact Support==%@",JSON);
+            
+            if ([[JSON objectForKey:@"userObj"] valueForKey:@"emailAddress"]) {
+                if (![[[JSON objectForKey:@"userObj"] valueForKey:@"emailAddress"] isKindOfClass:[NSNull class]]) {
+                    self.lblForEmailContact.text=[[JSON objectForKey:@"userObj"] valueForKey:@"emailAddress"];
+                }
+            }
+            
+            if ([[JSON objectForKey:@"userObj"] valueForKey:@"contactNumber"]) {
+                if (![[[JSON objectForKey:@"userObj"] valueForKey:@"contactNumber"] isKindOfClass:[NSNull class]]) {
+                    self.lblForPhoneContact.text=[[JSON objectForKey:@"userObj"] valueForKey:@"contactNumber"];
+                }
+            }
+            
+            [self setupContactSupport];
+            
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -2654,7 +2672,7 @@
     }else if (tableView == self.tableVwForLeaveApproval){
         return arrayForLeaveApprovalList.count;
     }else if (tableView == self.tableVwForReporties) {
-        return 10;
+        return arrayForReportee.count;
     }else if (tableView == self.tableVwForReportiesHistory) {
         return 10;
     }else if (tableView == self.tableVwForIndividualHistory){
@@ -2680,9 +2698,21 @@
     if (tableView == self.tableVwForReporties) {
         MKAgentListCell *cell=[tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (cell==nil) {
-            cell=[[MKAgentListCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+            cell=[[MKAgentListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        
+        if ([[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"]) {
+            if (![[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"] isKindOfClass:[NSNull class]]) {
+                cell.lblFieldAgentName.text=[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"];
+             
+//                NSLog(@"----->>%@",[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"]);
+            }
+        }
+       
+        cell.lblStoreLocation.text=@"";
+        cell.lblStatus.text=@"";
         return cell;
     }
     
@@ -2990,6 +3020,8 @@
             [self.btnLeaveRqstCancel setTitle:@"Cancel" forState:UIControlStateNormal];
             
         }else if ([cell.textLabel.text isEqualToString:@"Reporties"]){
+            arrayForReportee=[[NSMutableArray alloc] init];
+            [self getReportee];
             self.vwForReporties.hidden = NO;
             self.backBtn.hidden = NO;
             self.tableVwForReporties.delegate=self;
@@ -3052,10 +3084,13 @@
         [self leaveRequestEdit:indexPath.row];
         [self disableLeaveRequestFields];
     }else if (tableView == self.tableVwForReporties){
-        self.vwForReportiesHistory.hidden = NO;
+        
+        strForReporteeUserName=[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"username"];
+        [self getReporteeHistory];
+        
         self.tableVwForReportiesHistory.delegate=self;
         self.tableVwForReportiesHistory.dataSource=self;
-        [self.tableVwForReportiesHistory reloadData];
+        
     }else if(tableView == self.tableVwForReportiesHistory){
         self.vwForReportiesIndividualHistory.hidden=NO;
         self.tableVwForIndividualHistory.delegate=self;
@@ -3106,6 +3141,164 @@
  // Pass the selected object to the new view controller.
  }
  */
+
+
+#pragma mark - Reportees
+-(void)getReportee{
+    if ([APPDELEGATE connected]) {
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
+        
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/user/reportees"];
+       // NSLog(@"String Path for Get Promoters==%@",strPath);
+        NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                                path:strPath
+                                                          parameters:nil];
+        
+        //====================================================RESPONSE
+        
+//        if (pageNumber==0) {
+            [DejalBezelActivityView activityViewForView:self.view];
+//        }
+        
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            
+//            if (pageNumber==0) {
+                [DejalBezelActivityView removeView];
+//             }
+          
+             arrayForReportee=[[JSON objectForKey:@"reporteeList"] mutableCopy];
+            
+//            arrayForReportee=array;
+            
+            [self.tableVwForReporties reloadData];
+            NSLog(@"Reportee List===%@",arrayForReportee);
+        }
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                             NSError *jsonError;
+                                             NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                             
+                                             if (objectData != nil) {
+                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                      options:NSJSONReadingMutableContainers
+                                                                                                        error:&jsonError];
+                                                 
+                                                 NSString *strError=[json valueForKey:@"errors"];
+                                                 [[[UIAlertView alloc] initWithTitle:@""
+                                                                             message:strError
+                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                             }
+                                             
+                                         }];
+        [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+
+}
+-(void)getReporteeHistory{
+    
+    if ([APPDELEGATE connected]) {
+        
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+        NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
+        
+        AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+        httpClient.parameterEncoding = AFFormURLParameterEncoding;
+        [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
+        
+        ///rest/s1/ft/attendance/${username}/log?pageIndex&pageSize=10&estimatedStartDate=2016-12-11 00:00:00&estimatedCompletionDate=2016-12-11 23:50:59
+        
+        NSString *strPath=[NSString stringWithFormat:@"rest/s1/ft/attendance/%@/log?pageIndex=0&pageSize=10",strForReporteeUserName];
+        //NSLog(@"String Path for Get Promoters==%@",strPath);
+        
+        NSString *strURL=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        
+//        strURL=[strURL stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
+        
+        NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                                path:strURL
+                                                          parameters:nil];
+        
+        //====================================================RESPONSE
+        
+        //        if (pageNumber==0) {
+        [DejalBezelActivityView activityViewForView:self.view];
+        //        }
+        
+        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        
+        [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            
+        }];
+        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError *error = nil;
+            NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+            
+            //            if (pageNumber==0) {
+            [DejalBezelActivityView removeView];
+            //             }
+            NSLog(@"Reportee History===%@",JSON);
+            
+            if ([[JSON valueForKey:@"totalEntries"] integerValue] == 0) {
+                self.vwForReportiesHistory.hidden = YES;
+                [[[UIAlertView alloc] initWithTitle:@""
+                                            message:@"There is no log history. The user didn't logged yet."
+                                           delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+            }else{
+                self.vwForReportiesHistory.hidden = NO;
+                [self.tableVwForReportiesHistory reloadData];
+            }
+        }
+         //==================================================ERROR
+                                         failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                             [DejalBezelActivityView removeView];
+                                             NSLog(@"Error %@",[error description]);
+                                             NSError *jsonError;
+                                             NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                             
+                                             if (objectData != nil) {
+                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                                                                                      options:NSJSONReadingMutableContainers
+                                                                                                        error:&jsonError];
+                                                 
+                                                 NSString *strError=[json valueForKey:@"errors"];
+                                                 [[[UIAlertView alloc] initWithTitle:@""
+                                                                             message:strError
+                                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
+                                             }
+                                             
+                                         }];
+        [operation start];
+    }else{
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    
+}
+
 #pragma mark - Back Button
 - (IBAction)onClickBackBtn:(UIButton *)sender{
     

@@ -2846,6 +2846,11 @@
                                                         <constraint firstItem="cT5-G8-Q4L" firstAttribute="centerY" secondItem="0M7-YY-nsH" secondAttribute="centerY" id="suT-zg-xTb"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
+                                                <connections>
+                                                    <outlet property="lblFieldAgentName" destination="ALD-cs-azD" id="a2G-zj-fcf"/>
+                                                    <outlet property="lblStatus" destination="cT5-G8-Q4L" id="nK0-Ym-Pzy"/>
+                                                    <outlet property="lblStoreLocation" destination="i45-pc-VcX" id="bul-wS-dUe"/>
+                                                </connections>
                                             </tableViewCell>
                                         </prototypes>
                                     </tableView>
