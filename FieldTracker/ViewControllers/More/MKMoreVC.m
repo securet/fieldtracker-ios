@@ -170,7 +170,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+    //NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
     self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
@@ -219,7 +219,10 @@
     self.textFieldMyName.text=[NSString stringWithFormat:@"%@ %@",self.lblFName.text,self.lblLName.text];
     self.textFieldMyNumber.text = @"Mobile Number";
     self.textFieldMyEmail.text = [dict valueForKey:@"emailAddress"];
-    self.textFieldMyStore.text = self.lblForStoreLocation.text;
+    self.textFieldMyStore.text = [[defaults objectForKey:@"StoreData"] valueForKey:@"storeName"];
+    //StoreData
+    
+   
     
     if ([dict valueForKey:@"directions"]) {
         self.textVwMyAddress.text=[dict valueForKey:@"directions"];
@@ -665,7 +668,7 @@
     
     @try {
         NSDictionary *userInfo = notification.userInfo;
-        NSLog(@"Notification In History==%@",userInfo);
+      //  NSLog(@"Notification In History==%@",userInfo);
         
         //    NSDictionary *dict=[userIn];
         
@@ -2136,8 +2139,11 @@
         dictForLeaveTypes=JSON;
         NSLog(@"Leave Types===%@",dictForLeaveTypes);
         
-        NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
-        for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
+        if ([arrayForLeaveHistory count] > 0)
+        {
+ 
+            NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
+         for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
             if ([strLeaveType isEqualToString:[dict valueForKey:@"enumId"]]) {
                 self.txtFieldLeaveType.text=[dict valueForKey:@"description"];
                 leaveTypeEnumID=[dict valueForKey:@"enumId"];
@@ -2150,6 +2156,10 @@
                 self.txtFieldLeaveReason.text=[dict valueForKey:@"description"];
                 leaveReasonEnumID=[dict valueForKey:@"enumId"];
             }
+        }
+            
+        }else{
+            [self.tableVwForLeaveRqst reloadData];
         }
     }
      //==================================================ERROR
@@ -2282,7 +2292,7 @@
             NSTimeZone *timeZone = [NSTimeZone localTimeZone];
             NSString *tzName = [timeZone name];
             
-            NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+          //  NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
             NSString *strCurrentTime=[dateFormatter stringFromDate:now];
             strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
             
@@ -2498,7 +2508,7 @@
         NSTimeZone *timeZone = [NSTimeZone localTimeZone];
         NSString *tzName = [timeZone name];
         
-        NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+       // NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
         NSString *strCurrentTime=[dateFormatter stringFromDate:now];
         strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
         
@@ -2935,6 +2945,13 @@
             endDate=[endDate substringToIndex:10];
             
             cellLeave.lblForTypeOfLeave.text=[NSString stringWithFormat:@"%@",[[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] substringFromIndex:3]];
+            
+            for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveReasonEnumId"]){
+                if ([[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] isEqualToString:[dict valueForKey:@"enumId"]]) {
+                    cellLeave.lblForTypeOfLeave.text=[dict valueForKey:@"description"];
+                }
+            }
+            
             strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
         }
         
@@ -3102,6 +3119,7 @@
             
             arrayForLeaveHistory=[[NSMutableArray alloc] init];
             pageNumberForLeave = 0;
+            [self getLeaveType:0];
             [self getMyLeaveHistory];
             self.vwForLeaveRqst.hidden =NO;
             self.backBtn.hidden = NO;

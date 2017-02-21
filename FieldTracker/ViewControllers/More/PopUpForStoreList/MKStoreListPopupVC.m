@@ -194,12 +194,12 @@
              arrayForStoreList=[JSON objectForKey:@"userStores"];
         }else if (popupViewDifferentiate == 2){
             arrayForLeaveType=[JSON objectForKey:@"leaveTypeEnumId"];
-//             NSLog(@"%@",JSON);
+             NSLog(@"%@",JSON);
         }else if (popupViewDifferentiate == 3){
-//             NSLog(@"%@",JSON);
+             NSLog(@"%@",JSON);
             arrayForLeaveReason=[JSON objectForKey:@"leaveReasonEnumId"];
         }
-        
+          
         [_tableVw reloadData];
     }
      //==================================================ERROR

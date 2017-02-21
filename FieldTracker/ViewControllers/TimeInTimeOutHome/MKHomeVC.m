@@ -38,6 +38,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self getStoreDetails];
+    [self checkAppVersion];
+    
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
     NSLog(@"%@",dict);
@@ -142,7 +144,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+   // NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
     self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
@@ -159,6 +161,51 @@
                                     message:@"Please Enable GPS"
                                    delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
     }
+}
+
+#pragma mark - Check App Version
+
+-(void)checkAppVersion{
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *auth_String=[defaults valueForKey:@"BasicAuth"];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    [httpClient setDefaultHeader:@"Authorization" value:auth_String];
+    
+    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/checkForceUpdate"];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:urlPath
+                                                      parameters:nil];
+    //====================================================RESPONSE
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
+        NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
+        if (![[JSON valueForKey:@"appVersion"] isEqualToString:currentVersion] && [[JSON valueForKey:@"forceUpdate"] isEqualToString:@"Y"]){
+            
+             NSLog(@"Need to update = %@",currentVersion);
+            UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"Update" message:[JSON valueForKey:@"message"] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Update",nil];
+            alertView.tag=200;
+            [alertView show];
+        }
+        NSLog(@"App Version Details==%@",JSON);
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         //                                         [DejalBezelActivityView removeView];
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+
 }
 
 #pragma mark - Background Task
@@ -279,6 +326,15 @@
         
         [self startBackgroundTask];
         [self checkLocation];
+        
+          //  CLLocationCoordinate2D locationCoordinate=CLLocationCoordinate2DMake([[dict valueForKey:@"cLatitude"]doubleValue], [[dict valueForKey:@"cLongitude"]doubleValue]);
+        
+        CLCircularRegion *circularRegion=[[CLCircularRegion alloc]initWithCenter:coordinate radius:radiusForStore identifier:@"Karthik"];
+        
+            circularRegion.notifyOnEntry=YES;
+            circularRegion.notifyOnExit=YES;
+        locationManager.delegate=self;
+           [locationManager startMonitoringForRegion:circularRegion];
     }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -461,7 +517,7 @@
                                                                      longitude:coordinate.longitude];
         CLLocationDistance distance = [location distanceFromLocation:userLocation];
         
-        NSLog(@"Accuracy Data=====%f",userLocation.verticalAccuracy);
+      //  NSLog(@"Accuracy Data=====%f",userLocation.verticalAccuracy);
         
         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
         
@@ -470,6 +526,22 @@
         //FieldExectiveOffPremise
         
         if (distance <= radiusForStore && distance >= 0){
+            
+            if ([self.lblForStoreLocation.text isEqualToString:@"Off site"]) {
+                
+               // [self showRegionAlert:@"Entering Region" forRegion:@"Store"];
+                
+                UILocalNotification *notification = [[UILocalNotification alloc] init];
+                notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:1];
+                notification.alertBody = @"Entering To Store Region !";
+                notification.timeZone = [NSTimeZone defaultTimeZone];
+                notification.soundName = UILocalNotificationDefaultSoundName;
+                //notification.applicationIconBadgeNumber = 10;
+                
+                [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+                
+            }
+            
             self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
             self.lblForStoreLocation.text=[dictForStoreDetails valueForKey:@"storeName"];
             self.lblForStoreLocation.textColor=[UIColor whiteColor];
@@ -477,7 +549,24 @@
             storeName= [dictForStoreDetails valueForKey:@"storeName"];
             boolValueForInLocationOrNot = YES;
             self.lblStoreName.text=storeName;
+            
         }else{
+            
+            if (![self.lblForStoreLocation.text isEqualToString:@"Off site"]) {
+                
+               // [self showRegionAlert:@"Exiting Region" forRegion:@"Store"];
+                
+                
+                UILocalNotification *notification = [[UILocalNotification alloc] init];
+                notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:1];
+                notification.alertBody = @"Exiting From Store Region !";
+                notification.timeZone = [NSTimeZone defaultTimeZone];
+                notification.soundName = UILocalNotificationDefaultSoundName;
+                //notification.applicationIconBadgeNumber = 10;
+                
+                [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+            }
+
             self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
             self.lblForStoreLocation.text=@"Off site";
             self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
@@ -486,6 +575,10 @@
             boolValueForInLocationOrNot = NO;
             self.lblStoreName.text=@"(Not at location)";
         }
+        
+        
+        
+        
         
         NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
         
@@ -533,13 +626,13 @@
 
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
     NSLog(@"Entered Region - %@", region.identifier);
-    //[self showRegionAlert:@"Entering Region" forRegion:region.identifier];
+   // [self showRegionAlert:@"Entering Region" forRegion:region.identifier];
     //    [self checkLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
     NSLog(@"Exited Region - %@", region.identifier);
-    //[self showRegionAlert:@"Exiting Region" forRegion:region.identifier];
+   // [self showRegionAlert:@"Exiting Region" forRegion:region.identifier];
     //    [self checkLocation];
 }
 
@@ -587,6 +680,10 @@
     }
     
     [locationManager startUpdatingLocation];
+    
+    
+    
+
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -615,6 +712,8 @@
     }
 }
 
+
+
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     //    NSLog(@"Location Updates====%@,%@",strForCurLatitude,strForCurLongitude);
@@ -622,7 +721,7 @@
 
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error{
-    NSLog(@"didFailWithError: %@", error);
+   // NSLog(@"didFailWithError: %@", error);
 }
 
 #pragma mark -
@@ -737,14 +836,20 @@
         strMsg=@"Confirm Time In";
     }
     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:strMsg message:[NSString stringWithFormat:@"You are currently at %@",[dictForStoreDetails valueForKey:@"storeName"]] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
+    alert.tag=100;
     [alert show];
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    
-    if (buttonIndex == 1) {
-        [self saveDataIntoLocal:NO];
-        [self getTimeLineData];
+    if (alertView.tag == 200) {
+        if (buttonIndex == 1) {
+//         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/geotag-photos-pro-2/id1008694552?mt=8"]];
+        }
+    }else{
+        if (buttonIndex == 1) {
+            [self saveDataIntoLocal:NO];
+            [self getTimeLineData];
+        }
     }
 }
 
@@ -1087,7 +1192,7 @@
     NSTimeZone *timeZone = [NSTimeZone localTimeZone];
     NSString *tzName = [timeZone name];
     
-    NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+   // NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
     NSString *strCurrentTime=[dateFormatter stringFromDate:now];
     strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
     

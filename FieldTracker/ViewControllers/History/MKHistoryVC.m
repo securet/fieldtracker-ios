@@ -74,7 +74,7 @@
 -(void)checkingInLocation:(NSNotification*)notification{
     
     NSDictionary *userInfo = notification.userInfo;
-    NSLog(@"Notification In History==%@",userInfo);
+   // NSLog(@"Notification In History==%@",userInfo);
     
     //    NSDictionary *dict=[userIn];
     
@@ -119,7 +119,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
+    //NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
     self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];

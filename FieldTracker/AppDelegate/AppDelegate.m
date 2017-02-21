@@ -56,6 +56,13 @@
     //        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
     //    }
     
+    
+    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)])
+    {
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+    }
+
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChangeGot:) name:NSSystemClockDidChangeNotification object:nil];
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
@@ -87,9 +94,26 @@
             }
         }
     }
-    
-    
+
     return YES;
+}
+
+
+
+-(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification{
+    
+    
+    if (application.applicationState == UIApplicationStateActive)
+    {
+        // Nothing to do if applicationState is Inactive, the iOS already displayed an alert view.
+//        UIAlertView *notificationAlert = [[UIAlertView alloc] initWithTitle:@"Notification" message:notification.alertBody
+//                                                                   delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+//        
+//        [notificationAlert show];
+    }
+    
+  
+    // NSLog(@"didReceiveLocalNotification");
 }
 
 -(void)timeChangeGot:(NSNotification*)notifi{
