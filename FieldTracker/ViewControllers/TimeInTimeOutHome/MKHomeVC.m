@@ -175,7 +175,7 @@
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
     [httpClient setDefaultHeader:@"Authorization" value:auth_String];
     
-    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/checkForceUpdate"];
+    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/checkForceUpdate?operatingSystemId=IOS"];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                             path:urlPath
                                                       parameters:nil];
@@ -456,8 +456,8 @@
     }
 }
 
--(NSString*)getTimeIndividual:(NSString*)strDate
-{
+-(NSString*)getTimeIndividual:(NSString*)strDate{
+    
     if ([strDate isKindOfClass:[NSNull class]]) {
         return @"--";
     }
@@ -474,7 +474,6 @@
 
 -(NSString*)getTime:(NSString*)strDate
 {
-    
     NSRange range=[strDate rangeOfString:@"T"];
     strDate=[strDate substringFromIndex:NSMaxRange(range)];
     range=[strDate rangeOfString:@"+"];
@@ -512,13 +511,11 @@
                                                           longitude:longitude];
         NSString *storeName=[dictForStoreDetails valueForKey:@"storeName"];
         
-                CLLocationCoordinate2D coordinate = [self getLocation];
-                CLLocation *userLocation= [[CLLocation alloc] initWithLatitude:coordinate.latitude
+        CLLocationCoordinate2D coordinate = [self getLocation];
+        CLLocation *userLocation= [[CLLocation alloc] initWithLatitude:coordinate.latitude
                                                                      longitude:coordinate.longitude];
         CLLocationDistance distance = [location distanceFromLocation:userLocation];
-        
-      //  NSLog(@"Accuracy Data=====%f",userLocation.verticalAccuracy);
-        
+     
         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
         
         //SalesExecutive
@@ -528,18 +525,13 @@
         if (distance <= radiusForStore && distance >= 0){
             
             if ([self.lblForStoreLocation.text isEqualToString:@"Off site"]) {
-                
-               // [self showRegionAlert:@"Entering Region" forRegion:@"Store"];
-                
+              
                 UILocalNotification *notification = [[UILocalNotification alloc] init];
                 notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:1];
                 notification.alertBody = @"Entering To Store Region !";
                 notification.timeZone = [NSTimeZone defaultTimeZone];
                 notification.soundName = UILocalNotificationDefaultSoundName;
-                //notification.applicationIconBadgeNumber = 10;
-                
                 [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-                
             }
             
             self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
@@ -553,20 +545,15 @@
         }else{
             
             if (![self.lblForStoreLocation.text isEqualToString:@"Off site"]) {
-                
-               // [self showRegionAlert:@"Exiting Region" forRegion:@"Store"];
-                
-                
+              
                 UILocalNotification *notification = [[UILocalNotification alloc] init];
                 notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:1];
                 notification.alertBody = @"Exiting From Store Region !";
                 notification.timeZone = [NSTimeZone defaultTimeZone];
                 notification.soundName = UILocalNotificationDefaultSoundName;
-                //notification.applicationIconBadgeNumber = 10;
-                
                 [[UIApplication sharedApplication] scheduleLocalNotification:notification];
             }
-
+            
             self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
             self.lblForStoreLocation.text=@"Off site";
             self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
@@ -575,10 +562,6 @@
             boolValueForInLocationOrNot = NO;
             self.lblStoreName.text=@"(Not at location)";
         }
-        
-        
-        
-        
         
         NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
         
@@ -626,14 +609,10 @@
 
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
     NSLog(@"Entered Region - %@", region.identifier);
-   // [self showRegionAlert:@"Entering Region" forRegion:region.identifier];
-    //    [self checkLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
     NSLog(@"Exited Region - %@", region.identifier);
-   // [self showRegionAlert:@"Exiting Region" forRegion:region.identifier];
-    //    [self checkLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
@@ -680,10 +659,6 @@
     }
     
     [locationManager startUpdatingLocation];
-    
-    
-    
-
 }
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -699,29 +674,15 @@
     }else{
         
         [self showingCurrentLocation];
-        //        [mapView_ clear];
-        //        mapView_.delegate=self;
-        //        marker = [[GMSMarker alloc] init];
-        //        [CATransaction begin];
-        //        [CATransaction setAnimationDuration:2.0];
-        //        marker.position = current;
-        //        [CATransaction commit];
-        //        marker.icon = [UIImage imageNamed:@"pin_driver"];
-        //        marker.map = mapView_;
         prevCurrLocation=newLocation.coordinate;
     }
 }
 
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
 
-
--(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
-{
-    //    NSLog(@"Location Updates====%@,%@",strForCurLatitude,strForCurLongitude);
 }
-
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error{
-   // NSLog(@"didFailWithError: %@", error);
 }
 
 #pragma mark -
@@ -730,7 +691,7 @@
 }
 
 -(void)mapViewDidFinishTileRendering:(GMSMapView *)mapView{
-    //TAKE THE SCREENSHOT HERE
+ 
 }
 
 - (void) mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position{
@@ -768,20 +729,10 @@
         GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:coordinate zoom:15];
         [mapView animateWithCameraUpdate:updatedCamera];
         mapView.myLocationEnabled = YES;
-        
-        //CLLocationCoordinate2D coordinate=mapView.myLocation;
-        //        GMSMarker *markerCar = [[GMSMarker alloc] init];
-        //        markerCar.icon=[UIImage imageNamed:@"location_marker"];
-        //        [CATransaction begin];
-        //        [CATransaction setAnimationDuration:5.0];
-        //        markerCar.position =  coordinate;
-        //        [CATransaction commit];
-        //        markerCar.map = mapView;
-        
+       
         CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
         CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
         
-        //        CLLocationCoordinate2D coordinate;
         coordinate.latitude = latitude;
         coordinate.longitude = longitude;
         
@@ -1167,7 +1118,7 @@
                             NSLog(@"JSON serialize error occurred: %@", serializeError);
                         }
                         
-                        if ([jsonData objectForKey:@"savedFilename"]){
+                        if ([jsonData objectForKey:@"savedFilename"] || ([HTTPResponse statusCode] == 200)){
                             imgPathToSend=[jsonData valueForKey:@"savedFilename"];
                             [self timeLineUpdating:dictToSend withIndex:indexValue];
                         }
@@ -1465,37 +1416,7 @@
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
     [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
-    
-    // NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    //    NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
-    //{"username":"anand@securet.in","clockDate":"2016-12-10 18:40:00","workEffortTypeEnumId":"WetAvailable","purposeEnumId":"WepAttendance","comments":"Clocking out now from ameerpet","productStoreId":"100051","actionType":"clockOut",'actionImage":"test.jpg","latitude":"15.00","longitude":"19.00"}
-    // messages = "Successfully Clocked In!\n";
-    //messages = "Successfully Clocked out!\n";
-    
-    /*
-     NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
-     NSLog(@"User Name===%@",[dict valueForKey:@"actiontype"]);
-     NSLog(@"clockdate===%@",[dict valueForKey:@"clockdate"]);
-     NSLog(@"comments===%@",[dict valueForKey:@"comments"]);
-     NSLog(@"latitude===%@",[dict valueForKey:@"latitude"]);
-     NSLog(@"longitude===%@",[dict valueForKey:@"longitude"]);
-     NSLog(@"productstoreid===%@",[dict valueForKey:@"productstoreid"]);
-     NSLog(@"issend===%@",[dict valueForKey:@"issend"]);
-     
-     */
-    //    NSString *actionType;
-    //    NSString *comments;
-    //    NSString *statusData=[self getStatus];
-    //    if ([statusData length]<=0) {
-    //        comments=@"Time In";
-    //        actionType=@"clockIn";
-    //    }else if([statusData isEqualToString:@"TimeIn"]){
-    //        comments=@"Time Out";
-    //        actionType=@"clockOut";
-    //    }else if([statusData isEqualToString:@"TimeOut"]){
-    //        comments=@"Time In";
-    //        actionType=@"clockIn";
-    //    }
+
     
     if (imgPathToSend.length<=0||imgPathToSend == nil) {
         imgPathToSend=@"img";
@@ -1592,14 +1513,10 @@
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
         NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-        NSLog(@"%@",[dict valueForKey:@"username"]);
-        NSDate *now = [NSDate date];
+        
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.dateFormat = @"yyyy-MM-dd";
-        //    NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
-        //estimatedStartDate=2016-12-11 00:00:00&estimatedCompletionDate=2016-12-11 23:50:59
-        //    NSString *startDate=[NSString stringWithFormat:@"estimatedStartDate=%@ 00:00:00",[dateFormatter stringFromDate:now]];
-        //    NSString *endDate=[NSString stringWithFormat:@"estimatedCompletionDate=%@ 23:50:59",[dateFormatter stringFromDate:now]];
+     
         NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=0&pageSize=1",[dict valueForKey:@"username"]];
         NSLog(@"String Path for Get History===%@",strPath);
         NSString *strURL=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];

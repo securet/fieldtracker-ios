@@ -23,7 +23,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
@@ -65,8 +65,6 @@
     pageNumber=0;
     [self.tableVw addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     
-    //    [self getHistory];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
 }
 
@@ -74,16 +72,12 @@
 -(void)checkingInLocation:(NSNotification*)notification{
     
     NSDictionary *userInfo = notification.userInfo;
-   // NSLog(@"Notification In History==%@",userInfo);
-    
-    //    NSDictionary *dict=[userIn];
     
     if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
         self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
         self.lblForStoreLocation.textColor=[UIColor whiteColor];
     }else{
         self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        //        self.lblForStoreLocation.text=@"Off site";
         self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
     }
     
@@ -97,7 +91,6 @@
         self.lblForStoreLocation.textColor=[UIColor whiteColor];
     }else{
         self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        //        self.lblForStoreLocation.text=@"Off site";
         self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
     }
     
@@ -119,7 +112,6 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    //NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
     self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
@@ -168,29 +160,7 @@
 }
 
 #pragma mark- UITableView
-//-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    if (tableView == self.tableVwForIndividual) {
-//        CGFloat ht;
-//
-//        if (indexPath.row==0) {
-//            ht=50;
-//        }else{
-//            if (indexPath.row % 2 == 0) {
-//                ht=35;
-//            }else{
-//                 ht=35;
-//            }
-//        }
-//
-//
-//        if (indexPath.row==arrayForStatusData.count-1){
-//            ht=50;
-//        }
-//        return ht;
-//    }
-//    return 81;
-//}
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView == self.tableVwForIndividual) {
@@ -271,7 +241,7 @@
         }
         return cell;
     }
-    ////
+
     if (cell == nil) {
         cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     }
@@ -288,7 +258,7 @@
     [dateFormatter setDateFormat:@"dd-MMM-yyyy"];
     NSString *newDateString = [dateFormatter stringFromDate:date];
     cell.lblDate.text=newDateString;
-    //////
+    
     
     NSMutableArray *array=[[NSMutableArray alloc] init];
     NSInteger   hoursBetweenDates = 0;
@@ -334,7 +304,7 @@
                 hour=abs(hour);
                 min = abs(min);
                 NSString *timeString = [NSString stringWithFormat:@"%dh %02dm", hour, min];
-                //    NSLog(@"Total Time: %@", timeString);
+            
                 if (hour<0) {
                     cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
                 }else{
@@ -356,71 +326,7 @@
         cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
         cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
     }
-    
     return cell;
-    
-    /*
-     if (![[[array objectAtIndex:0] valueForKey:@"fromDate"] isKindOfClass:[NSNull class]]) {
-     cell.lblInTime.text=[NSString stringWithFormat:@"Time In: %@",[self getTime:[[array objectAtIndex:0] valueForKey:@"fromDate"]]];
-     }
-     else{
-     cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
-     }
-     
-     if (![[[array lastObject] valueForKey:@"thruDate"] isKindOfClass:[NSNull class]] ) {
-     cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: %@",[self getTime:[[array lastObject] valueForKey:@"thruDate"]]];
-     }else{
-     cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
-     }
-     
-     
-     if (![[[array lastObject] valueForKey:@"thruDate"] isKindOfClass:[NSNull class]] && ![[[array objectAtIndex:0] valueForKey:@"fromDate"] isKindOfClass:[NSNull class]])
-     {
-     NSString *firstViewd;
-     
-     firstViewd=[NSString stringWithFormat:@"%@",[[array objectAtIndex:0] valueForKey:@"fromDate"]];
-     
-     firstViewd = [firstViewd stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-     firstViewd = [firstViewd stringByReplacingOccurrencesOfString:@"+0000" withString:@""];
-     
-     NSString *lastViewedString;
-     
-     lastViewedString=[NSString stringWithFormat:@"%@",[[array lastObject] valueForKey:@"thruDate"]];
-     lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-     lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"+0000" withString:@""];
-     
-     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-     //            [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm:ss"];
-     NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
-     NSDate *now = [dateFormatter dateFromString:firstViewd];
-     
-     NSTimeInterval distanceBetweenDates = [lastViewed timeIntervalSinceDate:now];
-     double minutesInAnHour = 60;
-     hoursBetweenDates = hoursBetweenDates + (distanceBetweenDates / minutesInAnHour);
-     
-     
-     int hour = hoursBetweenDates / 60;
-     int min = hoursBetweenDates % 60;
-     
-     hour=abs(hour);
-     min = abs(min);
-     NSString *timeString = [NSString stringWithFormat:@"%dh %02dm", hour, min];
-     //    NSLog(@"Total Time: %@", timeString);
-     if (hour<0) {
-     cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
-     }else{
-     cell.lblTotalTime.text=timeString;
-     }
-     
-     if ([timeString isEqualToString:@"0h 00m"]) {
-     self.lblTotalTime.text=[NSString stringWithFormat:@"--"];
-     }
-     }else{
-     cell.lblTotalTime.text=[NSString stringWithFormat:@"--"];
-     }
-     */
-    
-    
 }
 
 -(NSString*)getTimeIndividual:(NSString*)strDate
@@ -428,7 +334,7 @@
     if ([strDate isKindOfClass:[NSNull class]]) {
         return @"--";
     }
-    //   NSLog(@"Time===%@",strDate);
+
     NSString *strDateChange=strDate;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
@@ -440,33 +346,11 @@
     NSInteger seconds = [tz secondsFromGMTForDate:daate];
     daate = [NSDate dateWithTimeInterval: seconds sinceDate: daate];
     
-    /* NSTimeZone *timeZone = [NSTimeZone localTimeZone];
-     NSString *tzName = [timeZone name];
-     NSLog(@"Time Zone===%@",daate.description);
-     
-     if (![tzName containsString:@"Asia"]) {
-     NSDateFormatter * format = [[NSDateFormatter alloc] init];
-     [format setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
-     NSDate * dateTemp = [format dateFromString:strDateChange];
-     [format setDateFormat:@"hh:mm a"];
-     NSTimeZone *currentTimeZone = [NSTimeZone localTimeZone];
-     NSTimeZone *utcTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
-     NSInteger currentGMTOffset = [currentTimeZone secondsFromGMTForDate:dateTemp];
-     NSInteger gmtOffset = [utcTimeZone secondsFromGMTForDate:dateTemp];
-     NSTimeInterval gmtInterval = currentGMTOffset - gmtOffset;
-     NSDate *destinationDate = [[NSDate alloc] initWithTimeInterval:gmtInterval sinceDate:dateTemp];
-     NSString *dateStr = [format stringFromDate:destinationDate];
-     NSLog(@"Converted Time===%@",dateStr);
-     return dateStr;
-     }*/
-    
     NSDate *date_1 = [dateFormatter dateFromString:strDateChange];
     dateFormatter.dateFormat = @"hh:mm a";
-    //    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:[NSTimeZone localTimeZone].secondsFromGMT];
     strDateChange = [dateFormatter stringFromDate:date_1];
-    
-    //    NSLog(@"Converted Time===%@",strDateChange);
+   
     return strDateChange;
 }
 
@@ -546,51 +430,6 @@
         MKHistoryCustomCell *cell=(MKHistoryCustomCell*)[tableView cellForRowAtIndexPath:indexPath];
         self.lblTotalTime.text = cell.lblTotalTime.text;
         
-        /*
-         NSArray *array=[[NSArray alloc] init];
-         NSInteger   hoursBetweenDates = 0;
-         
-         array=[[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"];
-         
-         NSString *firstViewd;
-         
-         firstViewd=[NSString stringWithFormat:@"%@",[[array objectAtIndex:0] valueForKey:@"fromDate"]];
-         firstViewd = [firstViewd stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-         firstViewd = [firstViewd stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
-         
-         NSString *lastViewedString;
-         
-         lastViewedString=[NSString stringWithFormat:@"%@",[[array lastObject] valueForKey:@"thruDate"]];
-         lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-         lastViewedString = [lastViewedString stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
-         
-         [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss xxxx"];
-         
-         
-         NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
-         NSDate *now = [dateFormatter dateFromString:firstViewd];
-         
-         NSTimeInterval distanceBetweenDates = [lastViewed timeIntervalSinceDate:now];
-         double minutesInAnHour = 60;
-         hoursBetweenDates = hoursBetweenDates + (distanceBetweenDates / minutesInAnHour);
-         
-         int hour = hoursBetweenDates / 60;
-         int min = hoursBetweenDates % 60;
-         
-         hour=abs(hour);
-         min = abs(min);
-         NSString *timeString = [NSString stringWithFormat:@"%dh %02dm", hour, min];
-         NSLog(@"Total Time: %@", timeString);
-         
-         if (hour<0) {
-         self.lblTotalTime.text=[NSString stringWithFormat:@"--"];
-         }else{
-         self.lblTotalTime.text=timeString;
-         }
-         
-         if ([timeString isEqualToString:@"0h 00m"]) {
-         self.lblTotalTime.text=[NSString stringWithFormat:@"--"];
-         }         */
     }
 }
 
@@ -599,7 +438,7 @@
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ssZ"];
     NSMutableArray *tempArray = [NSMutableArray array];
-    // fast enumeration of the array
+  
     for (NSString *dateString in array) {
         if (![dateString isKindOfClass:[NSNull class]]){
             NSString *str=dateString;
@@ -609,22 +448,16 @@
             [tempArray addObject:date];
         }
     }
-    // NSLog(@"%@", tempArray);
-    // sort the array of dates
+    
     [tempArray sortUsingComparator:^NSComparisonResult(NSDate *date1, NSDate *date2) {
-        // return date2 compare date1 for descending. Or reverse the call for ascending.
         return [date2 compare:date1];
     }];
     
     tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
     NSMutableArray *correctOrderStringArray = [NSMutableArray array];
     for (NSDate *date_1 in tempArray) {
-        //        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        //        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss xxxx"];
-        //        NSString *dateString = [formatter stringFromDate:date_1];
         [correctOrderStringArray addObject:date_1.description];
     }
-    //  NSLog(@"%@", correctOrderStringArray);
     return correctOrderStringArray;
 }
 

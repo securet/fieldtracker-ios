@@ -22,7 +22,7 @@
     NSMutableArray *arrayForReporteeHistory;
     NSMutableArray *arrayForReporteeStatusData;
     
-    NSInteger countForReporteeHistory;
+    NSInteger countForReporteeHistory,countForReportee;
     
     NSString *strForReporteeUserName;
     
@@ -107,7 +107,6 @@
     self.tableVwForReportiesHistory.tableFooterView=[[UIView alloc] init];
     self.tableVwForIndividualHistory.tableFooterView=[[UIView alloc] init];
     
-    
     self.vwForPromoters.hidden = YES;
     self.vwForStore.hidden = YES;
     self.vwForLeaveRqst.hidden= YES;
@@ -137,15 +136,15 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
     
-    
-    
     pageNumber=0;
     //rgb(84,138,176)
     //    UIColor *color=[UIColor colorWithRed:(84/255.0) green:(138/255.0) blue:(176/255.0) alpha:1.0];
     
     [self.tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     [self.tableVwForLeaveRqst addFooterWithTarget:self action:@selector(refreshFooterForLeave) withIndicatorColor:TopColor];
-    [self.tableVwForReportiesHistory addFooterWithTarget:self action:@selector(refreshFooterForReportees) withIndicatorColor:TopColor];
+    [self.tableVwForReportiesHistory addFooterWithTarget:self action:@selector(refreshFooterForReporteesHistory) withIndicatorColor:TopColor];
+    
+    [self.tableVwForReporties addFooterWithTarget:self action:@selector(refreshFooterForReportees) withIndicatorColor:TopColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveTypeSelected:) name:@"LeaveTypeSelected" object:nil];
@@ -170,7 +169,6 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    //NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
     self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
@@ -222,8 +220,6 @@
     self.textFieldMyStore.text = [[defaults objectForKey:@"StoreData"] valueForKey:@"storeName"];
     //StoreData
     
-   
-    
     if ([dict valueForKey:@"directions"]) {
         self.textVwMyAddress.text=[dict valueForKey:@"directions"];
     }else{
@@ -258,7 +254,6 @@
     self.textFieldMyManagerEmailID.userInteractionEnabled = NO;
     self.textFieldMyManagerMobileNumber.userInteractionEnabled = NO;
     
-    
     if ([dict objectForKey:@"reportingPerson"]) {
         
         if ([[dict objectForKey:@"reportingPerson"] valueForKey:@"emailAddress"] && ![[[dict objectForKey:@"reportingPerson"] valueForKey:@"emailAddress"] isKindOfClass:[NSNull class]]) {
@@ -269,10 +264,8 @@
             self.textFieldMyManagerMobileNumber.text = [[dict objectForKey:@"reportingPerson"] valueForKey:@"contactNumber"];
         }
         
-        
         NSString *firstName=[[dict objectForKey:@"reportingPerson"] valueForKey:@"firstName"];
         NSString *lastName=[[dict objectForKey:@"reportingPerson"] valueForKey:@"lastName"];
-        
         
         self.textFieldMyManagerName.text=[NSString stringWithFormat:@"%@ %@",firstName,lastName];
         self.textFieldMyManagerName.userInteractionEnabled = NO;
@@ -380,7 +373,6 @@
     self.txtFieldLeaveComments.keyboardType=UIKeyboardTypeASCIICapable;
     
     [self.txtFieldLeaveComments addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
-    
     
     [self.btnLeaveRqstCancel addTarget:self action:@selector(leaveRqstCancel:) forControlEvents:UIControlEventTouchUpInside];
     [self.btnLeaveRqstSubmit addTarget:self action:@selector(leaveRequestSubmit:) forControlEvents:UIControlEventTouchUpInside];
@@ -562,7 +554,6 @@
             }
             
             [self setupContactSupport];
-            
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -668,9 +659,6 @@
     
     @try {
         NSDictionary *userInfo = notification.userInfo;
-      //  NSLog(@"Notification In History==%@",userInfo);
-        
-        //    NSDictionary *dict=[userIn];
         
         if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
             self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
@@ -687,8 +675,6 @@
         NSLog(@"%@", exception.reason);
     }
     @finally {
-        //        NSLog(@"Char at index %d cannot be found", index);
-        //        NSLog(@"Max index is: %d", [test length]-1);
     }
 }
 
@@ -709,11 +695,8 @@
 - (void)refreshFooter
 {
     if(arrayCountToCheck > pageNumber){
-        
         pageNumber++;
-        
         [self getPromoters];
-        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.tableVwForPromoters reloadData];
             [self.tableVwForPromoters footerEndRefreshing];
@@ -728,12 +711,9 @@
 -(void)storeSelected{
     NSDictionary *dict=[[NSMutableDictionary alloc] init];
     dict=[[MKSharedClass shareManager] dictForStoreSelected];
-    NSLog(@"Selected Store Details===%@",dict);
     self.txtFieldStoreAsgnmntPromoter.text=[dict valueForKey:@"storeName"];
     self.txtFieldSEAsgnmntPromoter.text=[NSString stringWithFormat:@"%@ %@",self.lblFName.text,self.lblLName.text];
     storeIDForPromoterAdd=[dict valueForKey:@"productStoreId"];
-    
-    NSLog(@"Selected Store ID===%@",storeIDForPromoterAdd);
 }
 
 -(void)addShadow:(UIButton*)btn{
@@ -952,8 +932,7 @@
     [locationManager startUpdatingLocation];
     CLLocation *location = [locationManager location];
     CLLocationCoordinate2D coordinate = [location coordinate];
-    //    NSLog(@"Lat:%f Lon:%f",coordinate.latitude,coordinate.longitude);
-    //    return coordinate;
+    
     strForCurLatitude=[NSString stringWithFormat:@"%f",coordinate.latitude];
     strForCurLongitude=[NSString stringWithFormat:@"%f",coordinate.longitude];
     [self getAddress];
@@ -971,13 +950,8 @@
         NSDictionary *getRoutes = [JSON valueForKey:@"routes"];
         NSDictionary *getLegs = [getRoutes valueForKey:@"legs"];
         NSArray *getAddress = [getLegs valueForKey:@"end_address"];
-        //        NSLog(@"Map Location=====%@",JSON);
+        
         if (getAddress.count!=0){
-            //            self.textVwForAddress.text=[[getAddress objectAtIndex:0]objectAtIndex:0];
-            //            CGRect frame = self.textVwForAddress.frame;
-            //            frame.size.height = self.textVwForAddress.contentSize.height;
-            //            self.textVwForAddress.frame=frame;
-            //            NSLog(@"Address==%@",[[getAddress objectAtIndex:0]objectAtIndex:0]);
             self.lblForLatLon.text=[NSString stringWithFormat:@"Lat: %f | Lon: %f",[strForCurLatitude floatValue],[strForCurLongitude floatValue]];
             
             self.txtVwStoreAddress.text=[[getAddress objectAtIndex:0]objectAtIndex:0];
@@ -1071,7 +1045,6 @@
         [alert show];
     }
 }
-
 
 #pragma mark - Add Store
 
@@ -1248,7 +1221,6 @@
     NSLog(@"selected: '%@'", [multiSelectSegmentedControl.selectedSegmentTitles componentsJoinedByString:@","]);
 }
 
-
 -(void)onClickAddPromoter{
     
     for (UIView *subview in [self.btnPhotoPromoter subviews]) {
@@ -1256,19 +1228,16 @@
             [subview removeFromSuperview];
         }
     }
-    
     for (UIView *subview in [self.btnAadharPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
     }
-    
     for (UIView *subview in [self.btnAdressProofPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
     }
-    
     [self promoterDetails:YES];
 }
 
@@ -1279,13 +1248,11 @@
             [subview removeFromSuperview];
         }
     }
-    
     for (UIView *subview in [self.btnAadharPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
         }
     }
-    
     for (UIView *subview in [self.btnAdressProofPromoter subviews]) {
         if([subview isKindOfClass:[JSBadgeView class]]){
             [subview removeFromSuperview];
@@ -1741,35 +1708,8 @@
     }else if (sender.tag == 300){
         stringForImagePurpose=@"addressProof";
     }
-    //userPhoto aadharId addressProof
-    //    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-    //    {
-    //        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-    //        imagePickerController.delegate = self;
-    //
-    //        imagePickerController.sourceType =UIImagePickerControllerSourceTypeCamera;
     
-    if (sender.tag == 100) {
-        //           imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-        //
-        //            UIView *cameraOverlayView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width - 100.0f, 5.0f, 100.0f, 35.0f)];
-        //            [cameraOverlayView setBackgroundColor:[UIColor blackColor]];
-        //            UIButton *emptyBlackButton = [[UIButton alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 100.0f, 35.0f)];
-        //            [emptyBlackButton setBackgroundColor:[UIColor blackColor]];
-        //            [emptyBlackButton setEnabled:YES];
-        //            [cameraOverlayView addSubview:emptyBlackButton];
-        //            imagePickerController.allowsEditing = YES;
-        //            imagePickerController.showsCameraControls = YES;
-        //            imagePickerController.cameraOverlayView = cameraOverlayView;
-    }else if (sender.tag == 200){
-        //            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
-    }else if (sender.tag == 300){
-        //            imagePickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
-    }
-    //        [self presentViewController:imagePickerController animated:YES completion:^{
-    //
-    //        }];
-    //    }
+    
     NSError *error;
     AVCaptureDevice *captureDevice ;
     if (sender.tag == 100) {
@@ -2106,6 +2046,12 @@
         self.lblForNoOfDays.text=[NSString stringWithFormat:@"%i",[components day]+1];
     }
     self.txtFieldLeaveDescription.text=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"description"];
+    
+    self.txtFieldLeaveReason.text=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveReasonEnumName"];
+    self.txtFieldLeaveType.text=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumName"];
+    
+    leaveTypeEnumID=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
+    leaveReasonEnumID=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveReasonEnumId"];
 }
 
 
@@ -2141,22 +2087,22 @@
         
         if ([arrayForLeaveHistory count] > 0)
         {
- 
+            
             NSString *strLeaveType=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveTypeEnumId"];
-         for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
-            if ([strLeaveType isEqualToString:[dict valueForKey:@"enumId"]]) {
-                self.txtFieldLeaveType.text=[dict valueForKey:@"description"];
-                leaveTypeEnumID=[dict valueForKey:@"enumId"];
+            for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveTypeEnumId"]) {
+                if ([strLeaveType isEqualToString:[dict valueForKey:@"enumId"]]) {
+                    self.txtFieldLeaveType.text=[dict valueForKey:@"description"];
+                    leaveTypeEnumID=[dict valueForKey:@"enumId"];
+                }
             }
-        }
-        NSString *strLeaveReason=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveReasonEnumId"];
-        
-        for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveReasonEnumId"]) {
-            if ([strLeaveReason isEqualToString:[dict valueForKey:@"enumId"]]) {
-                self.txtFieldLeaveReason.text=[dict valueForKey:@"description"];
-                leaveReasonEnumID=[dict valueForKey:@"enumId"];
+            NSString *strLeaveReason=[[arrayForLeaveHistory objectAtIndex:indexValue] valueForKey:@"leaveReasonEnumId"];
+            
+            for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveReasonEnumId"]) {
+                if ([strLeaveReason isEqualToString:[dict valueForKey:@"enumId"]]) {
+                    self.txtFieldLeaveReason.text=[dict valueForKey:@"description"];
+                    leaveReasonEnumID=[dict valueForKey:@"enumId"];
+                }
             }
-        }
             
         }else{
             [self.tableVwForLeaveRqst reloadData];
@@ -2292,7 +2238,7 @@
             NSTimeZone *timeZone = [NSTimeZone localTimeZone];
             NSString *tzName = [timeZone name];
             
-          //  NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+            //  NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
             NSString *strCurrentTime=[dateFormatter stringFromDate:now];
             strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
             
@@ -2508,7 +2454,7 @@
         NSTimeZone *timeZone = [NSTimeZone localTimeZone];
         NSString *tzName = [timeZone name];
         
-       // NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+        // NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
         NSString *strCurrentTime=[dateFormatter stringFromDate:now];
         strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
         
@@ -2547,8 +2493,10 @@
             [DejalBezelActivityView removeView];
             NSLog(@"Leave Request==%@ %ld",JSON,(long)[[operation response] statusCode]);
             if ([[operation response] statusCode] == 200) {
-                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[json valueForKey:@"messages"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:[JSON valueForKey:@"messages"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
+                [arrayForLeaveHistory removeObjectAtIndex:indexValueForLeaveEdit];
+                [self.tableVwForLeaveApproval reloadData];
             }
             self.backBtn.hidden = NO;
             self.vwForLeaveRqstAdd.hidden = YES;
@@ -2944,13 +2892,7 @@
             startDate=[startDate substringToIndex:10];
             endDate=[endDate substringToIndex:10];
             
-            cellLeave.lblForTypeOfLeave.text=[NSString stringWithFormat:@"%@",[[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] substringFromIndex:3]];
-            
-            for (NSDictionary *dict in [dictForLeaveTypes objectForKey:@"leaveReasonEnumId"]){
-                if ([[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumId"] isEqualToString:[dict valueForKey:@"enumId"]]) {
-                    cellLeave.lblForTypeOfLeave.text=[dict valueForKey:@"description"];
-                }
-            }
+            cellLeave.lblForTypeOfLeave.text=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveReasonEnumName"];
             
             strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
         }
@@ -3067,16 +3009,6 @@
         
         if ([cell.textLabel.text isEqualToString:@"Log Off"]){
             
-            //            [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
-            //            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-            //            [defaults removeObjectForKey:@"UserData"];
-            //            [defaults removeObjectForKey:@"StoreData"];
-            //            [defaults setObject:@"0" forKey:@"Is_Login"];
-            //            [defaults synchronize];
-            //            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            //            UIViewController *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"MainRoot"];
-            //            [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
-            
             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Are You Sure Want To Log Off ?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
             alert.tag = 1001;
             [alert show];
@@ -3119,7 +3051,7 @@
             
             arrayForLeaveHistory=[[NSMutableArray alloc] init];
             pageNumberForLeave = 0;
-            [self getLeaveType:0];
+            // [self getLeaveType:0];
             [self getMyLeaveHistory];
             self.vwForLeaveRqst.hidden =NO;
             self.backBtn.hidden = NO;
@@ -3133,6 +3065,7 @@
             
         }else if ([cell.textLabel.text isEqualToString:@"Reporties"]){
             arrayForReportee=[[NSMutableArray alloc] init];
+            pageNumber=0;
             [self getReportee];
             self.vwForReporties.hidden = NO;
             self.backBtn.hidden = NO;
@@ -3175,20 +3108,19 @@
         if ([strLeaveApprove isKindOfClass:[NSNull class]]) {
             
             [self emptyLeaveRequestFields];
-            [self getLeaveType:indexPath.row];
+            //  [self getLeaveType:indexPath.row];
             indexValueForLeaveEdit=indexPath.row;
             self.backBtn.hidden = YES;
             self.vwForLeaveRqstAdd.hidden = NO;
             isLeaveEditRNew=NO;
             [self leaveRequestEdit:indexPath.row];
-            
         }
     }else if (tableView == self.tableVwForLeaveApproval){
         indexValueForLeaveEdit=indexPath.row;
         self.txtFieldLeaveComments.text=@"";
         arrayForLeaveHistory=arrayForLeaveApprovalList;
         [self emptyLeaveRequestFields];
-        [self getLeaveType:indexPath.row];
+        //  [self getLeaveType:indexPath.row];
         self.backBtn.hidden = NO;
         self.vwForLeaveRqstAdd.hidden = NO;
         [self.btnLeaveRqstSubmit setTitle:@"Approve" forState:UIControlStateNormal];
@@ -3204,13 +3136,11 @@
         self.tableVwForReportiesHistory.dataSource=self;
         [self getReporteeHistory];
         
-        
     }else if(tableView == self.tableVwForReportiesHistory){
         
         arrayForReporteeStatusData=[[NSMutableArray alloc] init];
         
-        for (NSDictionary *dict in [[arrayForReporteeHistory objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"])
-        {
+        for (NSDictionary *dict in [[arrayForReporteeHistory objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"]){
             [arrayForReporteeStatusData addObject:[dict valueForKey:@"fromDate"]];
             [arrayForReporteeStatusData addObject:[dict valueForKey:@"thruDate"]];
         }
@@ -3295,20 +3225,10 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
-
 
 #pragma mark - Reportees
 
-- (void)refreshFooterForReportees
+- (void)refreshFooterForReporteesHistory
 {
     if(pageNumber < countForReporteeHistory){
         pageNumber++;
@@ -3324,7 +3244,27 @@
         [self.tableVwForReportiesHistory headerEndRefreshing];
     }
 }
+
+- (void)refreshFooterForReportees
+{
+    if(pageNumber < countForReportee){
+        pageNumber++;
+        [self getReportee];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableVwForReporties reloadData];
+            [self.tableVwForReporties footerEndRefreshing];
+            //        [self.tableVw removeFooter];
+        });
+    }else{
+        [self.tableVwForReporties footerEndRefreshing];
+        [self.tableVwForReporties headerEndRefreshing];
+    }
+}
+
+
 -(void)getReportee{
+    
     if ([APPDELEGATE connected]) {
         
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
@@ -3336,37 +3276,41 @@
         [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
-        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/user/reportees"];
-        // NSLog(@"String Path for Get Promoters==%@",strPath);
+        NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/user/reportees?pageIndex=%li&pageSize=10",(long)pageNumber];
+        NSLog(@"String Path for Get Reportee==%@",strPath);
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                                 path:strPath
                                                           parameters:nil];
         
         //====================================================RESPONSE
         
-        //        if (pageNumber==0) {
-        [DejalBezelActivityView activityViewForView:self.view];
-        //        }
+        if (pageNumber==0) {
+            [DejalBezelActivityView activityViewForView:self.view];
+        }
         
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         
         [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
             
         }];
+        
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSError *error = nil;
             NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
             
-            //            if (pageNumber==0) {
-            [DejalBezelActivityView removeView];
-            //             }
             
-            arrayForReportee=[[JSON objectForKey:@"reporteeList"] mutableCopy];
+            if (pageNumber==0) {
+                [DejalBezelActivityView removeView];
+            }
             
-            //            arrayForReportee=array;
+            NSMutableArray *array=[[JSON objectForKey:@"reporteeList"] mutableCopy];
+            for (NSDictionary *dict in array) {
+                [arrayForReportee addObject:dict];
+            }
+            
+            countForReportee=[[JSON valueForKey:@"totalReportees"] integerValue];
             
             [self.tableVwForReporties reloadData];
-            NSLog(@"Reportee List===%@",arrayForReportee);
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -3412,7 +3356,6 @@
         //reportee/log?username=
         NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/reportee/log?username=%@&pageIndex=%li&pageSize=10",strForReporteeUserName,(long)pageNumber];
         
-       
         NSString *strURL=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
         strURL=[strURL stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
@@ -3542,26 +3485,6 @@
     NSTimeZone *tz = [NSTimeZone localTimeZone];
     NSInteger seconds = [tz secondsFromGMTForDate:daate];
     daate = [NSDate dateWithTimeInterval: seconds sinceDate: daate];
-    
-    /* NSTimeZone *timeZone = [NSTimeZone localTimeZone];
-     NSString *tzName = [timeZone name];
-     NSLog(@"Time Zone===%@",daate.description);
-     
-     if (![tzName containsString:@"Asia"]) {
-     NSDateFormatter * format = [[NSDateFormatter alloc] init];
-     [format setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
-     NSDate * dateTemp = [format dateFromString:strDateChange];
-     [format setDateFormat:@"hh:mm a"];
-     NSTimeZone *currentTimeZone = [NSTimeZone localTimeZone];
-     NSTimeZone *utcTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
-     NSInteger currentGMTOffset = [currentTimeZone secondsFromGMTForDate:dateTemp];
-     NSInteger gmtOffset = [utcTimeZone secondsFromGMTForDate:dateTemp];
-     NSTimeInterval gmtInterval = currentGMTOffset - gmtOffset;
-     NSDate *destinationDate = [[NSDate alloc] initWithTimeInterval:gmtInterval sinceDate:dateTemp];
-     NSString *dateStr = [format stringFromDate:destinationDate];
-     NSLog(@"Converted Time===%@",dateStr);
-     return dateStr;
-     }*/
     
     NSDate *date_1 = [dateFormatter dateFromString:strDateChange];
     dateFormatter.dateFormat = @"hh:mm a";

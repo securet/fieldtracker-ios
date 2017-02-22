@@ -41,29 +41,15 @@
     if([_locationManager respondsToSelector:@selector(allowsBackgroundLocationUpdates)]){
         [_locationManager setAllowsBackgroundLocationUpdates:YES];
     }
-#ifdef __IPHONE_8_0
-    //      if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
-    //     Use one or the other, not both. Depending on what you put in info.plist
-    //    [self.locationManager requestWhenInUseAuthorization];
-    
-    //      }
-#endif
+
     [_locationManager requestAlwaysAuthorization];
     _locationManager.allowsBackgroundLocationUpdates = YES;
     [_locationManager startUpdatingLocation];
     
-    //    if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
-    //        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
-    //    }
-    
-    
-    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)])
-    {
+    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
+        
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
     }
-
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timeChangeGot:) name:NSSystemClockDidChangeNotification object:nil];
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
@@ -75,53 +61,34 @@
         
     }
     
-    
-    NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
-    NSString* appID = infoDictionary[@"CFBundleIdentifier"];
-    
-    NSLog(@"App ID%@", appID);
-    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@", appID]];
-    NSData* data = [NSData dataWithContentsOfURL:url];
-    
-    if (data) {
-        NSDictionary* lookup = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"Look up==%@", lookup);
-        if ([lookup[@"resultCount"] integerValue] == 1){
-            NSString* appStoreVersion = lookup[@"results"][0][@"version"];
-            NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
-            if (![appStoreVersion isEqualToString:currentVersion]){
-                NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);
-            }
-        }
-    }
+//    NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
+//    NSString* appID = infoDictionary[@"CFBundleIdentifier"];
+//    
+//    NSLog(@"App ID%@", appID);
+//    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@", appID]];
+//    NSData* data = [NSData dataWithContentsOfURL:url];
+//    
+//    if (data) {
+//        NSDictionary* lookup = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+//        NSLog(@"Look up==%@", lookup);
+//        if ([lookup[@"resultCount"] integerValue] == 1){
+//            NSString* appStoreVersion = lookup[@"results"][0][@"version"];
+//            NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
+//            if (![appStoreVersion isEqualToString:currentVersion]){
+//                NSLog(@"Need to update [%@ != %@]", appStoreVersion, currentVersion);
+//            }
+//        }
+//    }
 
     return YES;
 }
 
-
-
 -(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification{
-    
-    
-    if (application.applicationState == UIApplicationStateActive)
-    {
-        // Nothing to do if applicationState is Inactive, the iOS already displayed an alert view.
-//        UIAlertView *notificationAlert = [[UIAlertView alloc] initWithTitle:@"Notification" message:notification.alertBody
-//                                                                   delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
-//        
-//        [notificationAlert show];
+    if (application.applicationState == UIApplicationStateActive){
     }
-    
-  
-    // NSLog(@"didReceiveLocalNotification");
 }
 
--(void)timeChangeGot:(NSNotification*)notifi{
-    NSLog(@"Time Changed===%@",notifi.userInfo);
-}
--(void)timeChange:(NSNotification*)notifi{
-    NSLog(@"Time Changed===%@",notifi.userInfo);
-}
+
 #pragma mark - sharedAppDelegate
 
 +(AppDelegate *)sharedAppDelegate
