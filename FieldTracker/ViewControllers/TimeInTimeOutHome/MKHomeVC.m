@@ -131,9 +131,6 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     
-    //    NSDictionary *pref = [[NSUserDefaults standardUserDefaults] persistentDomainForName:@"com.apple.timed"];
-    //    BOOL autotime = [[pref objectForKey:@"TMAutomaticTimeEnabled"] boolValue];
-    //    NSLog(@"Automatic time is %@", autotime ? @"enabled" : @"disabled");
     [self updateLocationManagerr];
     
     self.navigationController.navigationBarHidden = YES;
@@ -144,7 +141,6 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-   // NSLog(@"The Current Time is %@",[dateFormatter stringFromDate:now]);
     
     self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
     self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
@@ -192,7 +188,7 @@
         NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
         if (![[JSON valueForKey:@"appVersion"] isEqualToString:currentVersion] && [[JSON valueForKey:@"forceUpdate"] isEqualToString:@"Y"]){
             
-             NSLog(@"Need to update = %@",currentVersion);
+//             NSLog(@"Need to update = %@",currentVersion);
             UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"Update" message:[JSON valueForKey:@"message"] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Update",nil];
             alertView.tag=200;
             [alertView show];
@@ -205,7 +201,6 @@
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
-
 }
 
 #pragma mark - Background Task
@@ -717,15 +712,13 @@
         coordinate.latitude=[strForCurLatitude doubleValue];
         coordinate.longitude=[strForCurLongitude doubleValue];
         
-        CLLocation* gps = [[CLLocation alloc]
-                           initWithLatitude:coordinate.latitude
-                           longitude:coordinate.longitude];
-        NSDate* now = gps.timestamp;
+//        CLLocation* gps = [[CLLocation alloc] initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
+       // NSDate* now = gps.timestamp;
         
         strForCurLatitude = [NSString stringWithFormat:@"%f", coordinate.latitude];
         strForCurLongitude= [NSString stringWithFormat:@"%f", coordinate.longitude];
         
-        NSLog(@"Time Got From GPS===%@",[self getTimeIndividual:now.description]);
+       // NSLog(@"Time Got From GPS===%@",[self getTimeIndividual:now.description]);
         GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:coordinate zoom:15];
         [mapView animateWithCameraUpdate:updatedCamera];
         mapView.myLocationEnabled = YES;
@@ -794,7 +787,7 @@
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (alertView.tag == 200) {
         if (buttonIndex == 1) {
-//         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/geotag-photos-pro-2/id1008694552?mt=8"]];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/geotag-photos-pro-2/id1008694552?mt=8"]];
         }
     }else{
         if (buttonIndex == 1) {

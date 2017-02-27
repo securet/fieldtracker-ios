@@ -26,7 +26,7 @@
     
     NSString *strForReporteeUserName;
     
-    NSInteger countForLeaveData,pageNumberForLeave,indexValueForLeaveEdit,leaveApprovalListCount,pageNumberForLeaveApproval;
+    NSInteger countForLeaveData,pageNumberForLeave,indexValueForLeaveEdit,leaveApprovalListCount,pageNumberForLeaveApproval,countForStoreList;
     BOOL isLeaveEditRNew;
     NSDictionary *dictForLeaveTypes;
     
@@ -76,7 +76,7 @@
     self.lblFName.text=[dict valueForKey:@"firstName"];
     self.lblLName.text=[dict valueForKey:@"lastName"];
     
-    if (![roleType isEqualToString:@"FieldExecutiveOnPremise"] && ![roleType isEqualToString:@"FieldExecutiveOffPremise"]) {
+    if (![roleType isEqualToString:@"FieldExecutiveOnPremise"] && ![roleType isEqualToString:@"FieldExecutiveOffPremise"] && ![roleType isEqualToString:@"FE"]) {
         arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Promoters Approval",@"Leaves",@"Leave Requisitions",@"Reporties",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
         [self getStores];
     }else{
@@ -145,6 +145,8 @@
     [self.tableVwForReportiesHistory addFooterWithTarget:self action:@selector(refreshFooterForReporteesHistory) withIndicatorColor:TopColor];
     
     [self.tableVwForReporties addFooterWithTarget:self action:@selector(refreshFooterForReportees) withIndicatorColor:TopColor];
+    
+    [self.tableVwForStore addFooterWithTarget:self action:@selector(refreshFooterForStoreList) withIndicatorColor:TopColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveTypeSelected:) name:@"LeaveTypeSelected" object:nil];
@@ -528,7 +530,7 @@
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                                path:@"http://ft.allsmart.in/rest/s1/ft/customerSupportInfo"
+                                                                path:@"/rest/s1/ft/customerSupportInfo"
                                                           parameters:nil];
         //====================================================RESPONSE
         [DejalBezelActivityView activityViewForView:self.view];
@@ -819,13 +821,25 @@
         self.btnAdd.enabled = YES;
         self.btnAdd.alpha = 1.0;
         
-        self.txtVwStoreAddress.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"address"];
-        self.txtFieldStoreName.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"storeName"];
-        self.txtFieldSiteRadius.text=[NSString stringWithFormat:@"%i",[[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] integerValue]];
+        if (![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"address"] isKindOfClass:[NSNull class]]) {
+            self.txtVwStoreAddress.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"address"];
+        }
         
-        self.lblForLatLon.text=[NSString stringWithFormat:@"Lat: %@ | Lon: %@",[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"],[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"]];
-        strForCurLatitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"];
-        strForCurLongitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"];
+        if (![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"storeName"] isKindOfClass:[NSNull class]]) {
+            self.txtFieldStoreName.text=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"storeName"];
+        }
+        
+        if (![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] isKindOfClass:[NSNull class]]) {
+            self.txtFieldSiteRadius.text=[NSString stringWithFormat:@"%i",[[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] integerValue]];
+        }
+        
+        if (![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"] isKindOfClass:[NSNull class]] && ![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"] isKindOfClass:[NSNull class]]) {
+            self.lblForLatLon.text=[NSString stringWithFormat:@"Lat: %@ | Lon: %@",[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"],[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"]];
+            
+            strForCurLatitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"];
+            strForCurLongitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"];
+        }
+        
         self.btnAdd.tag=indexValue;
     }
 }
@@ -989,6 +1003,24 @@
 }
 #pragma mark - Get Store's
 
+
+- (void)refreshFooterForStoreList
+{
+    if(pageNumber < countForStoreList){
+        
+        pageNumber++;
+        [self getStores];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableVwForStore reloadData];
+            [self.tableVwForStore footerEndRefreshing];
+        });
+    }else{
+        [self.tableVwForStore footerEndRefreshing];
+        [self.tableVwForStore headerEndRefreshing];
+    }
+}
+
 -(void)getStores{
     
     if ([APPDELEGATE connected]) {
@@ -1002,20 +1034,37 @@
         [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
         [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
         
+          NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/stores/user/list?pageIndex=%i&pageSize=10",pageNumber];
+        NSLog(@"Store List URL===%@",strPath);
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
-                                                                path:@"/rest/s1/ft/stores/user/list"
+                                                                path:strPath
                                                           parameters:nil];
+        
         //====================================================RESPONSE
-        [DejalBezelActivityView activityViewForView:self.view];
+        
+        if (pageNumber == 0) {
+                    [DejalBezelActivityView activityViewForView:self.view];
+        }
+        
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
         }];
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSError *error = nil;
             NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-            [DejalBezelActivityView removeView];
+            
+            if (pageNumber == 0) {
+                [DejalBezelActivityView removeView];
+            }
             NSLog(@"Store List==%@",JSON);
-            arrayForStoreList=[JSON objectForKey:@"userStores"];
+            countForStoreList=[[JSON valueForKey:@"totalEntries"] integerValue];
+            NSMutableArray *array=[[JSON objectForKey:@"userStores"] mutableCopy];
+            for (NSDictionary *dict in array) {
+                [arrayForStoreList addObject:dict];
+            }
+            if ([array count] <= 0) {
+                countForStoreList=0;
+            }
             [self.tableVwForStore reloadData];
         }
          //==================================================ERROR
@@ -1096,13 +1145,16 @@
             
             NSMutableArray *array=[[JSON objectForKey:@"requestList"] mutableCopy];
             
-            //arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
-            
             for (NSDictionary *dict in array) {
                 [arrayForPromoters addObject:dict];
             }
             NSLog(@"Promoter List===%@",JSON);
             arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
+            
+            if (array.count <= 0) {
+                arrayCountToCheck=0;
+            }
+            
             [self.tableVwForPromoters reloadData];
         }
          //==================================================ERROR
@@ -1172,13 +1224,16 @@
             
             NSMutableArray *array=[[JSON objectForKey:@"requestList"] mutableCopy];
             
-            //arrayForPromoters=[[JSON objectForKey:@"requestList"] mutableCopy];
-            
             for (NSDictionary *dict in array) {
                 [arrayForPromoters addObject:dict];
             }
             NSLog(@"Promoter List===%@",JSON);
             arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
+            
+            if (array.count <= 0) {
+                arrayCountToCheck=0;
+            }
+            
             [self.tableVwForPromoters reloadData];
         }
          //==================================================ERROR
@@ -2300,7 +2355,7 @@
                     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave requested successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert show];
                 }else{
-                    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave edited successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:[JSON valueForKey:@"messages"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert show];
                 }
             }
@@ -2473,13 +2528,20 @@
                  @"description":self.txtFieldLeaveDescription.text,
                  @"fromDate":strStartDate,
                  @"thruDate":strEndDate,
-                 @"partyRelationshipId":partyRelationshipId,
-                 @"leaveApproved":status
+                 @"partyRelationshipId":partyRelationshipId
                  };
-        //{"partyRelationshipId" : "100153",  "fromDate" : "1484245800000", "thruDate" : "2017-01-14", "leaveTypeEnumId" : "EltEarned", "leaveReasonEnumId" : "ElrMedical", "leaveApproved" : "Y", "description" : "Test" }
-        request = [httpClient requestWithMethod:@"PUT"
-                                           path:@"/rest/s1/ft/updateLeave"
-                                     parameters:json];
+        //{"partyRelationshipId" : "100153",  "fromDate" : "1484245800000", "thruDate" : "2017-01-14", "leaveTypeEnumId" : "EltEarned", "leaveReasonEnumId" : "ElrMedical", "description" : "Test" }
+        
+        if ([status isEqualToString:@"Y"]) {
+            request = [httpClient requestWithMethod:@"PUT"
+                                               path:@"/rest/s1/ft/approveLeave"
+                                         parameters:json];
+        }else if ([status isEqualToString:@"N"]){
+            request = [httpClient requestWithMethod:@"PUT"
+                                               path:@"/rest/s1/ft/rejectLeave"
+                                         parameters:json];
+        }
+       
         NSLog(@"Json URL---PUT===%@",json);
         //====================================================RESPONSE
         [DejalBezelActivityView activityViewForView:self.view];
@@ -2533,14 +2595,13 @@
 
 #pragma mark - Custom Calendar
 // Returns YES if the date should be highlighted or NO if it should not.
-- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldHighlightDate:(NSDate *)date
-{
+- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldHighlightDate:(NSDate *)date{
     return YES;
 }
 
 // Returns YES if the date should be selected or NO if it should not.
-- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldSelectDate:(NSDate *)date
-{
+- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldSelectDate:(NSDate *)date{
+    
     NSDateComponents *dayComponent = [[NSDateComponents alloc] init];
     dayComponent.day = 1;
     
@@ -2659,7 +2720,6 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        
         if ([[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"]) {
             if (![[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"] isKindOfClass:[NSNull class]]) {
                 cell.lblFieldAgentName.text=[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"userFullName"];
@@ -2684,7 +2744,6 @@
             cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
         
         NSMutableArray *array=[[NSMutableArray alloc] init];
         NSInteger   hoursBetweenDates = 0;
@@ -2880,7 +2939,6 @@
             
         }else{
             
-            
             if (![[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"] isKindOfClass:[NSNull class]]) {
                 startDate=[self convertLeaveDate:[[arrayForLeaveHistory objectAtIndex:indexPath.row]valueForKey:@"fromDate"]];
             }
@@ -3016,6 +3074,8 @@
             return;
             
         }else if ([cell.textLabel.text isEqualToString:@"Stores"]){
+            pageNumber = 0;
+            arrayForStoreList=[[NSMutableArray alloc] init];
             [self getStores];
             self.vwForStore.hidden =NO;
             self.backBtn.hidden = NO;
@@ -3310,6 +3370,10 @@
             
             countForReportee=[[JSON valueForKey:@"totalReportees"] integerValue];
             
+            if (array.count  <= 0) {
+                countForReportee=0;
+            }
+            
             [self.tableVwForReporties reloadData];
         }
          //==================================================ERROR
@@ -3337,8 +3401,8 @@
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
-    
 }
+
 -(void)getReporteeHistory{
     
     if ([APPDELEGATE connected]) {
@@ -3404,6 +3468,10 @@
                 }
                 
                 countForReporteeHistory = [[JSON objectForKey:@"totalEntries"] integerValue];;
+                
+                if (array.count <= 0) {
+                    countForReporteeHistory = 0;
+                }
                 
                 [self.tableVwForReportiesHistory reloadData];
             }
@@ -3505,7 +3573,6 @@
     }
     else if (![self.vwForPromoters isHidden]){
         if (![self.vwForCamera isHidden]){
-            //            self.backBtn.hidden = NO;
             self.tabBarController.tabBar.hidden =NO;
             self.vwForCamera.hidden = YES;
         }else if (![self.vwForPromoterAdd isHidden]){
@@ -3521,7 +3588,6 @@
             self.vwForCalendar.hidden = YES;
             
         }else{
-            
             self.vwForLeaveRqst.hidden =YES;
         }
     }else if (![self.vwForCamera isHidden]){

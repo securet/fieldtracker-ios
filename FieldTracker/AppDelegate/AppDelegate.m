@@ -26,7 +26,7 @@
     // Override point for customization after application launch.
     
     [Fabric with:@[[Crashlytics class]]];
-    _Base_URL=@"http://ft.allsmart.in";
+//    _Base_URL=@"http://oppo.allsmart.in";
     
     [GMSServices provideAPIKey:@"AIzaSyBuOTx1LZAltSaWE5ehj0p5XwzvrJeChdU"];
     
@@ -53,6 +53,8 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
+    
+    _Base_URL=[NSString stringWithFormat:@"http://%@",[defaults valueForKey:@"Domain"]];
     NSInteger is_Login=[[defaults valueForKey:@"Is_Login"] integerValue];
     
     if (is_Login == 1) {
@@ -66,6 +68,7 @@
 //    
 //    NSLog(@"App ID%@", appID);
 //    NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"http://itunes.apple.com/lookup?bundleId=%@", appID]];
+//    //com.allsmart.FieldTrackerios
 //    NSData* data = [NSData dataWithContentsOfURL:url];
 //    
 //    if (data) {

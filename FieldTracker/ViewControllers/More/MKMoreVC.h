@@ -5,7 +5,6 @@
 //  Created by User1 on 12/20/16.
 //
 //
-  
 #import <UIKit/UIKit.h>
 #import "MultiSelectSegmentedControl.h"
 
@@ -35,11 +34,9 @@
 @property (strong, nonatomic) IBOutlet UIView *vwForPromoters;
 @property (strong, nonatomic) IBOutlet UIView *vwForLeaveRqst;
 
-
 @property (strong, nonatomic) IBOutlet UIView *vwForStoreAdd;
 @property (strong, nonatomic) IBOutlet UIView *vwForPromoterAdd;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollForPromoterAdd;
-
 
 @property (strong, nonatomic) IBOutlet UIView *vwForLeaveRqstAdd;
 
@@ -57,7 +54,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblForStoreLocation;
 
 #pragma mark - IBOutlets For Add/Edit Store
-
 @property (strong, nonatomic) IBOutlet UILabel *lblForEditStore;
 @property (strong, nonatomic) IBOutlet UILabel *lblForLatLon;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldStoreName;
@@ -72,7 +68,6 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfTxtFieldStorName;
 
 #pragma mark - IBOutlets For Add/Edit Promoters
-
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldFNamePromoter;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldLNamePromoter;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldPhonePromoter;
@@ -86,7 +81,6 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnForStoreAssignmtPopup;
 
 #pragma mark - IBOutlets For Leave Request
-
 @property (strong, nonatomic) IBOutlet UIButton *btnLeaveStartDate;
 @property (strong, nonatomic) IBOutlet UIButton *btnLeaveEndDate;
 @property (strong, nonatomic) IBOutlet UIButton *btnLeaveType;
@@ -107,19 +101,16 @@
 @property (strong, nonatomic) IBOutlet UILabel *lblForDateStartEnd;
 @property (strong, nonatomic) IBOutlet UIButton *btnToday;
 
-
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfScrollVwForLeaveRqst;
 - (IBAction)onClickType:(UIButton *)sender;
 - (IBAction)onClickReason:(UIButton *)sender;
 
 #pragma mark - Camera View
-
 @property (strong, nonatomic) IBOutlet UIView *vwForCamera;
 @property (strong, nonatomic) IBOutlet UIView *previewCamera;
 @property (strong, nonatomic) IBOutlet UIButton *cameraBtn;
 
 #pragma mark - My Account View
-
 @property (strong, nonatomic) IBOutlet UIView *vwForAccount;
 @property (strong, nonatomic) IBOutlet UITextField *textFieldMyName;
 @property (strong, nonatomic) IBOutlet UITextField *textFieldMyNumber;
@@ -134,7 +125,6 @@
 - (IBAction)onClickManagerPhoneNumber:(UIButton *)sender;
 
 #pragma mark - Change Password
-
 @property (strong, nonatomic) IBOutlet UIView *vwForChangePwd;
 @property (strong, nonatomic) IBOutlet UITextField *textFieldCurrentPwd;
 @property (strong, nonatomic) IBOutlet UITextField *textFieldNewPwd;
@@ -142,19 +132,15 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnChangePwd;
 
 #pragma mark - Contact Support
-
 @property (strong, nonatomic) IBOutlet UIView *vwForContact;
 @property (strong, nonatomic) IBOutlet UIImageView *imgVwLogoConatact;
 @property (strong, nonatomic) IBOutlet UILabel *lblForEmailContact;
 @property (strong, nonatomic) IBOutlet UILabel *lblForPhoneContact;
 @property (strong, nonatomic) IBOutlet UILabel *lblForOrgNameContact;
 
-
 #pragma mark - Leave Requisitions ( i.e for approval )
-
 @property (strong, nonatomic) IBOutlet UIView *vwForLeaveRequestForApproval;
 @property (strong, nonatomic) IBOutlet UITableView *tableVwForLeaveApproval;
-
 
 #pragma mark - Reporties
 @property (strong, nonatomic) IBOutlet UIView *vwForReporties;
@@ -168,18 +154,11 @@
 @property (strong, nonatomic) IBOutlet UILabel *lblTimeOut;
 @property (strong, nonatomic) IBOutlet UILabel *lblTotalTime;
 
-
-
-
-
 - (IBAction)onClickCamera:(UIButton *)sender;
-
 
 - (IBAction)onClickLeaveStartDate:(UIButton *)sender;
 - (IBAction)onClickLeaveEndDate:(UIButton *)sender;
 
-
 - (IBAction)onClickStorAssignment:(UIButton *)sender;
-
 - (IBAction)onClickSEAssignment:(UIButton *)sender;
 @end

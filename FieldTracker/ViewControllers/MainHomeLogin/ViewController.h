@@ -13,6 +13,8 @@
 
 @property (strong,nonatomic) IBOutlet UITextField *txtFieldForEmail;
 @property (strong, nonatomic) IBOutlet UITextField *txtFieldForPassword;
+@property (strong, nonatomic) IBOutlet UITextField *txtFieldForDomainName;
+
 @property (strong, nonatomic) IBOutlet UIButton *btnLogin;
 @property (strong, nonatomic) IBOutlet UIButton *btnForgotPwd;
 @property (strong, nonatomic) IBOutlet UIImageView *imgVwForLogo;

@@ -24,6 +24,7 @@
     self.txtFieldForPassword.text=@"";
     [self addPadding:self.txtFieldForEmail];
     [self addPadding:self.txtFieldForPassword];
+    [self addPadding:self.txtFieldForDomainName];
     self.imgVwForLogo.image=[UIImage imageNamed:@""];
     self.btnLogin.layer.cornerRadius = 5;
     
@@ -58,9 +59,10 @@
     
     if (txtField == self.txtFieldForEmail){
         imgVw.image=[UIImage imageNamed:@"email"];
-    }
-    else if (txtField == self.txtFieldForPassword){
+    }else if (txtField == self.txtFieldForPassword){
         imgVw.image=[UIImage imageNamed:@"password"];
+    }else if (txtField == self.txtFieldForDomainName){
+        imgVw.image=[UIImage imageNamed:@"domain"];
     }
     
     imgVw.contentMode = UIViewContentModeScaleAspectFit;
@@ -90,7 +92,7 @@
 
 - (IBAction)onClickLogin:(UIButton *)sender{
     
-    if (self.txtFieldForEmail.text.length>0 && self.txtFieldForPassword.text.length>0) {
+    if (self.txtFieldForEmail.text.length>0 && self.txtFieldForPassword.text.length>0 && self.txtFieldForDomainName.text.length>0) {
         
         if ([self isValidEmail:self.txtFieldForEmail.text]) {
             
@@ -107,12 +109,13 @@
         }
     }
     else{
-        
-        if (self.txtFieldForEmail.text.length <= 0) {
+        if (self.txtFieldForDomainName.text.length <= 0){
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Domain Name" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }else if (self.txtFieldForEmail.text.length <= 0) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Email ID" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
-        }
-        else if (self.txtFieldForPassword.text.length <= 0){
+        }else if (self.txtFieldForPassword.text.length <= 0){
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please Enter Password" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
@@ -225,8 +228,8 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     
-    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
-    
+    NSURL * url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@",self.txtFieldForDomainName.text]];
+    APPDELEGATE.Base_URL=[NSString stringWithFormat:@"http://%@",self.txtFieldForDomainName.text];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
@@ -267,28 +270,26 @@
                 for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys]){
                     if (![key isEqualToString:@"reportingPerson"]) {
                         
-                    if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
-                        [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                        if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
+                            [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
                     }
                 }
                 
                 if ([[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]) {
-                    
-                
-                NSMutableDictionary *reportingPerson = [NSMutableDictionary dictionary];
-                for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]){
-                    if (![key isEqualToString:@"reportingPerson"]) {
-                        
-                        if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
-                            [reportingPerson setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                    NSMutableDictionary *reportingPerson = [NSMutableDictionary dictionary];
+                    for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]){
+                        if (![key isEqualToString:@"reportingPerson"]) {
+                            if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
+                                [reportingPerson setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                        }
                     }
-                }
                     [prunedDictionary setObject:reportingPerson forKey:@"reportingPerson"];
                 }
                 
-//                [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"] forKey:@"reportingPerson"];
+                //                [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"] forKey:@"reportingPerson"];
                 [defaults setObject:@"1" forKey:@"Is_Login"];
                 [defaults setObject:prunedDictionary forKey:@"UserData"];
+                [defaults setObject:self.txtFieldForDomainName.text forKey:@"Domain"];
                 [defaults synchronize];
                 
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -296,12 +297,12 @@
                 [[UIApplication sharedApplication].keyWindow setRootViewController:rootViewController];
             }else{
                 
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Not account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"No account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
             }
         }else{
             
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Not account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"No account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
         }
     }
