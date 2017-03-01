@@ -12,7 +12,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <GoogleMaps/GoogleMaps.h>
 
-@interface MKHomeVC : UIViewController<CLLocationManagerDelegate,GMSMapViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIAlertViewDelegate,UITableViewDelegate,UITableViewDataSource>
+@interface MKHomeVC : UIViewController<CLLocationManagerDelegate,GMSMapViewDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIAlertViewDelegate,UITableViewDelegate,UITableViewDataSource,UITabBarControllerDelegate>
 {
     CLLocationManager *locationManager;
 }

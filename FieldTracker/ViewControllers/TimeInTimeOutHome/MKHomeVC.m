@@ -47,7 +47,9 @@
     self.lblLName.text=[dict valueForKey:@"lastName"];
     
     if ([dict valueForKey:@"userPhotoPath"]) {
-        NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
+        
+        NSString *baseURL=APPDELEGATE.Base_URL;
+        NSString *str = [NSString stringWithFormat:@"http://%@/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"],baseURL];
         NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
         NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
         dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
@@ -127,6 +129,8 @@
     
     [self checkLocation];
     timerForLocation= [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateLocationBackground) userInfo:nil repeats:YES];
+    
+    self.tabBarController.delegate=self;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -159,6 +163,13 @@
     }
 }
 
+-(void) tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController{
+    if (tabBarController.selectedIndex == 2) {
+       [[NSNotificationCenter defaultCenter] postNotificationName:@"MoreTabSelected" object:nil];
+    }else if (tabBarController.selectedIndex ==1){
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"HistoryTabSelected" object:nil];
+    }
+}
 #pragma mark - Check App Version
 
 -(void)checkAppVersion{
@@ -1030,7 +1041,6 @@
 
 -(void)postData:(NSDictionary*)dictToSend
       withIndex:(NSInteger)indexValue{
-    
     
     if ([[dictToSend valueForKey:@"actionimage"] isEqualToString:@"img"]) {
         imgPathToSend=@"img";

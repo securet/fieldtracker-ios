@@ -27,4 +27,6 @@
 #import "JSBadgeView.h"
 #import "MKAgentListCell.h"
 #import "MKIndividualHistoryCell.h"
+#import "UIImage+Exif.h"
+#import "ExifContainer.h"
 #endif

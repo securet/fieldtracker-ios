@@ -64,6 +64,12 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnCancel;
 @property (strong, nonatomic) IBOutlet UIButton *btnAddPromoterConfirm;
 @property (strong, nonatomic) IBOutlet UIButton *btnCancelPromoterAdd;
+@property (strong, nonatomic) IBOutlet UIButton *btnForStoreCamera;
+
+
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfStoreCamera;
+
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfTxtVwStoreAddress;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfTxtFieldStorName;
 
@@ -79,6 +85,20 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnAadharPromoter;
 @property (strong, nonatomic) IBOutlet UIButton *btnAdressProofPromoter;
 @property (strong, nonatomic) IBOutlet UIButton *btnForStoreAssignmtPopup;
+
+
+
+
+@property (strong, nonatomic) IBOutlet UIView *vwForImgPreview;
+@property (weak, nonatomic) IBOutlet UIButton *btnPhotoConfirm;
+@property (weak, nonatomic) IBOutlet UIButton *btnPhotoRetake;
+
+@property (strong, nonatomic) IBOutlet UIImageView *imgVwForPhotoPreview;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfImgPrvw;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *widthOfImgPrvw;
+
+
 
 #pragma mark - IBOutlets For Leave Request
 @property (strong, nonatomic) IBOutlet UIButton *btnLeaveStartDate;
@@ -153,6 +173,8 @@
 @property (strong, nonatomic) IBOutlet UILabel *lblTimeIn;
 @property (strong, nonatomic) IBOutlet UILabel *lblTimeOut;
 @property (strong, nonatomic) IBOutlet UILabel *lblTotalTime;
+
+- (IBAction)onClickToggle:(UIButton *)sender;
 
 - (IBAction)onClickCamera:(UIButton *)sender;
 

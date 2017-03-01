@@ -39,6 +39,7 @@
 - (IBAction)onClickBackBtn:(UIButton *)sender;
 
 
+- (IBAction)onClickToggle:(UIButton *)sender;
 
 
 @end

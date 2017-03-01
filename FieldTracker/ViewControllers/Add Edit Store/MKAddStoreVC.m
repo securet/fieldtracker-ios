@@ -117,7 +117,7 @@
     strForCurLatitude=[NSString stringWithFormat:@"%f",coordinate.latitude];
     strForCurLongitude=[NSString stringWithFormat:@"%f",coordinate.longitude];
     
-    [self getAddress];
+    //[self getAddress];
 }
 
 

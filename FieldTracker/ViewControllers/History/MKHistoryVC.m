@@ -32,7 +32,8 @@
     self.lblLName.text=[dict valueForKey:@"lastName"];
 
     if ([dict valueForKey:@"userPhotoPath"]) {
-        NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
+        NSString *baseURL=APPDELEGATE.Base_URL;
+        NSString *str = [NSString stringWithFormat:@"http://%@/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"],baseURL];
         NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
         NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
         dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
@@ -66,8 +67,14 @@
     [self.tableVw addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
+    
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(historyTabSelected) name:@"HistoryTabSelected" object:nil];
 }
 
+-(void)historyTabSelected{
+    self.vwForIndividualItem.hidden = YES;
+    self.backBtn.hidden = YES;
+}
 
 -(void)checkingInLocation:(NSNotification*)notification{
     
@@ -564,6 +571,11 @@
  */
 
 - (IBAction)onClickBackBtn:(UIButton *)sender {
+    self.vwForIndividualItem.hidden = YES;
+    self.backBtn.hidden = YES;
+}
+
+- (IBAction)onClickToggle:(UIButton *)sender {
     self.vwForIndividualItem.hidden = YES;
     self.backBtn.hidden = YES;
 }

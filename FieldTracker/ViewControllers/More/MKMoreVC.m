@@ -9,7 +9,8 @@
 #import "MKMoreVC.h"
 #import "MKCustomCellForLeave.h"
 #import <AVFoundation/AVFoundation.h>
-
+#import <AssetsLibrary/AssetsLibrary.h>
+#import <ImageIO/ImageIO.h>
 
 @interface MKMoreVC ()<RSDFDatePickerViewDelegate,RSDFDatePickerViewDataSource>
 {
@@ -58,6 +59,10 @@
     
     NSString *roleType;
     
+    NSURL *urlForImage;
+    NSMutableDictionary *dictForMetadata;
+    
+    NSData *imgDataToSend;
     BOOL isPromoterOrPromoterApprove;
 }
 @end
@@ -107,28 +112,13 @@
     self.tableVwForReportiesHistory.tableFooterView=[[UIView alloc] init];
     self.tableVwForIndividualHistory.tableFooterView=[[UIView alloc] init];
     
-    self.vwForPromoters.hidden = YES;
-    self.vwForStore.hidden = YES;
-    self.vwForLeaveRqst.hidden= YES;
-    
-    self.backBtn.hidden = YES;
     
     [self.btnAddStore addTarget:self action:@selector(onClickAddStore:) forControlEvents:UIControlEventTouchUpInside];
     [self.btnAddPromoter addTarget:self action:@selector(onClickAddPromoter) forControlEvents:UIControlEventTouchUpInside];
     [self.btnLeaveRqst addTarget:self action:@selector(onClickLeaveRqst:) forControlEvents:UIControlEventTouchUpInside];
     
-    self.vwForStoreAdd.hidden = YES;
-    self.vwForPromoterAdd.hidden = YES;
-    self.vwForLeaveRqstAdd.hidden = YES;
-    self.vwForCamera.hidden = YES;
-    self.vwForAccount.hidden = YES;
-    self.vwForChangePwd.hidden = YES;
-    self.vwForContact.hidden = YES;
-    self.vwForCalendar.hidden = YES;
-    self.vwForLeaveRequestForApproval.hidden = YES;
-    self.vwForReporties.hidden = YES;
-    self.vwForReportiesHistory.hidden = YES;
-    self.vwForReportiesIndividualHistory.hidden = YES;
+    [self hiddenAllViews];
+    
     
     self.cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
     self.cameraBtn.layer.cornerRadius = self.cameraBtn.frame.size.height/2;
@@ -153,6 +143,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveReasonSelected:) name:@"LeaveReasonSelected" object:nil];
     
     [self setupUIForAllViews];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hiddenAllViews) name:@"MoreTabSelected" object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -188,6 +181,29 @@
                                    delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
     }
 }
+
+-(void)hiddenAllViews{
+    
+    self.backBtn.hidden = YES;
+    
+    self.vwForPromoters.hidden = YES;
+    self.vwForStore.hidden = YES;
+    self.vwForLeaveRqst.hidden= YES;
+    self.vwForStoreAdd.hidden = YES;
+    self.vwForPromoterAdd.hidden = YES;
+    self.vwForLeaveRqstAdd.hidden = YES;
+    self.vwForCamera.hidden = YES;
+    self.vwForAccount.hidden = YES;
+    self.vwForChangePwd.hidden = YES;
+    self.vwForContact.hidden = YES;
+    self.vwForCalendar.hidden = YES;
+    self.vwForLeaveRequestForApproval.hidden = YES;
+    self.vwForReporties.hidden = YES;
+    self.vwForReportiesHistory.hidden = YES;
+    self.vwForReportiesIndividualHistory.hidden = YES;
+    self.vwForImgPreview.hidden = YES;
+}
+
 
 #pragma mark - ---
 - (IBAction)onClickManagerPhoneNumber:(UIButton *)sender {
@@ -233,7 +249,8 @@
     }
     
     if ([dict valueForKey:@"userPhotoPath"]) {
-        NSString *str = [NSString stringWithFormat:@"http://ft.allsmart.in/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"]];
+        NSString *baseURL=APPDELEGATE.Base_URL;
+        NSString *str = [NSString stringWithFormat:@"http://%@/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"],baseURL];
         NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
         NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
         dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
@@ -282,9 +299,14 @@
     if (IS_IPHONE_4) {
         self.heightOfTxtVwStoreAddress.constant = 50;
         self.txtVwStoreAddress.font = [UIFont systemFontOfSize:12];
+        self.heightOfStoreCamera.constant = 50;
     }else{
         self.heightOfTxtFieldStorName.constant = 40;
     }
+    
+    self.btnForStoreCamera.tag=400;
+    self.btnForStoreCamera.layer.cornerRadius = 5;
+    self.btnForStoreCamera.layer.masksToBounds = YES;
     
     [self textFieldEdit:self.txtFieldStoreName];
     [self textFieldEdit:self.txtFieldSiteRadius];
@@ -308,12 +330,17 @@
     [self.btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
     [self.btnGetLocation addTarget:self action:@selector(getLocation) forControlEvents:UIControlEventTouchUpInside];
     
+    [self.btnForStoreCamera addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
     //For Promoter View
     [self addPromoterViewSetup];
     [self addShadow:self.btnAddStore];
     [self addShadow:self.btnAddPromoter];
     [self addShadow:self.btnLeaveRqst];
     
+    [self.btnPhotoConfirm addTarget:self action:@selector(onClickPhotoConfirm:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.btnPhotoRetake addTarget:self action:@selector(onClickPhotoRetake:) forControlEvents:UIControlEventTouchUpInside];
+
     //For Change Password
     [self textFieldEdit:self.textFieldCurrentPwd];
     [self textFieldEdit:self.textFieldNewPwd];
@@ -816,8 +843,8 @@
     }else if ([[MKSharedClass shareManager] valueForStoreEditVC] == 0){
         
         self.lblForEditStore.text=@"Edit Store";
-        [self.btnAdd setTitle:@"Edit" forState:UIControlStateNormal];
-        self.btnAdd.backgroundColor=[[UIColor blueColor] colorWithAlphaComponent:0.6];
+        [self.btnAdd setTitle:@"Update" forState:UIControlStateNormal];
+        self.btnAdd.backgroundColor=[UIColor colorWithRed:(85/255.0) green:(160/255.0) blue:(248/255.0) alpha:1.0];
         self.btnAdd.enabled = YES;
         self.btnAdd.alpha = 1.0;
         
@@ -874,11 +901,16 @@
         
         [httpClient setDefaultHeader:@"Authorization" value:str];
         //{"storeName":"OPPO Tirumalgherry","address":"Via Rest API","latitude":100.00,"longitude":100.00,"proximityRadius":200}
+        if (strUserPhotoPath == nil) {
+            strUserPhotoPath=@"locationImagePath";
+        }
+        
         NSDictionary * json = @{@"storeName":self.txtFieldStoreName.text,
                                 @"address":self.txtVwStoreAddress.text,
                                 @"latitude":strForCurLatitude,
                                 @"longitude":strForCurLongitude,
                                 @"proximityRadius":self.txtFieldSiteRadius.text,
+                                @"locationImagePath":strUserPhotoPath,
                                 };
         NSMutableURLRequest *request;
         if ([[MKSharedClass shareManager] valueForStoreEditVC] == 1){
@@ -938,7 +970,20 @@
     self.backBtn.hidden=NO;
 }
 
+-(CLLocationCoordinate2D)fetchLocation{
+    
+    locationManager = [[CLLocationManager alloc] init];
+    locationManager.delegate = self;
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    locationManager.distanceFilter = kCLDistanceFilterNone;
+    [locationManager startUpdatingLocation];
+    CLLocation *location = [locationManager location];
+    CLLocationCoordinate2D coordinate = [location coordinate];
+    return coordinate;
+}
+
 -(void)getLocation{
+    
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
     locationManager.desiredAccuracy = kCLLocationAccuracyBest;
@@ -1758,18 +1803,24 @@
     
     if (sender.tag == 100) {
         stringForImagePurpose=@"userPhoto";
+        self.btnPhotoRetake.tag=100;
     }else if (sender.tag == 200){
         stringForImagePurpose=@"aadharId";
+        self.btnPhotoRetake.tag=200;
     }else if (sender.tag == 300){
         stringForImagePurpose=@"addressProof";
+        self.btnPhotoRetake.tag=300;
+    }else if (sender.tag == 400){
+        [self getLocation];
+        stringForImagePurpose=@"locationImagePath";
+        self.btnPhotoRetake.tag=400;
     }
-    
     
     NSError *error;
     AVCaptureDevice *captureDevice ;
     if (sender.tag == 100) {
         captureDevice   = [self frontFacingCamera];
-    }else if (sender.tag == 200 || sender.tag == 300){
+    }else if (sender.tag == 200 || sender.tag == 300 || sender.tag == 400){
         captureDevice = [self rearFacingCamera];
     }
     
@@ -1828,18 +1879,19 @@
     return nil;
 }
 
+
 - (IBAction)onClickCamera:(UIButton *)sender {
     
     AVCaptureConnection *videoConnection = nil;
     
     for (AVCaptureConnection *connection in [stillImageOutput connections]){
-        for (AVCaptureInputPort *port in [connection inputPorts])        {
-            if ([[port mediaType] isEqual:AVMediaTypeVideo] )            {
+        for (AVCaptureInputPort *port in [connection inputPorts]){
+            if ([[port mediaType] isEqual:AVMediaTypeVideo] ){
                 videoConnection = connection;
                 break;
             }
         }
-        if (videoConnection)        {
+        if (videoConnection){
             break;
         }
     }
@@ -1847,17 +1899,182 @@
     NSLog(@"About to request a capture from: %@", stillImageOutput);
     [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
         
+//        NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+//        UIImage *image = [[UIImage alloc] initWithData:imageData];
+//        imgToSend=image;
+//        self.vwForCamera.hidden = YES;
+//        self.backBtn.hidden = YES;
+//        [self postImageDataToServer];
+        
         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-        UIImage *image = [[UIImage alloc] initWithData:imageData];
-        imgToSend=image;
-        self.vwForCamera.hidden = YES;
-        self.backBtn.hidden = YES;
-        [self postImageDataToServer];
+        
+ UIImage *image = [[UIImage alloc] initWithData:imageData];
+        NSDictionary *props = [self getImageProperties:imageData];
+        NSMutableDictionary *imageMetadata = [NSMutableDictionary dictionaryWithDictionary:props];
+        //[self saveImage:image withInfo:imageMetadata];
+        [self editExifData:imageData];
     }];
     
     self.tabBarController.tabBar.hidden =NO;
 }
 
+-(void)editExifData:(NSData*)imageData{
+    
+    ExifContainer *container = [[ExifContainer alloc] init];
+    CLLocationCoordinate2D coordSF = [self fetchLocation];
+    double altitudeSF = 15.0;
+    double accuracyHorizontal = 1.0;
+    double accuracyVertical = 1.0;
+    NSDate * nowDate = [NSDate date];
+    CLLocation * loc = [[CLLocation alloc] initWithCoordinate:coordSF altitude:altitudeSF horizontalAccuracy:accuracyHorizontal verticalAccuracy:accuracyVertical timestamp:nowDate];
+    [container addLocation:loc];
+    NSString*strImageName=[NSString stringWithFormat:@"%@",nowDate];
+    
+    NSData *imgData = [[UIImage imageWithData:imageData] addExif:container];
+    
+    imgDataToSend=imgData;
+    
+   // NSString *imagePath = [self saveImageDataToDocuments:imgData];
+   // NSLog(@"saved image path: %@", imagePath);
+    
+    imgToSend = [UIImage imageWithData:imgData];
+    self.vwForImgPreview.hidden = NO;
+    self.imgVwForPhotoPreview.image=imgToSend;
+    self.vwForCamera.hidden = YES;
+}
+
+- (NSString *)saveImageDataToDocuments:(NSData *)data {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *savedImagePath = [documentsDirectory stringByAppendingPathComponent:@"savedImage.jpg"];
+    [data writeToFile:savedImagePath atomically:NO];
+    
+    return savedImagePath;
+    
+}
+
+-(void)onClickPhotoConfirm:(UIButton*)sender{
+    self.vwForImgPreview.hidden = YES;
+    [self postImageDataToServer];
+}
+
+-(void)onClickPhotoRetake:(UIButton*)sender{
+    if ([UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera]){
+        [self openCamera:sender];
+    }
+}
+
+- (NSDictionary *)getImageProperties:(NSData *)imageData {
+    // get the original image metadata
+    CGImageSourceRef imageSourceRef = CGImageSourceCreateWithData((__bridge CFDataRef) imageData, NULL);
+    CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(imageSourceRef, 0, NULL);
+    NSDictionary *props = (__bridge_transfer NSDictionary *) properties;
+    CFRelease(imageSourceRef);
+   // NSLog(@"Metadata before Edit===%@",props);
+    return props;
+}
+
+- (void) saveImage:(UIImage *)imageToSave withInfo:(NSMutableDictionary *)imageData{
+    
+    // Get the image metadata (EXIF & TIFF)
+    NSMutableDictionary * imageMetadata = [imageData mutableCopy];
+    
+    // add GPS data
+ 
+    CLLocationCoordinate2D coordSF = [self fetchLocation];
+    
+    // arbitrary altitude and accuracy
+    double altitudeSF = 15.0;
+    double accuracyHorizontal = 1.0;
+    double accuracyVertical = 1.0;
+    NSDate * nowDate = [NSDate date];
+    // create CLLocation for image
+    CLLocation * loc = [[CLLocation alloc] initWithCoordinate:coordSF altitude:altitudeSF horizontalAccuracy:accuracyHorizontal verticalAccuracy:accuracyVertical timestamp:nowDate];
+    
+    // this is in case we try to acquire actual location instead of faking it with the code right above
+    if ( loc ) {
+        [imageMetadata setObject:[self gpsDictionaryForLocation:loc] forKey:(NSString*)kCGImagePropertyGPSDictionary];
+    }
+    
+    // Get the assets library
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    
+    // create a completion block for when we process the image
+    ALAssetsLibraryWriteImageCompletionBlock imageWriteCompletionBlock =
+    ^(NSURL *newURL, NSError *error) {
+        if (error) {
+            NSLog( @"Error writing image with metadata to Photo Library: %@", error );
+        } else {
+            NSLog( @"Wrote image======%@\n\n",newURL);
+            
+//            dictForMetadata=[[NSMutableDictionary alloc] init];
+//            
+//            dictForMetadata=imageMetadata;
+            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+            [library assetForURL:newURL resultBlock:^(ALAsset *asset)
+             {
+                 urlForImage=newURL;
+//                 ALAssetRepresentation *rep = [asset defaultRepresentation];
+//                 CGImageRef iref = [rep fullResolutionImage];
+//                 
+//                 imgToSend = [UIImage imageWithContentsOfFile:newURL.absoluteString];
+//                 
+                 UIImage  *image = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullScreenImage] scale:0.5 orientation:UIImageOrientationUp];
+                 imgToSend=image;
+                 
+                 //imgToSend = [UIImage imageWithData:[NSData dataWithContentsOfURL:newURL]];
+                 self.vwForImgPreview.hidden = NO;
+                 self.imgVwForPhotoPreview.image=imgToSend;
+                 self.vwForCamera.hidden = YES;
+            }
+                    failureBlock:^(NSError *error)
+             {
+                 // error handling
+                 NSLog(@"failure-----");
+             }];
+        }
+    };
+  
+    [library writeImageToSavedPhotosAlbum:[imageToSave CGImage]
+                                 metadata:imageMetadata
+                          completionBlock:imageWriteCompletionBlock];
+}
+- (NSDictionary *) gpsDictionaryForLocation:(CLLocation *)location
+{
+    CLLocationDegrees exifLatitude  = location.coordinate.latitude;
+    CLLocationDegrees exifLongitude = location.coordinate.longitude;
+    
+    NSString * latRef;
+    NSString * longRef;
+    if (exifLatitude < 0.0) {
+        exifLatitude = exifLatitude * -1.0f;
+        latRef = @"S";
+    } else {
+        latRef = @"N";
+    }
+    
+    if (exifLongitude < 0.0) {
+        exifLongitude = exifLongitude * -1.0f;
+        longRef = @"W";
+    } else {
+        longRef = @"E";
+    }
+    
+    NSMutableDictionary *locDict = [[NSMutableDictionary alloc] init];
+    
+    // requires ImageIO
+    [locDict setObject:location.timestamp forKey:(NSString*)kCGImagePropertyGPSTimeStamp];
+    [locDict setObject:latRef forKey:(NSString*)kCGImagePropertyGPSLatitudeRef];
+    [locDict setObject:[NSNumber numberWithFloat:exifLatitude] forKey:(NSString *)kCGImagePropertyGPSLatitude];
+    [locDict setObject:longRef forKey:(NSString*)kCGImagePropertyGPSLongitudeRef];
+    [locDict setObject:[NSNumber numberWithFloat:exifLongitude] forKey:(NSString *)kCGImagePropertyGPSLongitude];
+    [locDict setObject:[NSNumber numberWithFloat:location.horizontalAccuracy] forKey:(NSString*)kCGImagePropertyGPSDOP];
+    [locDict setObject:[NSNumber numberWithFloat:location.altitude] forKey:(NSString*)kCGImagePropertyGPSAltitude];
+    
+    return locDict;
+    
+}
 #pragma mark - ImagePickerDelegate Methods
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
@@ -1912,11 +2129,14 @@
                        
                        // add image data
                        NSData *imageData = UIImageJPEGRepresentation(imgToSend, 0.5);
-                       if (imageData) {
+                       
+                      // NSData *imageData=[NSData dataWithContentsOfURL:urlForImage];
+                       
+                       if (imgDataToSend) {
                            [body appendData:[[NSString stringWithFormat:@"--%@\r\n", BoundaryConstant] dataUsingEncoding:NSUTF8StringEncoding]];
                            [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"snapshotFile.png\"\r\n", FileParamConstant] dataUsingEncoding:NSUTF8StringEncoding]];
                            [body appendData:[@"Content-Type: pplication/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-                           [body appendData:imageData];
+                           [body appendData:imgDataToSend];
                            [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
                        }
                        
@@ -1943,6 +2163,8 @@
                                                                         error:&serializeError];
                                               NSLog(@"print response after image post : %@",jsonData);
                                               //userPhoto aadharId addressProof
+                                              strUserPhotoPath=[jsonData valueForKey:@"savedFilename"];
+                                              
                                               if ([stringForImagePurpose isEqualToString:@"userPhoto"]) {
                                                   strUserPhotoPath=[jsonData valueForKey:@"savedFilename"];
                                                   JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:self.btnPhotoPromoter alignment:JSBadgeViewAlignmentTopRight];
@@ -3563,13 +3785,31 @@
     //    NSLog(@"Converted Time===%@",strDateChange);
     return strDateChange;
 }
+- (IBAction)onClickToggle:(UIButton *)sender {
+    self.vwForReportiesIndividualHistory.hidden = YES;
+}
+
 #pragma mark - Back Button
 - (IBAction)onClickBackBtn:(UIButton *)sender{
     
     self.backBtn.hidden = YES;
     
     if (![self.vwForStore isHidden]){
-        self.vwForStore.hidden= YES;
+        
+        if (![self.vwForCamera isHidden]){
+            if (![self.vwForImgPreview isHidden]){
+                self.vwForImgPreview.hidden = YES;
+                imgToSend=nil;
+            }
+            self.tabBarController.tabBar.hidden =NO;
+            self.vwForCamera.hidden = YES;
+        }else if (![self.vwForImgPreview isHidden]){
+            self.vwForImgPreview.hidden = YES;
+            imgToSend=nil;
+        }
+        else{
+            self.vwForStore.hidden= YES;
+        }
     }
     else if (![self.vwForPromoters isHidden]){
         if (![self.vwForCamera isHidden]){
