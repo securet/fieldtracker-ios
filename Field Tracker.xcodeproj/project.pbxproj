@@ -8,14 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		27FC09E77673E9E0B1BDDD97 /* Pods_Field_Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D605FA6ED061FED5593E10 /* Pods_Field_Tracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		7F0ADF631E66A5A100DE7A3F /* ExifContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0ADF621E66A5A100DE7A3F /* ExifContainer.m */; };
+		7F0ADF661E66A5AE00DE7A3F /* UIImage+Exif.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0ADF651E66A5AE00DE7A3F /* UIImage+Exif.m */; };
 		7F1716521E3767F50007253E /* MKAgentListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F1716511E3767F50007253E /* MKAgentListCell.m */; };
 		7F9FC6CF1E1E3277005767F6 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */; };
 		7FA481D41E162EF200345BCE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA481D31E162EF200345BCE /* CoreData.framework */; };
 		7FA481D81E162FE400345BCE /* FieldTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7FA481D61E162FE400345BCE /* FieldTracker.xcdatamodeld */; };
 		7FA8B6FD1E657CB8001FD2FD /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA8B6FC1E657CB8001FD2FD /* AssetsLibrary.framework */; };
 		7FA8B6FF1E657CCE001FD2FD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA8B6FE1E657CCE001FD2FD /* CoreGraphics.framework */; };
-		7FA8B7031E65B058001FD2FD /* ExifContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA8B7021E65B058001FD2FD /* ExifContainer.m */; };
-		7FA8B7061E65B079001FD2FD /* UIImage+Exif.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA8B7051E65B079001FD2FD /* UIImage+Exif.m */; };
 		7FB6AB181E2F395000C0E270 /* Location.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 7FB6AB171E2F395000C0E270 /* Location.gpx */; };
 		7FB6AB241E2F3C6F00C0E270 /* MKAddStoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AB231E2F3C6F00C0E270 /* MKAddStoreVC.m */; };
 		7FB6AB271E2F3D3A00C0E270 /* MKHomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB6AB261E2F3D3A00C0E270 /* MKHomeVC.m */; };
@@ -101,6 +101,10 @@
 /* Begin PBXFileReference section */
 		36B4DEA742DB76EB695F833A /* Pods-Field Tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.debug.xcconfig"; sourceTree = "<group>"; };
 		5544F011375BD9C37A491A69 /* Pods-Field Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Field Tracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Field Tracker/Pods-Field Tracker.release.xcconfig"; sourceTree = "<group>"; };
+		7F0ADF611E66A5A100DE7A3F /* ExifContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExifContainer.h; sourceTree = "<group>"; };
+		7F0ADF621E66A5A100DE7A3F /* ExifContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExifContainer.m; sourceTree = "<group>"; };
+		7F0ADF641E66A5AE00DE7A3F /* UIImage+Exif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Exif.h"; sourceTree = "<group>"; };
+		7F0ADF651E66A5AE00DE7A3F /* UIImage+Exif.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Exif.m"; sourceTree = "<group>"; };
 		7F1716501E3767F50007253E /* MKAgentListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKAgentListCell.h; sourceTree = "<group>"; };
 		7F1716511E3767F50007253E /* MKAgentListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKAgentListCell.m; sourceTree = "<group>"; };
 		7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -108,10 +112,6 @@
 		7FA481D71E162FE400345BCE /* FieldTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FieldTracker.xcdatamodel; sourceTree = "<group>"; };
 		7FA8B6FC1E657CB8001FD2FD /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		7FA8B6FE1E657CCE001FD2FD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		7FA8B7011E65B058001FD2FD /* ExifContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExifContainer.h; path = "../../../../../../../../Downloads/SimpleExif-master/Classes/ExifContainer.h"; sourceTree = "<group>"; };
-		7FA8B7021E65B058001FD2FD /* ExifContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExifContainer.m; path = "../../../../../../../../Downloads/SimpleExif-master/Classes/ExifContainer.m"; sourceTree = "<group>"; };
-		7FA8B7041E65B079001FD2FD /* UIImage+Exif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Exif.h"; path = "../../../../../../../../Downloads/SimpleExif-master/Classes/ios/UIImage+Exif.h"; sourceTree = "<group>"; };
-		7FA8B7051E65B079001FD2FD /* UIImage+Exif.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Exif.m"; path = "../../../../../../../../Downloads/SimpleExif-master/Classes/ios/UIImage+Exif.m"; sourceTree = "<group>"; };
 		7FB6AB171E2F395000C0E270 /* Location.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Location.gpx; sourceTree = "<group>"; };
 		7FB6AB221E2F3C6F00C0E270 /* MKAddStoreVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKAddStoreVC.h; sourceTree = "<group>"; };
 		7FB6AB231E2F3C6F00C0E270 /* MKAddStoreVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKAddStoreVC.m; sourceTree = "<group>"; };
@@ -308,10 +308,10 @@
 		7FA8B7001E65B01D001FD2FD /* ImageExif */ = {
 			isa = PBXGroup;
 			children = (
-				7FA8B7041E65B079001FD2FD /* UIImage+Exif.h */,
-				7FA8B7051E65B079001FD2FD /* UIImage+Exif.m */,
-				7FA8B7011E65B058001FD2FD /* ExifContainer.h */,
-				7FA8B7021E65B058001FD2FD /* ExifContainer.m */,
+				7F0ADF641E66A5AE00DE7A3F /* UIImage+Exif.h */,
+				7F0ADF651E66A5AE00DE7A3F /* UIImage+Exif.m */,
+				7F0ADF611E66A5A100DE7A3F /* ExifContainer.h */,
+				7F0ADF621E66A5A100DE7A3F /* ExifContainer.m */,
 			);
 			path = ImageExif;
 			sourceTree = "<group>";
@@ -971,9 +971,9 @@
 				7FB6AC591E2F47AD00C0E270 /* AFJSONRequestOperation.m in Sources */,
 				7FB6AC421E2F47AD00C0E270 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				7FB6AC661E2F47AD00C0E270 /* UIScrollView+DXRefresh.m in Sources */,
-				7FA8B7031E65B058001FD2FD /* ExifContainer.m in Sources */,
+				7F0ADF631E66A5A100DE7A3F /* ExifContainer.m in Sources */,
 				7FB6AB241E2F3C6F00C0E270 /* MKAddStoreVC.m in Sources */,
-				7FA8B7061E65B079001FD2FD /* UIImage+Exif.m in Sources */,
+				7F0ADF661E66A5AE00DE7A3F /* UIImage+Exif.m in Sources */,
 				7FB6AC5A1E2F47AD00C0E270 /* AFNetworkActivityIndicatorManager.m in Sources */,
 				7FB6AC4E1E2F47AD00C0E270 /* IQBarButtonItem.m in Sources */,
 				7FB6AC471E2F47AD00C0E270 /* IQNSArray+Sort.m in Sources */,

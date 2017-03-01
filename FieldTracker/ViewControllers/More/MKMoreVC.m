@@ -1928,7 +1928,7 @@
     NSDate * nowDate = [NSDate date];
     CLLocation * loc = [[CLLocation alloc] initWithCoordinate:coordSF altitude:altitudeSF horizontalAccuracy:accuracyHorizontal verticalAccuracy:accuracyVertical timestamp:nowDate];
     [container addLocation:loc];
-    NSString*strImageName=[NSString stringWithFormat:@"%@",nowDate];
+  //  NSString*strImageName=[NSString stringWithFormat:@"%@",nowDate];
     
     NSData *imgData = [[UIImage imageWithData:imageData] addExif:container];
     
@@ -2006,11 +2006,11 @@
         if (error) {
             NSLog( @"Error writing image with metadata to Photo Library: %@", error );
         } else {
-            NSLog( @"Wrote image======%@\n\n",newURL);
+            //NSLog( @"Wrote image======%@\n\n",newURL);
             
 //            dictForMetadata=[[NSMutableDictionary alloc] init];
-//            
 //            dictForMetadata=imageMetadata;
+            
             ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
             [library assetForURL:newURL resultBlock:^(ALAsset *asset)
              {
@@ -2040,6 +2040,7 @@
                                  metadata:imageMetadata
                           completionBlock:imageWriteCompletionBlock];
 }
+
 - (NSDictionary *) gpsDictionaryForLocation:(CLLocation *)location
 {
     CLLocationDegrees exifLatitude  = location.coordinate.latitude;
