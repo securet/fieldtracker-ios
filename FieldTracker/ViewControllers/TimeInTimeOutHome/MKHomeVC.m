@@ -37,12 +37,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self getUserInfo];
     [self getStoreDetails];
     [self checkAppVersion];
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    NSLog(@"%@",dict);
     self.lblFName.text=[dict valueForKey:@"firstName"];
     self.lblLName.text=[dict valueForKey:@"lastName"];
     
@@ -115,10 +115,10 @@
     
     if ([[dict valueForKey:@"roleTypeId"] isEqualToString:@"SalesExecutive"]){
         
-//        self.vwForManager.hidden = NO;
-//        self.tableVwForAgents.tableFooterView=[[UIView alloc] init];
-//        self.tableVwForAgents.delegate = self;
-//        self.tableVwForAgents.dataSource = self;
+        //        self.vwForManager.hidden = NO;
+        //        self.tableVwForAgents.tableFooterView=[[UIView alloc] init];
+        //        self.tableVwForAgents.delegate = self;
+        //        self.tableVwForAgents.dataSource = self;
         
     }else{
         
@@ -165,7 +165,7 @@
 
 -(void) tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController{
     if (tabBarController.selectedIndex == 2) {
-       [[NSNotificationCenter defaultCenter] postNotificationName:@"MoreTabSelected" object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"MoreTabSelected" object:nil];
     }else if (tabBarController.selectedIndex ==1){
         [[NSNotificationCenter defaultCenter] postNotificationName:@"HistoryTabSelected" object:nil];
     }
@@ -199,7 +199,7 @@
         NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
         if (![[JSON valueForKey:@"appVersion"] isEqualToString:currentVersion] && [[JSON valueForKey:@"forceUpdate"] isEqualToString:@"Y"]){
             
-//             NSLog(@"Need to update = %@",currentVersion);
+            //             NSLog(@"Need to update = %@",currentVersion);
             UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"Update" message:[JSON valueForKey:@"message"] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Update",nil];
             alertView.tag=200;
             [alertView show];
@@ -276,6 +276,67 @@
  
  return arrayOfData;
  }*/
+#pragma mark - Get User Info
+-(void)getUserInfo{
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
+    NSString *auth_String=[defaults valueForKey:@"BasicAuth"];
+    
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    httpClient.parameterEncoding = AFFormURLParameterEncoding;
+    [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    [httpClient setDefaultHeader:@"Authorization" value:auth_String];
+    
+    NSString *urlPath=[NSString stringWithFormat:@"/rest/s1/ft/user"];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
+                                                            path:urlPath
+                                                      parameters:nil];
+    //====================================================RESPONSE
+    
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+    }];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError *error = nil;
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+        
+        
+        if ([[JSON objectForKey:@"user"] isKindOfClass:[NSArray class]]) {
+            if ([[JSON objectForKey:@"user"] count]>0)
+            {
+                NSMutableDictionary *prunedDictionary = [NSMutableDictionary dictionary];
+                for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys]){
+                    if (![key isEqualToString:@"reportingPerson"]) {
+                        
+                        if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
+                            [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                    }
+                }
+                
+                if ([[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]) {
+                    NSMutableDictionary *reportingPerson = [NSMutableDictionary dictionary];
+                    for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]){
+                        if (![key isEqualToString:@"reportingPerson"]) {
+                            if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
+                                [reportingPerson setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                        }
+                    }
+                    [prunedDictionary setObject:reportingPerson forKey:@"reportingPerson"];
+                }
+                
+                [defaults setObject:prunedDictionary forKey:@"UserData"];
+                NSLog(@"USER Data====%@",prunedDictionary);
+                [self getStoreDetails];
+            }
+        }
+    }
+     //==================================================ERROR
+                                     failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                         NSLog(@"Error %@",[error description]);
+                                     }];
+    [operation start];
+}
 
 #pragma mark - StoreDetails
 
@@ -333,14 +394,14 @@
         [self startBackgroundTask];
         [self checkLocation];
         
-          //  CLLocationCoordinate2D locationCoordinate=CLLocationCoordinate2DMake([[dict valueForKey:@"cLatitude"]doubleValue], [[dict valueForKey:@"cLongitude"]doubleValue]);
+        //  CLLocationCoordinate2D locationCoordinate=CLLocationCoordinate2DMake([[dict valueForKey:@"cLatitude"]doubleValue], [[dict valueForKey:@"cLongitude"]doubleValue]);
         
         CLCircularRegion *circularRegion=[[CLCircularRegion alloc]initWithCenter:coordinate radius:radiusForStore identifier:@"Karthik"];
         
-            circularRegion.notifyOnEntry=YES;
-            circularRegion.notifyOnExit=YES;
+        circularRegion.notifyOnEntry=YES;
+        circularRegion.notifyOnExit=YES;
         locationManager.delegate=self;
-           [locationManager startMonitoringForRegion:circularRegion];
+        [locationManager startMonitoringForRegion:circularRegion];
     }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -519,9 +580,9 @@
         
         CLLocationCoordinate2D coordinate = [self getLocation];
         CLLocation *userLocation= [[CLLocation alloc] initWithLatitude:coordinate.latitude
-                                                                     longitude:coordinate.longitude];
+                                                             longitude:coordinate.longitude];
         CLLocationDistance distance = [location distanceFromLocation:userLocation];
-     
+        
         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
         
         //SalesExecutive
@@ -531,7 +592,7 @@
         if (distance <= radiusForStore && distance >= 0){
             
             if ([self.lblForStoreLocation.text isEqualToString:@"Off site"]) {
-              
+                
                 UILocalNotification *notification = [[UILocalNotification alloc] init];
                 notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:1];
                 notification.alertBody = @"Entering To Store Region !";
@@ -551,7 +612,7 @@
         }else{
             
             if (![self.lblForStoreLocation.text isEqualToString:@"Off site"]) {
-              
+                
                 UILocalNotification *notification = [[UILocalNotification alloc] init];
                 notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:1];
                 notification.alertBody = @"Exiting From Store Region !";
@@ -685,7 +746,7 @@
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
-
+    
 }
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error{
@@ -697,7 +758,7 @@
 }
 
 -(void)mapViewDidFinishTileRendering:(GMSMapView *)mapView{
- 
+    
 }
 
 - (void) mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position{
@@ -723,17 +784,17 @@
         coordinate.latitude=[strForCurLatitude doubleValue];
         coordinate.longitude=[strForCurLongitude doubleValue];
         
-//        CLLocation* gps = [[CLLocation alloc] initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
-       // NSDate* now = gps.timestamp;
+        //        CLLocation* gps = [[CLLocation alloc] initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
+        // NSDate* now = gps.timestamp;
         
         strForCurLatitude = [NSString stringWithFormat:@"%f", coordinate.latitude];
         strForCurLongitude= [NSString stringWithFormat:@"%f", coordinate.longitude];
         
-       // NSLog(@"Time Got From GPS===%@",[self getTimeIndividual:now.description]);
+        // NSLog(@"Time Got From GPS===%@",[self getTimeIndividual:now.description]);
         GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:coordinate zoom:15];
         [mapView animateWithCameraUpdate:updatedCamera];
         mapView.myLocationEnabled = YES;
-       
+        
         CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
         CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
         
@@ -760,7 +821,79 @@
         if (boolValueForInLocationOrNot){
             
             if ([UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera]){
-                [self openCamera];
+                
+                NSMutableArray *arrayData=[self getTimeLineData];
+                NSMutableArray *arrayOfDates=[[NSMutableArray alloc] init];
+                NSMutableArray *arrayOfUsernames=[[NSMutableArray alloc] init];
+                
+                NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+                NSMutableDictionary *dictUserData=[[defaults objectForKey:@"UserData"] mutableCopy];
+                
+                NSDate *now = [NSDate date];
+                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                dateFormatter.dateFormat = @"yyyy-MM-dd";
+                [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+                NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+                
+                BOOL isLoginTodayAlready = false;
+                
+                for (NSDictionary*dict in arrayData) {
+                    //                    NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
+                    //  NSLog(@"Action Type===%@",[dict valueForKey:@"actiontype"]);
+                    //                    NSLog(@"clockdate===%@",[dict valueForKey:@"clockdate"]);
+                    //                    NSLog(@"comments===%@",[dict valueForKey:@"comments"]);
+                    //                    NSLog(@"latitude===%@",[dict valueForKey:@"latitude"]);
+                    //                    NSLog(@"longitude===%@",[dict valueForKey:@"longitude"]);
+                    //                    NSLog(@"productstoreid===%@",[dict valueForKey:@"productstoreid"]);
+                    //                    NSLog(@"issend===%@",[dict valueForKey:@"issend"]);
+                    
+                    if ([[dict valueForKey:@"actiontype"] isEqualToString:@"clockOut"]) {
+                        [arrayOfDates addObject:dict];
+                    }
+                }
+                
+                if (arrayOfDates.count > 0) {
+                    for (NSDictionary*dict in arrayOfDates) {
+                        if ([[[dict valueForKey:@"clockdate"] substringToIndex:10] isEqualToString:strCurrentTime]){
+                            [arrayOfUsernames addObject:dict];
+                        }
+                    }
+                }else{
+                    isLoginTodayAlready = NO;
+                }
+                
+                if (arrayOfUsernames.count > 0) {
+                    for (NSDictionary*dict in arrayOfUsernames) {
+                        if ([[dict valueForKey:@"username"]  isEqualToString:[dictUserData valueForKey:@"username"]]){
+                            isLoginTodayAlready = YES;
+                            NSLog(@"User had Time In Today Already==%i",isLoginTodayAlready);
+                        }
+                    }
+                }else{
+                    isLoginTodayAlready = NO;
+                }
+                
+                if (!isLoginTodayAlready) {
+                    [self openCamera];
+                    //                if ([[dictUserData valueForKey:@"username"] isEqualToString:[[arrayData lastObject] valueForKey:@"username"]]) {
+                    //                    if ([[[arrayData lastObject] valueForKey:@"actiontype"] isEqualToString:@"clockOut"]) {
+                    //                        //2017-03-01T17:40:21+0530
+                    //                        if ([strCurrentTime isEqualToString:[[[arrayData lastObject] valueForKey:@"clockdate"] substringToIndex:10]]) {
+                    //                            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Time In/Out done for today" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    //                            [alert show];
+                    //                        }else{
+                    //                            [self openCamera];
+                    //                        }
+                    //                    }else{
+                    //                        [self openCamera];
+                    //                    }
+                    //                }else{
+                    //                    [self openCamera];
+                    //                }
+                }else{
+                    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Time In/Out done for today" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                    [alert show];
+                }
             }else{
                 UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"No Camera" message:@"Camera Is Not Available" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
@@ -1146,7 +1279,7 @@
     NSTimeZone *timeZone = [NSTimeZone localTimeZone];
     NSString *tzName = [timeZone name];
     
-   // NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+    // NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
     NSString *strCurrentTime=[dateFormatter stringFromDate:now];
     strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
     
@@ -1179,7 +1312,7 @@
     }
     
     NSString *imgData;
-    if (imgToSend == nil || imgPathToSend == nil) {
+    if (imgToSend == nil) {
         imgData=@"img";
     }else{
         imgData=[UIImagePNGRepresentation(imgToSend) base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
@@ -1317,16 +1450,16 @@
         [dict setValue:[fetRec valueForKey:@"issend"] forKey:@"issend"];
         [arrayOfData addObject:dict];
     }
-    //    for (NSDictionary*dict in arrayOfData) {
-    //        NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
-    //        NSLog(@"User Name===%@",[dict valueForKey:@"actiontype"]);
-    //        NSLog(@"clockdate===%@",[dict valueForKey:@"clockdate"]);
-    //        NSLog(@"comments===%@",[dict valueForKey:@"comments"]);
-    //        NSLog(@"latitude===%@",[dict valueForKey:@"latitude"]);
-    //        NSLog(@"longitude===%@",[dict valueForKey:@"longitude"]);
-    //        NSLog(@"productstoreid===%@",[dict valueForKey:@"productstoreid"]);
-    //        NSLog(@"issend===%@",[dict valueForKey:@"issend"]);
-    //    }
+    //        for (NSDictionary*dict in arrayOfData) {
+    //            NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
+    //            NSLog(@"User Name===%@",[dict valueForKey:@"actiontype"]);
+    //            NSLog(@"clockdate===%@",[dict valueForKey:@"clockdate"]);
+    //            NSLog(@"comments===%@",[dict valueForKey:@"comments"]);
+    //            NSLog(@"latitude===%@",[dict valueForKey:@"latitude"]);
+    //            NSLog(@"longitude===%@",[dict valueForKey:@"longitude"]);
+    //            NSLog(@"productstoreid===%@",[dict valueForKey:@"productstoreid"]);
+    //            NSLog(@"issend===%@",[dict valueForKey:@"issend"]);
+    //        }
     return arrayOfData;
 }
 
@@ -1419,7 +1552,7 @@
     httpClient.parameterEncoding = AFFormURLParameterEncoding;
     [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
     [httpClient setDefaultHeader:@"Authorization" value:strAuthorization];
-
+    
     
     if (imgPathToSend.length<=0||imgPathToSend == nil) {
         imgPathToSend=@"img";
@@ -1519,7 +1652,7 @@
         
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.dateFormat = @"yyyy-MM-dd";
-     
+        
         NSString *strPath=[NSString stringWithFormat:@"/rest/s1/ft/attendance/log/?username=%@&pageIndex=0&pageSize=1",[dict valueForKey:@"username"]];
         NSLog(@"String Path for Get History===%@",strPath);
         NSString *strURL=[strPath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];

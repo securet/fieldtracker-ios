@@ -27,7 +27,6 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    NSLog(@"%@",dict);
     self.lblFName.text=[dict valueForKey:@"firstName"];
     self.lblLName.text=[dict valueForKey:@"lastName"];
 

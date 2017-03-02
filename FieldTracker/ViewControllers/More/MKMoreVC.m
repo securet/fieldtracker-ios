@@ -74,7 +74,6 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    NSLog(@"%@",dict);
     
     roleType=[dict valueForKey:@"roleTypeId"];
     
@@ -226,24 +225,16 @@
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    
-    NSLog(@"User Data==========%@",dict);
-    
-    // [defaults setObject:dictForStoreDetails forKey:@"StoreData"];
-    //storeName
-    
     self.textFieldMyName.text=[NSString stringWithFormat:@"%@ %@",self.lblFName.text,self.lblLName.text];
     self.textFieldMyNumber.text = @"Mobile Number";
     self.textFieldMyEmail.text = [dict valueForKey:@"emailAddress"];
     self.textFieldMyStore.text = [[defaults objectForKey:@"StoreData"] valueForKey:@"storeName"];
     //StoreData
-    
     if ([dict valueForKey:@"directions"]) {
         self.textVwMyAddress.text=[dict valueForKey:@"directions"];
     }else{
         self.textVwMyAddress.text=@"Address";
     }
-    
     if ([dict valueForKey:@"contactNumber"]) {
         self.textFieldMyNumber.text = [dict valueForKey:@"contactNumber"];
     }
@@ -285,7 +276,6 @@
         
         NSString *firstName=[[dict objectForKey:@"reportingPerson"] valueForKey:@"firstName"];
         NSString *lastName=[[dict objectForKey:@"reportingPerson"] valueForKey:@"lastName"];
-        
         self.textFieldMyManagerName.text=[NSString stringWithFormat:@"%@ %@",firstName,lastName];
         self.textFieldMyManagerName.userInteractionEnabled = NO;
         self.textFieldMyManagerEmailID.userInteractionEnabled = NO;
@@ -295,7 +285,6 @@
 
 -(void)setupUIForAllViews{
     // For Store View
-    
     if (IS_IPHONE_4) {
         self.heightOfTxtVwStoreAddress.constant = 50;
         self.txtVwStoreAddress.font = [UIFont systemFontOfSize:12];
@@ -307,12 +296,9 @@
     self.btnForStoreCamera.tag=400;
     self.btnForStoreCamera.layer.cornerRadius = 5;
     self.btnForStoreCamera.layer.masksToBounds = YES;
-    
     [self textFieldEdit:self.txtFieldStoreName];
     [self textFieldEdit:self.txtFieldSiteRadius];
-    
     self.txtFieldSiteRadius.keyboardType = UIKeyboardTypeNumberPad;
-    
     self.txtVwStoreAddress.layer.cornerRadius = 5;
     self.txtVwStoreAddress.layer.masksToBounds = YES;
     self.txtVwStoreAddress.keyboardType=UIKeyboardTypeASCIICapable;
@@ -329,8 +315,8 @@
     [self.btnAdd addTarget:self action:@selector(onClickStoreAddToServer:) forControlEvents:UIControlEventTouchUpInside];
     [self.btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
     [self.btnGetLocation addTarget:self action:@selector(getLocation) forControlEvents:UIControlEventTouchUpInside];
-    
     [self.btnForStoreCamera addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
+    
     //For Promoter View
     [self addPromoterViewSetup];
     [self addShadow:self.btnAddStore];
@@ -338,7 +324,6 @@
     [self addShadow:self.btnLeaveRqst];
     
     [self.btnPhotoConfirm addTarget:self action:@selector(onClickPhotoConfirm:) forControlEvents:UIControlEventTouchUpInside];
-    
     [self.btnPhotoRetake addTarget:self action:@selector(onClickPhotoRetake:) forControlEvents:UIControlEventTouchUpInside];
 
     //For Change Password
@@ -867,6 +852,9 @@
             strForCurLongitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"];
         }
         
+        if (![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"locationImagePath"] isKindOfClass:[NSNull class]]) {
+            strUserPhotoPath=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"locationImagePath"];
+        }
         self.btnAdd.tag=indexValue;
     }
 }
@@ -3227,6 +3215,12 @@
         }
         cell.textLabel.text=[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"storeName"];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        
+        if (![[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"latitude"] isKindOfClass:[NSNull class]] && ![[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"longitude"] isKindOfClass:[NSNull class]] && ![[[arrayForStoreList objectAtIndex:indexPath.row] valueForKey:@"locationImagePath"] isKindOfClass:[NSNull class]]) {
+            cell.backgroundColor=[UIColor colorWithRed:(92/255.0) green:(184/255.0) blue:(92/255.0) alpha:1.0];
+        }else{
+            cell.backgroundColor=[UIColor colorWithRed:(241/255.0) green:(147/255.0) blue:(147/255.0) alpha:1.0];
+        }
     }
     else if (tableView == self.tableVwForPromoters){
         // Prpomoter List
