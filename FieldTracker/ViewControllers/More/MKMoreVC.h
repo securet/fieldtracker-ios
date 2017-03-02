@@ -65,7 +65,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnAddPromoterConfirm;
 @property (strong, nonatomic) IBOutlet UIButton *btnCancelPromoterAdd;
 @property (strong, nonatomic) IBOutlet UIButton *btnForStoreCamera;
-
+@property (strong, nonatomic) IBOutlet UIButton *btnForStoreImage;
 
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *heightOfStoreCamera;
@@ -85,7 +85,6 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnAadharPromoter;
 @property (strong, nonatomic) IBOutlet UIButton *btnAdressProofPromoter;
 @property (strong, nonatomic) IBOutlet UIButton *btnForStoreAssignmtPopup;
-
 
 
 

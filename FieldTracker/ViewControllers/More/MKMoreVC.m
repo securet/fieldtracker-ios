@@ -241,7 +241,7 @@
     
     if ([dict valueForKey:@"userPhotoPath"]) {
         NSString *baseURL=APPDELEGATE.Base_URL;
-        NSString *str = [NSString stringWithFormat:@"http://%@/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"],baseURL];
+        NSString *str = [NSString stringWithFormat:@"//%@/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"],baseURL];
         NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
         NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
         dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
@@ -316,7 +316,7 @@
     [self.btnCancel addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
     [self.btnGetLocation addTarget:self action:@selector(getLocation) forControlEvents:UIControlEventTouchUpInside];
     [self.btnForStoreCamera addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
-    
+    [self.btnForStoreImage addTarget:self action:@selector(showStoreImage:) forControlEvents:UIControlEventTouchUpInside];
     //For Promoter View
     [self addPromoterViewSetup];
     [self addShadow:self.btnAddStore];
@@ -842,7 +842,7 @@
         }
         
         if (![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] isKindOfClass:[NSNull class]]) {
-            self.txtFieldSiteRadius.text=[NSString stringWithFormat:@"%i",[[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] integerValue]];
+            self.txtFieldSiteRadius.text=[NSString stringWithFormat:@"%li",[[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"proximityRadius"] integerValue]];
         }
         
         if (![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"latitude"] isKindOfClass:[NSNull class]] && ![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"] isKindOfClass:[NSNull class]]) {
@@ -852,11 +852,33 @@
             strForCurLongitude=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"longitude"];
         }
         
+        self.btnForStoreImage.hidden = YES;
+        
         if (![[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"locationImagePath"] isKindOfClass:[NSNull class]]) {
             strUserPhotoPath=[[arrayForStoreList objectAtIndex:indexValue] valueForKey:@"locationImagePath"];
+            self.btnForStoreImage.tag=indexValue;
+            self.btnForStoreImage.hidden = NO;
         }
         self.btnAdd.tag=indexValue;
     }
+}
+-(void)showStoreImage:(UIButton*)sender{
+    
+    NSString *baseURL=APPDELEGATE.Base_URL;
+    NSString *str = [NSString stringWithFormat:@"%@/uploads/uid/%@",baseURL,[[arrayForStoreList objectAtIndex:sender.tag] valueForKey:@"locationImagePath"]];
+
+    JTSImageInfo *imageInfo = [[JTSImageInfo alloc] init];
+    imageInfo.imageURL = [NSURL URLWithString:str];
+    imageInfo.referenceRect = self.view.frame;
+    imageInfo.referenceView = self.view;
+    imageInfo.referenceContentMode = UIViewContentModeScaleAspectFit;
+    imageInfo.referenceCornerRadius = 0;
+    
+    JTSImageViewController *imageViewer = [[JTSImageViewController alloc]
+                                           initWithImageInfo:imageInfo
+                                           mode:JTSImageViewControllerMode_Image
+                                           backgroundStyle:JTSImageViewControllerBackgroundOption_Scaled];
+    [imageViewer showFromViewController:self transition:JTSImageViewControllerTransition_FromOriginalPosition];
 }
 
 -(void)enableAddNewStoreBtn

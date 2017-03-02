@@ -32,7 +32,7 @@
 
     if ([dict valueForKey:@"userPhotoPath"]) {
         NSString *baseURL=APPDELEGATE.Base_URL;
-        NSString *str = [NSString stringWithFormat:@"http://%@/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"],baseURL];
+        NSString *str = [NSString stringWithFormat:@"//%@/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"],baseURL];
         NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
         NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
         dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);

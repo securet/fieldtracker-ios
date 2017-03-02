@@ -2323,7 +2323,7 @@
                                 <rect key="frame" x="0.0" y="174" width="600" height="627"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Store" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hhE-RE-fmG">
-                                        <rect key="frame" x="10" y="10" width="120" height="21"/>
+                                        <rect key="frame" x="10" y="15" width="120" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="eh0-js-IsW"/>
                                             <constraint firstAttribute="width" constant="120" id="zJH-kE-aYO"/>
@@ -2332,8 +2332,17 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GzM-60-vm8">
+                                        <rect key="frame" x="145" y="5" width="35" height="35"/>
+                                        <color key="backgroundColor" red="0.35314479050000003" green="0.62076913249999999" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="35" id="5ES-qB-5Qb"/>
+                                            <constraint firstAttribute="height" constant="35" id="ShD-gq-nmc"/>
+                                        </constraints>
+                                        <state key="normal" image="storeBtnImage"/>
+                                    </button>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Store Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YGu-N9-2tc">
-                                        <rect key="frame" x="20" y="39" width="560" height="35"/>
+                                        <rect key="frame" x="20" y="44" width="560" height="35"/>
                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="35" id="2z2-DR-P09"/>
@@ -2342,13 +2351,13 @@
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                     </textField>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Site Radius" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sTk-Vv-QdW">
-                                        <rect key="frame" x="20" y="82" width="560" height="35"/>
+                                        <rect key="frame" x="20" y="87" width="560" height="35"/>
                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad"/>
                                     </textField>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut l" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="uMA-oU-Q9P">
-                                        <rect key="frame" x="20" y="125" width="560" height="80"/>
+                                        <rect key="frame" x="20" y="130" width="560" height="80"/>
                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="80" id="LD4-uB-fd7"/>
@@ -2357,7 +2366,7 @@
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no" spellCheckingType="no"/>
                                     </textView>
                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Esu-qY-bYV">
-                                        <rect key="frame" x="190" y="213" width="220" height="40"/>
+                                        <rect key="frame" x="190" y="218" width="220" height="40"/>
                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="220" id="cU6-fa-lgC"/>
@@ -2369,7 +2378,7 @@
                                         </state>
                                     </button>
                                     <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Locations" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qn8-j8-UsQ">
-                                        <rect key="frame" x="20" y="261" width="560" height="21"/>
+                                        <rect key="frame" x="20" y="266" width="560" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="tyd-AD-cUO"/>
                                         </constraints>
@@ -2397,7 +2406,7 @@
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xV5-QM-63X">
-                                        <rect key="frame" x="263" y="213" width="75" height="75"/>
+                                        <rect key="frame" x="263" y="218" width="75" height="75"/>
                                         <color key="backgroundColor" red="0.1960784314" green="0.58431372550000005" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="75" id="EOR-60-jDa"/>
@@ -2408,9 +2417,11 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstItem="GzM-60-vm8" firstAttribute="centerY" secondItem="hhE-RE-fmG" secondAttribute="centerY" constant="-3" id="1aV-ib-dCI"/>
                                     <constraint firstItem="xV5-QM-63X" firstAttribute="top" secondItem="uMA-oU-Q9P" secondAttribute="bottom" constant="8" id="2Ja-AX-KNa"/>
-                                    <constraint firstItem="hhE-RE-fmG" firstAttribute="top" secondItem="8so-PT-GcV" secondAttribute="top" constant="10" id="5ps-wg-EMt"/>
+                                    <constraint firstItem="hhE-RE-fmG" firstAttribute="top" secondItem="8so-PT-GcV" secondAttribute="top" constant="15" id="5ps-wg-EMt"/>
                                     <constraint firstAttribute="trailing" secondItem="fGP-Cj-BBA" secondAttribute="trailing" constant="20" id="7b4-XR-jEv"/>
+                                    <constraint firstItem="GzM-60-vm8" firstAttribute="leading" secondItem="hhE-RE-fmG" secondAttribute="trailing" constant="15" id="AHN-sg-teS"/>
                                     <constraint firstItem="sTk-Vv-QdW" firstAttribute="height" secondItem="YGu-N9-2tc" secondAttribute="height" id="Af2-ep-Hko"/>
                                     <constraint firstItem="sTk-Vv-QdW" firstAttribute="width" secondItem="YGu-N9-2tc" secondAttribute="width" id="Eds-VZ-ILx"/>
                                     <constraint firstItem="Qn8-j8-UsQ" firstAttribute="leading" secondItem="8so-PT-GcV" secondAttribute="leading" constant="20" id="FbF-Hw-BeA"/>
@@ -3816,6 +3827,7 @@
                         <outlet property="btnChangePwd" destination="sA0-CM-7QT" id="kkY-bf-Ppx"/>
                         <outlet property="btnForStoreAssignmtPopup" destination="gjg-Dj-9MO" id="3nP-s1-OQ6"/>
                         <outlet property="btnForStoreCamera" destination="xV5-QM-63X" id="Yk2-Mi-u0D"/>
+                        <outlet property="btnForStoreImage" destination="GzM-60-vm8" id="mlc-Th-VEG"/>
                         <outlet property="btnGetLocation" destination="Esu-qY-bYV" id="2gU-tX-VZM"/>
                         <outlet property="btnLeaveEndDate" destination="Fwj-th-yPn" id="6lT-rE-YBc"/>
                         <outlet property="btnLeaveReason" destination="2z1-oD-5EW" id="ZwT-xq-lfg"/>
@@ -4284,7 +4296,7 @@
         <image name="aadhar96" width="96" height="62"/>
         <image name="allsmart_logo" width="192" height="45"/>
         <image name="backspace_white" width="24" height="24"/>
-        <image name="btnCamera" width="48" height="48"/>
+        <image name="btnCamera" width="96" height="96"/>
         <image name="camera_click" width="36" height="36"/>
         <image name="canvas" width="320" height="533"/>
         <image name="clock" width="24" height="24"/>
@@ -4297,6 +4309,7 @@
         <image name="oppo_logo" width="1181" height="188"/>
         <image name="photo72" width="72" height="71"/>
         <image name="right_arrow_white" width="36" height="36"/>
+        <image name="storeBtnImage" width="48" height="48"/>
         <image name="timeInOutIcon" width="69" height="72"/>
         <image name="topUserIcon" width="25" height="22"/>
         <image name="topbar" width="320" height="75"/>

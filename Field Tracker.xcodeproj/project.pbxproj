@@ -10,6 +10,12 @@
 		27FC09E77673E9E0B1BDDD97 /* Pods_Field_Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D605FA6ED061FED5593E10 /* Pods_Field_Tracker.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		7F0ADF631E66A5A100DE7A3F /* ExifContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0ADF621E66A5A100DE7A3F /* ExifContainer.m */; };
 		7F0ADF661E66A5AE00DE7A3F /* UIImage+Exif.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0ADF651E66A5AE00DE7A3F /* UIImage+Exif.m */; };
+		7F0EF6C41E682700000A4067 /* JTSAnimatedGIFUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0EF6B91E682700000A4067 /* JTSAnimatedGIFUtility.m */; };
+		7F0EF6C51E682700000A4067 /* JTSImageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0EF6BB1E682700000A4067 /* JTSImageInfo.m */; };
+		7F0EF6C61E682700000A4067 /* JTSImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0EF6BD1E682700000A4067 /* JTSImageViewController.m */; };
+		7F0EF6C71E682700000A4067 /* JTSSimpleImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0EF6BF1E682700000A4067 /* JTSSimpleImageDownloader.m */; };
+		7F0EF6C81E682700000A4067 /* UIApplication+JTSImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0EF6C11E682700000A4067 /* UIApplication+JTSImageViewController.m */; };
+		7F0EF6C91E682700000A4067 /* UIImage+JTSImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F0EF6C31E682700000A4067 /* UIImage+JTSImageEffects.m */; };
 		7F1716521E3767F50007253E /* MKAgentListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F1716511E3767F50007253E /* MKAgentListCell.m */; };
 		7F9FC6CF1E1E3277005767F6 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */; };
 		7FA481D41E162EF200345BCE /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA481D31E162EF200345BCE /* CoreData.framework */; };
@@ -105,6 +111,18 @@
 		7F0ADF621E66A5A100DE7A3F /* ExifContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExifContainer.m; sourceTree = "<group>"; };
 		7F0ADF641E66A5AE00DE7A3F /* UIImage+Exif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Exif.h"; sourceTree = "<group>"; };
 		7F0ADF651E66A5AE00DE7A3F /* UIImage+Exif.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Exif.m"; sourceTree = "<group>"; };
+		7F0EF6B81E682700000A4067 /* JTSAnimatedGIFUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JTSAnimatedGIFUtility.h; sourceTree = "<group>"; };
+		7F0EF6B91E682700000A4067 /* JTSAnimatedGIFUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTSAnimatedGIFUtility.m; sourceTree = "<group>"; };
+		7F0EF6BA1E682700000A4067 /* JTSImageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JTSImageInfo.h; sourceTree = "<group>"; };
+		7F0EF6BB1E682700000A4067 /* JTSImageInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTSImageInfo.m; sourceTree = "<group>"; };
+		7F0EF6BC1E682700000A4067 /* JTSImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JTSImageViewController.h; sourceTree = "<group>"; };
+		7F0EF6BD1E682700000A4067 /* JTSImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTSImageViewController.m; sourceTree = "<group>"; };
+		7F0EF6BE1E682700000A4067 /* JTSSimpleImageDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JTSSimpleImageDownloader.h; sourceTree = "<group>"; };
+		7F0EF6BF1E682700000A4067 /* JTSSimpleImageDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTSSimpleImageDownloader.m; sourceTree = "<group>"; };
+		7F0EF6C01E682700000A4067 /* UIApplication+JTSImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIApplication+JTSImageViewController.h"; sourceTree = "<group>"; };
+		7F0EF6C11E682700000A4067 /* UIApplication+JTSImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIApplication+JTSImageViewController.m"; sourceTree = "<group>"; };
+		7F0EF6C21E682700000A4067 /* UIImage+JTSImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+JTSImageEffects.h"; sourceTree = "<group>"; };
+		7F0EF6C31E682700000A4067 /* UIImage+JTSImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+JTSImageEffects.m"; sourceTree = "<group>"; };
 		7F1716501E3767F50007253E /* MKAgentListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKAgentListCell.h; sourceTree = "<group>"; };
 		7F1716511E3767F50007253E /* MKAgentListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKAgentListCell.m; sourceTree = "<group>"; };
 		7F9FC6CE1E1E3277005767F6 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -297,6 +315,25 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		7F0EF6B71E6826B1000A4067 /* JTSImageViewController */ = {
+			isa = PBXGroup;
+			children = (
+				7F0EF6B81E682700000A4067 /* JTSAnimatedGIFUtility.h */,
+				7F0EF6B91E682700000A4067 /* JTSAnimatedGIFUtility.m */,
+				7F0EF6BA1E682700000A4067 /* JTSImageInfo.h */,
+				7F0EF6BB1E682700000A4067 /* JTSImageInfo.m */,
+				7F0EF6BC1E682700000A4067 /* JTSImageViewController.h */,
+				7F0EF6BD1E682700000A4067 /* JTSImageViewController.m */,
+				7F0EF6BE1E682700000A4067 /* JTSSimpleImageDownloader.h */,
+				7F0EF6BF1E682700000A4067 /* JTSSimpleImageDownloader.m */,
+				7F0EF6C01E682700000A4067 /* UIApplication+JTSImageViewController.h */,
+				7F0EF6C11E682700000A4067 /* UIApplication+JTSImageViewController.m */,
+				7F0EF6C21E682700000A4067 /* UIImage+JTSImageEffects.h */,
+				7F0EF6C31E682700000A4067 /* UIImage+JTSImageEffects.m */,
+			);
+			path = JTSImageViewController;
+			sourceTree = "<group>";
+		};
 		7FA481D51E162FBB00345BCE /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -445,6 +482,7 @@
 		7FB6ABD81E2F47AD00C0E270 /* HelperLibraryClasses */ = {
 			isa = PBXGroup;
 			children = (
+				7F0EF6B71E6826B1000A4067 /* JTSImageViewController */,
 				7FA8B7001E65B01D001FD2FD /* ImageExif */,
 				7FB6ABD91E2F47AD00C0E270 /* Badge View */,
 				7FB6ABDC1E2F47AD00C0E270 /* BizPopupView */,
@@ -961,6 +999,7 @@
 				7FB6AB271E2F3D3A00C0E270 /* MKHomeVC.m in Sources */,
 				7FB6ABD01E2F417800C0E270 /* ViewController.m in Sources */,
 				7FB6AC561E2F47AD00C0E270 /* AFHTTPClient.m in Sources */,
+				7F0EF6C91E682700000A4067 /* UIImage+JTSImageEffects.m in Sources */,
 				7FB6AC4C1E2F47AD00C0E270 /* IQSegmentedNextPrevious.m in Sources */,
 				7FB6AC431E2F47AD00C0E270 /* TPKeyboardAvoidingTableView.m in Sources */,
 				7FB6AC481E2F47AD00C0E270 /* IQUIView+Hierarchy.m in Sources */,
@@ -969,6 +1008,7 @@
 				7FB6AC461E2F47AD00C0E270 /* DejalActivityView.m in Sources */,
 				7FB6AC541E2F47AD00C0E270 /* MultiSelectSegmentedControl.m in Sources */,
 				7FB6AC591E2F47AD00C0E270 /* AFJSONRequestOperation.m in Sources */,
+				7F0EF6C81E682700000A4067 /* UIApplication+JTSImageViewController.m in Sources */,
 				7FB6AC421E2F47AD00C0E270 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				7FB6AC661E2F47AD00C0E270 /* UIScrollView+DXRefresh.m in Sources */,
 				7F0ADF631E66A5A100DE7A3F /* ExifContainer.m in Sources */,
@@ -978,9 +1018,11 @@
 				7FB6AC4E1E2F47AD00C0E270 /* IQBarButtonItem.m in Sources */,
 				7FB6AC471E2F47AD00C0E270 /* IQNSArray+Sort.m in Sources */,
 				7FB6ABD41E2F41A800C0E270 /* AppDelegate.m in Sources */,
+				7F0EF6C61E682700000A4067 /* JTSImageViewController.m in Sources */,
 				7FB6AB2F1E2F3D6600C0E270 /* MKHistoryCustomCell.m in Sources */,
 				7FB6AC511E2F47AD00C0E270 /* IQUIView+IQKeyboardToolbar.m in Sources */,
 				7FB6AC5D1E2F47AD00C0E270 /* AFXMLRequestOperation.m in Sources */,
+				7F0EF6C71E682700000A4067 /* JTSSimpleImageDownloader.m in Sources */,
 				7FB6AB391E2F3DA800C0E270 /* MKStoreListPopupVC.m in Sources */,
 				7FB6AC621E2F47AD00C0E270 /* RSDFDatePickerDayCell.m in Sources */,
 				7FB6AC551E2F47AD00C0E270 /* Reachability.m in Sources */,
@@ -988,6 +1030,7 @@
 				7FB6AC581E2F47AD00C0E270 /* AFImageRequestOperation.m in Sources */,
 				7FB6AC4D1E2F47AD00C0E270 /* IQTextView.m in Sources */,
 				7FB6AB2A1E2F3D5200C0E270 /* MKHistoryVC.m in Sources */,
+				7F0EF6C41E682700000A4067 /* JTSAnimatedGIFUtility.m in Sources */,
 				7FB6ABD71E2F41E000C0E270 /* main.m in Sources */,
 				7FB6AC611E2F47AD00C0E270 /* RSDFDatePickerCollectionViewLayout.m in Sources */,
 				7FB6AC4A1E2F47AD00C0E270 /* IQKeyboardManager.m in Sources */,
@@ -1008,6 +1051,7 @@
 				7FB6AC491E2F47AD00C0E270 /* IQUIWindow+Hierarchy.m in Sources */,
 				7F1716521E3767F50007253E /* MKAgentListCell.m in Sources */,
 				7FD6E59F1E35D89200FA01D4 /* MKForgotPasswordVC.m in Sources */,
+				7F0EF6C51E682700000A4067 /* JTSImageInfo.m in Sources */,
 				7FB6AB361E2F3D9400C0E270 /* MKCustomCellForLeave.m in Sources */,
 				7FB6AB301E2F3D6600C0E270 /* MKIndividualHistoryCell.m in Sources */,
 				7FB6AC501E2F47AD00C0E270 /* IQToolbar.m in Sources */,

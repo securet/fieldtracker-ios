@@ -29,4 +29,7 @@
 #import "MKIndividualHistoryCell.h"
 #import "UIImage+Exif.h"
 #import "ExifContainer.h"
+#import "JTSImageViewController.h"
+#import "JTSImageInfo.h"
+
 #endif
