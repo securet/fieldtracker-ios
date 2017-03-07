@@ -69,7 +69,6 @@
     txtField.rightView=imgVw;
     txtField.rightViewMode=UITextFieldViewModeAlways;
     
-    
     [txtField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 

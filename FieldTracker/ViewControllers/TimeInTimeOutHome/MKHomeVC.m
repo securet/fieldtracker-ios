@@ -382,26 +382,27 @@
         coordinate.latitude = latitude;
         coordinate.longitude = longitude;
         
-        // Build a circle for the GMSMapView
-        GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
-        geoFenceCircle.radius = radiusForStore; // Meters
-        geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
-        geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
-        geoFenceCircle.strokeWidth = 1.5;
-        geoFenceCircle.strokeColor = [UIColor blueColor];
-        geoFenceCircle.map = mapView; // Add it to Map
+        if ([[dict valueForKey:@"onPremise"] isEqualToString:@"Y"]) {
+            // Build a circle for the GMSMapView
+            GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
+            geoFenceCircle.radius = radiusForStore; // Meters
+            geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
+            geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
+            geoFenceCircle.strokeWidth = 1.5;
+            geoFenceCircle.strokeColor = [UIColor blueColor];
+            geoFenceCircle.map = mapView; // Add it to Map
+        }
         
         [self startBackgroundTask];
         [self checkLocation];
         
-        //  CLLocationCoordinate2D locationCoordinate=CLLocationCoordinate2DMake([[dict valueForKey:@"cLatitude"]doubleValue], [[dict valueForKey:@"cLongitude"]doubleValue]);
-        
-        CLCircularRegion *circularRegion=[[CLCircularRegion alloc]initWithCenter:coordinate radius:radiusForStore identifier:@"Karthik"];
-        
+        //if ([[dict valueForKey:@"onPremise"] isEqualToString:@"Y"]) {
+        CLCircularRegion *circularRegion=[[CLCircularRegion alloc]initWithCenter:coordinate radius:radiusForStore identifier:@"Region"];
         circularRegion.notifyOnEntry=YES;
         circularRegion.notifyOnExit=YES;
         locationManager.delegate=self;
         [locationManager startMonitoringForRegion:circularRegion];
+        //}
     }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -632,7 +633,7 @@
         
         NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
         
-        if ([[dict valueForKey:@"roleTypeId"] isEqualToString:@"SalesExecutive"] || [[dict valueForKey:@"roleTypeId"] isEqualToString:@"FieldExectiveOffPremise"]) {
+        if ([[dict valueForKey:@"onPremise"] isEqualToString:@"N"]) {
             boolValueForInLocationOrNot = YES;
         }
         
@@ -783,10 +784,7 @@
         CLLocationCoordinate2D coordinate;
         coordinate.latitude=[strForCurLatitude doubleValue];
         coordinate.longitude=[strForCurLongitude doubleValue];
-        
-        //        CLLocation* gps = [[CLLocation alloc] initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
-        // NSDate* now = gps.timestamp;
-        
+      
         strForCurLatitude = [NSString stringWithFormat:@"%f", coordinate.latitude];
         strForCurLongitude= [NSString stringWithFormat:@"%f", coordinate.longitude];
         
@@ -797,18 +795,21 @@
         
         CLLocationDegrees latitude = [[dictForStoreDetails valueForKey:@"latitude"] doubleValue];
         CLLocationDegrees longitude =[[dictForStoreDetails valueForKey:@"longitude"] doubleValue];
-        
         coordinate.latitude = latitude;
         coordinate.longitude = longitude;
         
-        GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
-        geoFenceCircle.radius = radiusForStore; // Meters
-        geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
-        geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
-        geoFenceCircle.strokeWidth = 1.5;
-        geoFenceCircle.strokeColor = [UIColor blueColor];
-        geoFenceCircle.map = mapView;
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
         
+        if ([[dict valueForKey:@"onPremise"] isEqualToString:@"Y"]) {
+            GMSCircle *geoFenceCircle = [[GMSCircle alloc] init];
+            geoFenceCircle.radius = radiusForStore; // Meters
+            geoFenceCircle.position = coordinate; // Some CLLocationCoordinate2D position
+            geoFenceCircle.fillColor = [UIColor colorWithWhite:0.7 alpha:0.7];
+            geoFenceCircle.strokeWidth = 1.5;
+            geoFenceCircle.strokeColor = [UIColor blueColor];
+            geoFenceCircle.map = mapView;
+        }
     }else{
         UIAlertView *alertLocation=[[UIAlertView alloc]initWithTitle:@"" message:@"Please Enable Location Access" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertLocation show];

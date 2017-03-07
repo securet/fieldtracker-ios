@@ -223,7 +223,7 @@
             cell.imgVwForBtmVerticalLine.hidden=NO;
         }
         
-        if (indexPath.row==arrayForStatusData.count-1){
+        if (indexPath.row==arrayForStatusData.count-1 && arrayForStatusData.count > 1){
             cell.centerConstraint.constant = 0;
             cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
              cell.imgVwForStatusIcon.backgroundColor=[UIColor colorWithRed:(90/255.0) green:(90/255.0) blue:(90/255.0) alpha:1.0];
@@ -244,10 +244,11 @@
             cell.imgVwForStatusIcon.image=[UIImage imageNamed:@""];
             cell.lblForStatus.text=@"";
             cell.imgVwForLine.backgroundColor=[UIColor clearColor];
+            cell.imgVwForStatusIcon.backgroundColor=[UIColor clearColor];
         }
         return cell;
     }
-
+  
     if (cell == nil) {
         cell=[[MKHistoryCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     }
@@ -266,7 +267,7 @@
     cell.lblDate.text=newDateString;
     
     
-    NSMutableArray *array=[[NSMutableArray alloc] init];
+    NSMutableArray *arrayForTime=[[NSMutableArray alloc] init];
     NSInteger   hoursBetweenDates = 0;
     
     if ([[[arrayForTableData objectAtIndex:indexPath.row]objectForKey:@"timeEntryList"] isKindOfClass:[NSArray class]]) {
@@ -274,31 +275,31 @@
         if ([[[arrayForTableData objectAtIndex:indexPath.row]objectForKey:@"timeEntryList"] count]>0) {
         
             for (NSDictionary *dict in [[arrayForTableData objectAtIndex:indexPath.row] objectForKey:@"timeEntryList"]) {
-                [array addObject:[dict valueForKey:@"fromDate"]];
-                [array addObject:[dict valueForKey:@"thruDate"]];
+                [arrayForTime addObject:[dict valueForKey:@"fromDate"]];
+                [arrayForTime addObject:[dict valueForKey:@"thruDate"]];
             }
             
-            array =  [self sortingArrayByDate:array];
+            arrayForTime =  [self sortingArrayByDate:arrayForTime];
             
-            if (![[array objectAtIndex:0] isKindOfClass:[NSNull class]]) {
-                cell.lblInTime.text=[NSString stringWithFormat:@"Time In: %@",[self getTimeIndividual:[array objectAtIndex:0] ]];
+            if (![[arrayForTime objectAtIndex:0] isKindOfClass:[NSNull class]]) {
+                cell.lblInTime.text=[NSString stringWithFormat:@"Time In: %@",[self getTimeIndividual:[arrayForTime objectAtIndex:0] ]];
             }
             else{
                 cell.lblInTime.text=[NSString stringWithFormat:@"Time In: --"];
             }
             
-            if (![[array lastObject]  isKindOfClass:[NSNull class]] ) {
-                cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: %@",[self getTimeIndividual:[array lastObject] ]];
+            if (![[arrayForTime lastObject]  isKindOfClass:[NSNull class]] ) {
+                cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: %@",[self getTimeIndividual:[arrayForTime lastObject] ]];
             }else{
                 cell.lblOutTime.text=[NSString stringWithFormat:@"Time Out: --"];
             }
             
-            if (![[array objectAtIndex:0] isKindOfClass:[NSNull class]] && ![[array lastObject] isKindOfClass:[NSNull class]]){
+            if (![[arrayForTime objectAtIndex:0] isKindOfClass:[NSNull class]] && ![[arrayForTime lastObject] isKindOfClass:[NSNull class]]){
                 
                 NSString *firstViewd;
-                firstViewd=[NSString stringWithFormat:@"%@",[array objectAtIndex:0]];
+                firstViewd=[NSString stringWithFormat:@"%@",[arrayForTime objectAtIndex:0]];
                 NSString *lastViewedString;
-                lastViewedString=[NSString stringWithFormat:@"%@",[array lastObject]];
+                lastViewedString=[NSString stringWithFormat:@"%@",[arrayForTime lastObject]];
                 [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss xxxx"];
                 NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
                 NSDate *now = [dateFormatter dateFromString:firstViewd];
@@ -445,13 +446,19 @@
     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ssZ"];
     NSMutableArray *tempArray = [NSMutableArray array];
   
+    NSMutableArray *arrayForNullValues=[[NSMutableArray alloc] init];
+    
     for (NSString *dateString in array) {
+        
+        NSInteger indexValue=[array indexOfObject:dateString];
         if (![dateString isKindOfClass:[NSNull class]]){
             NSString *str=dateString;
             str = [str stringByReplacingOccurrencesOfString:@"T" withString:@" "];
             str = [str stringByReplacingOccurrencesOfString:@"+0000" withString:@" +0000"];
             NSDate *date = [formatter dateFromString:str];
             [tempArray addObject:date];
+        }else{
+            [arrayForNullValues addObject:[NSString stringWithFormat:@"%i",indexValue]];
         }
     }
     
@@ -464,6 +471,12 @@
     for (NSDate *date_1 in tempArray) {
         [correctOrderStringArray addObject:date_1.description];
     }
+    
+    for (NSString *str in arrayForNullValues){
+        NSInteger indexValue=[str integerValue];
+        [correctOrderStringArray insertObject:[NSNull null] atIndex:indexValue];
+    }
+    
     return correctOrderStringArray;
 }
 
@@ -523,6 +536,10 @@
             if (arrayCountToCheck == 0) {
                 self.lblNodata.hidden = NO;
                 self.tableVw.hidden = YES;
+            }
+            
+            if (array.count <= 0) {
+                arrayCountToCheck=0;
             }
             [self.tableVw reloadData];
         }

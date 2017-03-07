@@ -94,7 +94,6 @@
     
     pageNumberForLeave = 0;
     countForLeaveData = 0;
-    
     leaveApprovalListCount=0;
     pageNumberForLeaveApproval=0;
     
@@ -110,14 +109,12 @@
     self.tableVwForReporties.tableFooterView=[[UIView alloc] init];
     self.tableVwForReportiesHistory.tableFooterView=[[UIView alloc] init];
     self.tableVwForIndividualHistory.tableFooterView=[[UIView alloc] init];
-    
-    
+
     [self.btnAddStore addTarget:self action:@selector(onClickAddStore:) forControlEvents:UIControlEventTouchUpInside];
     [self.btnAddPromoter addTarget:self action:@selector(onClickAddPromoter) forControlEvents:UIControlEventTouchUpInside];
     [self.btnLeaveRqst addTarget:self action:@selector(onClickLeaveRqst:) forControlEvents:UIControlEventTouchUpInside];
     
     [self hiddenAllViews];
-    
     
     self.cameraBtn.backgroundColor=[[UIColor lightGrayColor] colorWithAlphaComponent:0.4];
     self.cameraBtn.layer.cornerRadius = self.cameraBtn.frame.size.height/2;
@@ -132,9 +129,7 @@
     [self.tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     [self.tableVwForLeaveRqst addFooterWithTarget:self action:@selector(refreshFooterForLeave) withIndicatorColor:TopColor];
     [self.tableVwForReportiesHistory addFooterWithTarget:self action:@selector(refreshFooterForReporteesHistory) withIndicatorColor:TopColor];
-    
     [self.tableVwForReporties addFooterWithTarget:self action:@selector(refreshFooterForReportees) withIndicatorColor:TopColor];
-    
     [self.tableVwForStore addFooterWithTarget:self action:@selector(refreshFooterForStoreList) withIndicatorColor:TopColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
@@ -142,7 +137,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leaveReasonSelected:) name:@"LeaveReasonSelected" object:nil];
     
     [self setupUIForAllViews];
-    
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hiddenAllViews) name:@"MoreTabSelected" object:nil];
 }
@@ -159,7 +153,6 @@
     [self.navigationItem setHidesBackButton:YES];
     
     NSDate *now = [NSDate date];
-    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
@@ -202,7 +195,6 @@
     self.vwForReportiesIndividualHistory.hidden = YES;
     self.vwForImgPreview.hidden = YES;
 }
-
 
 #pragma mark - ---
 - (IBAction)onClickManagerPhoneNumber:(UIButton *)sender {
