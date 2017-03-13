@@ -123,9 +123,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(storeSelected) name:@"SelectedStore" object:nil];
     
     pageNumber=0;
-    //rgb(84,138,176)
-    //    UIColor *color=[UIColor colorWithRed:(84/255.0) green:(138/255.0) blue:(176/255.0) alpha:1.0];
-    
+   
     [self.tableVwForPromoters addFooterWithTarget:self action:@selector(refreshFooter) withIndicatorColor:TopColor];
     [self.tableVwForLeaveRqst addFooterWithTarget:self action:@selector(refreshFooterForLeave) withIndicatorColor:TopColor];
     [self.tableVwForReportiesHistory addFooterWithTarget:self action:@selector(refreshFooterForReporteesHistory) withIndicatorColor:TopColor];
@@ -295,7 +293,6 @@
     self.txtVwStoreAddress.layer.masksToBounds = YES;
     self.txtVwStoreAddress.keyboardType=UIKeyboardTypeASCIICapable;
     self.txtVwStoreAddress.backgroundColor =[[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
-    
     self.txtVwStoreAddress.autocorrectionType = UITextAutocorrectionTypeNo;
     
     self.btnGetLocation.layer.cornerRadius = 5;
@@ -317,7 +314,7 @@
     
     [self.btnPhotoConfirm addTarget:self action:@selector(onClickPhotoConfirm:) forControlEvents:UIControlEventTouchUpInside];
     [self.btnPhotoRetake addTarget:self action:@selector(onClickPhotoRetake:) forControlEvents:UIControlEventTouchUpInside];
-
+    
     //For Change Password
     [self textFieldEdit:self.textFieldCurrentPwd];
     [self textFieldEdit:self.textFieldNewPwd];
@@ -392,7 +389,6 @@
     [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:self.lblForEmailContact.text
                                                                              attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
                                                                                           NSBackgroundColorAttributeName: [UIColor clearColor]}]];
-    //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
     self.lblForEmailContact.attributedText = attributedString;
     
     NSMutableAttributedString *attributedStringForNumber = [[NSMutableAttributedString alloc] init];
@@ -402,7 +398,6 @@
     [attributedStringForNumber appendAttributedString:[[NSAttributedString alloc] initWithString:self.lblForPhoneContact.text
                                                                                       attributes:@{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle),
                                                                                                    NSBackgroundColorAttributeName: [UIColor clearColor]}]];
-    //    [attributedString appendAttributedString:[[NSAttributedString alloc] initWithString:@"tring"]];
     self.lblForPhoneContact.attributedText = attributedStringForNumber;
 }
 
@@ -552,13 +547,11 @@
                     self.lblForEmailContact.text=[[JSON objectForKey:@"userObj"] valueForKey:@"emailAddress"];
                 }
             }
-            
             if ([[JSON objectForKey:@"userObj"] valueForKey:@"contactNumber"]) {
                 if (![[[JSON objectForKey:@"userObj"] valueForKey:@"contactNumber"] isKindOfClass:[NSNull class]]) {
                     self.lblForPhoneContact.text=[[JSON objectForKey:@"userObj"] valueForKey:@"contactNumber"];
                 }
             }
-            
             [self setupContactSupport];
         }
          //==================================================ERROR
@@ -568,13 +561,8 @@
                                              
                                              NSError *jsonError;
                                              NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
-                                             
                                              if (objectData != nil) {
-                                                 
-                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
-                                                                                                      options:NSJSONReadingMutableContainers
-                                                                                                        error:&jsonError];
-                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData options:NSJSONReadingMutableContainers error:&jsonError];
                                                  NSString *strError=[json valueForKey:@"errors"];
                                                  [[[UIAlertView alloc] initWithTitle:@""
                                                                              message:strError
@@ -622,8 +610,6 @@
 }
 
 -(void)phoneNumTapped{
-    //    NSString *phNo = self.lblForPhoneContact.text;
-    
     NSString *string=[NSString stringWithFormat:@"%@",self.lblForPhoneContact.attributedText.string];
     NSURL *phoneUrl = [NSURL URLWithString:[NSString  stringWithFormat:@"telprompt:%@",[string substringFromIndex:8]]];
     if ([[UIApplication sharedApplication] canOpenURL:phoneUrl]) {
@@ -671,10 +657,8 @@
             self.lblForStoreLocation.textColor=[UIColor whiteColor];
         }else{
             self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-            //        self.lblForStoreLocation.text=@"Off site";
             self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
         }
-        // self.textVwMyAddress.text=[userInfo valueForKey:@"StoreAddress"];
         self.lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
     }
     @catch (NSException *exception) {
@@ -691,7 +675,6 @@
         self.lblForStoreLocation.textColor=[UIColor whiteColor];
     }else{
         self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        //self.lblForStoreLocation.text=@"Off site";
         self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
     }
     
@@ -706,7 +689,6 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.tableVwForPromoters reloadData];
             [self.tableVwForPromoters footerEndRefreshing];
-            //        [self.tableVw removeFooter];
         });
     }else{
         [self.tableVwForPromoters footerEndRefreshing];
@@ -762,14 +744,12 @@
 -(void)textFieldEdit:(UITextField*)txtField{
     txtField.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.7];
     txtField.keyboardType=UIKeyboardTypeASCIICapable;
-    
     UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 20)];
     txtField.leftView = paddingView;
     txtField.leftViewMode = UITextFieldViewModeAlways;
     txtField.layer.cornerRadius=5;
     txtField.delegate=self;
     txtField.autocorrectionType = UITextAutocorrectionTypeNo;
-    
     [txtField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 #pragma mark - TextView Delegate
@@ -1178,30 +1158,23 @@
         }
         
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        
         [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-            
         }];
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSError *error = nil;
             NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
-            
             if (pageNumber==0) {
                 [DejalBezelActivityView removeView];
             }
-            
             NSMutableArray *array=[[JSON objectForKey:@"requestList"] mutableCopy];
-            
             for (NSDictionary *dict in array) {
                 [arrayForPromoters addObject:dict];
             }
             NSLog(@"Promoter List===%@",JSON);
             arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
-            
             if (array.count <= 0) {
                 arrayCountToCheck=0;
             }
-            
             [self.tableVwForPromoters reloadData];
         }
          //==================================================ERROR
@@ -1212,11 +1185,7 @@
                                              NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
                                              
                                              if (objectData != nil) {
-                                                 
-                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
-                                                                                                      options:NSJSONReadingMutableContainers
-                                                                                                        error:&jsonError];
-                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData options:NSJSONReadingMutableContainers error:&jsonError];
                                                  NSString *strError=[json valueForKey:@"errors"];
                                                  [[[UIAlertView alloc] initWithTitle:@""
                                                                              message:strError
@@ -1251,15 +1220,11 @@
                                                           parameters:nil];
         
         //====================================================RESPONSE
-        
         if (pageNumber==0) {
             [DejalBezelActivityView activityViewForView:self.view];
         }
-        
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        
         [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-            
         }];
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSError *error = nil;
@@ -1268,15 +1233,12 @@
             if (pageNumber==0) {
                 [DejalBezelActivityView removeView];
             }
-            
             NSMutableArray *array=[[JSON objectForKey:@"requestList"] mutableCopy];
-            
             for (NSDictionary *dict in array) {
                 [arrayForPromoters addObject:dict];
             }
             NSLog(@"Promoter List===%@",JSON);
             arrayCountToCheck=[[JSON objectForKey:@"totalEntries"] integerValue];
-            
             if (array.count <= 0) {
                 arrayCountToCheck=0;
             }
@@ -1292,10 +1254,7 @@
                                              
                                              if (objectData != nil) {
                                                  
-                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
-                                                                                                      options:NSJSONReadingMutableContainers
-                                                                                                        error:&jsonError];
-                                                 
+                                                 NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData options:NSJSONReadingMutableContainers                                                                                                     error:&jsonError];
                                                  NSString *strError=[json valueForKey:@"errors"];
                                                  [[[UIAlertView alloc] initWithTitle:@""
                                                                              message:strError
@@ -1309,7 +1268,6 @@
         [alert show];
     }
 }
-
 
 #pragma mark - Add Promoter
 
@@ -1389,7 +1347,7 @@
         NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
         id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         
-        NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
+        //NSLog(@"Promoters List==%@",[json objectForKey:@"requestInfo"]);
         
         self.txtFieldFNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"firstName"];
         self.txtFieldLNamePromoter.text=[[json objectForKey:@"requestInfo"] valueForKey:@"lastName"];
@@ -1901,18 +1859,16 @@
     NSLog(@"About to request a capture from: %@", stillImageOutput);
     [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
         
-//        NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-//        UIImage *image = [[UIImage alloc] initWithData:imageData];
-//        imgToSend=image;
-//        self.vwForCamera.hidden = YES;
-//        self.backBtn.hidden = YES;
-//        [self postImageDataToServer];
-        
+        //        NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+        //        UIImage *image = [[UIImage alloc] initWithData:imageData];
+        //        imgToSend=image;
+        //        self.vwForCamera.hidden = YES;
+        //        self.backBtn.hidden = YES;
+        //        [self postImageDataToServer];
         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-        
- UIImage *image = [[UIImage alloc] initWithData:imageData];
-        NSDictionary *props = [self getImageProperties:imageData];
-        NSMutableDictionary *imageMetadata = [NSMutableDictionary dictionaryWithDictionary:props];
+        // UIImage *image = [[UIImage alloc] initWithData:imageData];
+       //  NSDictionary *props = [self getImageProperties:imageData];
+        //NSMutableDictionary *imageMetadata = [NSMutableDictionary dictionaryWithDictionary:props];
         //[self saveImage:image withInfo:imageMetadata];
         [self editExifData:imageData];
     }];
@@ -1931,14 +1887,10 @@
     CLLocation * loc = [[CLLocation alloc] initWithCoordinate:coordSF altitude:altitudeSF horizontalAccuracy:accuracyHorizontal verticalAccuracy:accuracyVertical timestamp:nowDate];
     [container addLocation:loc];
   //  NSString*strImageName=[NSString stringWithFormat:@"%@",nowDate];
-    
     NSData *imgData = [[UIImage imageWithData:imageData] addExif:container];
-    
     imgDataToSend=imgData;
-    
    // NSString *imagePath = [self saveImageDataToDocuments:imgData];
    // NSLog(@"saved image path: %@", imagePath);
-    
     imgToSend = [UIImage imageWithData:imgData];
     self.vwForImgPreview.hidden = NO;
     self.imgVwForPhotoPreview.image=imgToSend;
@@ -2131,8 +2083,7 @@
                        }
                        
                        // add image data
-                       NSData *imageData = UIImageJPEGRepresentation(imgToSend, 0.5);
-                       
+                       //NSData *imageData = UIImageJPEGRepresentation(imgToSend, 0.5);
                       // NSData *imageData=[NSData dataWithContentsOfURL:urlForImage];
                        
                        if (imgDataToSend) {
@@ -2731,21 +2682,11 @@
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
         [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-        NSTimeZone *timeZone = [NSTimeZone localTimeZone];
-        NSString *tzName = [timeZone name];
-        
-        // NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+
         NSString *strCurrentTime=[dateFormatter stringFromDate:now];
         strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-        
-        NSLog(@"%@",[strCurrentTime substringFromIndex:10]);
-        
-        //    NSString *strStartDate=[NSString stringWithFormat:@"%@%@",self.txtFieldStartDate.text,[strCurrentTime substringFromIndex:10]];
-        //    NSString *strEndDate=[NSString stringWithFormat:@"%@%@",self.txtFieldEndDate.text,[strCurrentTime substringFromIndex:10]];
-        
         NSString *strStartDate=[NSString stringWithFormat:@"%@",self.txtFieldStartDate.text];
         NSString *strEndDate=[NSString stringWithFormat:@"%@",self.txtFieldEndDate.text];
-        
         NSString *partyRelationshipId=[[arrayForLeaveHistory objectAtIndex:indexValueForLeaveEdit] valueForKey:@"partyRelationshipId"];
         
         json = @{@"leaveTypeEnumId":leaveTypeEnumID,
@@ -2841,15 +2782,12 @@
     NSDate *currentDate = [formatter dateFromString:string];
     NSComparisonResult result = [date1 compare:currentDate];
     if(result == NSOrderedDescending){
-        //        NSLog(@"Selected Date is greater than current Date");
         [self hasDatePickerPickedDate:date];
         return YES;
     }else if(result == NSOrderedAscending){
-        //        NSLog(@"Selected Date  is earlier than current date");
         return NO;
     }
     else{
-        //        NSLog(@"dates are the same");
         [self hasDatePickerPickedDate:date];
         return YES;
     }
@@ -2857,14 +2795,11 @@
 }
 
 // Prints out the selected date.
-- (void)datePickerView:(RSDFDatePickerView *)view didSelectDate:(NSDate *)date
-{
-    //    NSLog(@"%@", [date description]);
-}
+- (void)datePickerView:(RSDFDatePickerView *)view didSelectDate:(NSDate *)date{
 
+}
 // Returns YES if the date should be marked or NO if it should not.
-- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldMarkDate:(NSDate *)date
-{
+- (BOOL)datePickerView:(RSDFDatePickerView *)view shouldMarkDate:(NSDate *)date{
     // The date is an `NSDate` object without time components.
     // So, we need to use dates without time components.
     NSCalendar *calendar = [NSCalendar currentCalendar];
@@ -3292,18 +3227,14 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if (tableView == self.tableVw){
-        //arrayForTableData=[[NSMutableArray alloc] initWithObjects:@"Stores",@"Promoters",@"Leaves",@"Leave Requisitions",@"Contact Support",@"My Account",@"Change Password",@"Log Off", nil];
         
         UITableViewCell *cell=[tableView cellForRowAtIndexPath:indexPath];
-        
         if ([cell.textLabel.text isEqualToString:@"Log Off"]){
             
             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"Are You Sure Want To Log Off ?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
             alert.tag = 1001;
             [alert show];
-            
             return;
-            
         }else if ([cell.textLabel.text isEqualToString:@"Stores"]){
             pageNumber = 0;
             arrayForStoreList=[[NSMutableArray alloc] init];
@@ -3363,27 +3294,28 @@
             self.tableVwForReporties.delegate=self;
             self.tableVwForReporties.dataSource=self;
             [self.tableVwForReporties reloadData];
-        }
-        else if ([cell.textLabel.text isEqualToString:@"My Account"]){
+        
+        }else if ([cell.textLabel.text isEqualToString:@"My Account"]){
             self.vwForAccount.hidden =NO;
             self.backBtn.hidden = NO;
+        
         }else if ([cell.textLabel.text isEqualToString:@"Change Password"]){
             self.vwForChangePwd.hidden =NO;
             self.backBtn.hidden = NO;
+        
         }else if ([cell.textLabel.text isEqualToString:@"Contact Support"]){
             [self getContactSupport];
             self.vwForContact.hidden =NO;
             self.backBtn.hidden = NO;
+        
         }else if ([cell.textLabel.text isEqualToString:@"Leave Requisitions"]){
             
             [self getLeaveListForApproval];
-            
             self.vwForLeaveRequestForApproval.hidden = NO;
             self.tableVwForLeaveApproval.delegate = self;
             self.tableVwForLeaveApproval.dataSource = self;
             [self.tableVwForLeaveApproval reloadData];
             self.backBtn.hidden = NO;
-            
         }
     }else if (tableView == self.tableVwForStore){
         [[MKSharedClass shareManager] setValueForStoreEditVC:0];
@@ -3516,7 +3448,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-
 #pragma mark - Reportees
 
 - (void)refreshFooterForReporteesHistory
@@ -3524,11 +3455,9 @@
     if(pageNumber < countForReporteeHistory){
         pageNumber++;
         [self getReporteeHistory];
-        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.tableVwForReportiesHistory reloadData];
             [self.tableVwForReportiesHistory footerEndRefreshing];
-            //        [self.tableVw removeFooter];
         });
     }else{
         [self.tableVwForReportiesHistory footerEndRefreshing];
@@ -3536,8 +3465,8 @@
     }
 }
 
-- (void)refreshFooterForReportees
-{
+- (void)refreshFooterForReportees{
+    
     if(pageNumber < countForReportee){
         pageNumber++;
         [self getReportee];
@@ -3732,7 +3661,6 @@
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
-    
 }
 
 -(NSMutableArray*)sortingArrayByDate:(NSMutableArray*)array{
@@ -3768,8 +3696,9 @@
     //  NSLog(@"%@", correctOrderStringArray);
     return correctOrderStringArray;
 }
--(NSString*)getTimeIndividual:(NSString*)strDate
-{
+
+-(NSString*)getTimeIndividual:(NSString*)strDate{
+    
     if ([strDate isKindOfClass:[NSNull class]]) {
         return @"--";
     }

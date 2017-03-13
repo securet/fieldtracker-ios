@@ -114,12 +114,10 @@
     self.vwForManager.hidden = YES;
     
     if ([[dict valueForKey:@"roleTypeId"] isEqualToString:@"SalesExecutive"]){
-        
         //        self.vwForManager.hidden = NO;
         //        self.tableVwForAgents.tableFooterView=[[UIView alloc] init];
         //        self.tableVwForAgents.delegate = self;
         //        self.tableVwForAgents.dataSource = self;
-        
     }else{
         
     }
@@ -1297,10 +1295,12 @@
         if (fromInLoctnOrOutLoctn) {
             if (boolValueForInLocationOrNot) {
                 comments=@"InLocation";
-                actionType=@"clockIn";
+               // actionType=@"clockIn";
+                 actionType=@"InLocation";
             }else{
                 comments=@"OutLocation";
-                actionType=@"clockOut";
+               // actionType=@"clockOut";
+                 actionType=@"OutLocation";
             }
         }else{
             comments=@"Time Out";
