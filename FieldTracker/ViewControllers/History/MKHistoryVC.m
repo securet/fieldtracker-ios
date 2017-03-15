@@ -26,15 +26,15 @@
 
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    NSMutableDictionary *dict=[[defaults objectForKey:@"UserData"] mutableCopy];
-    self.lblFName.text=[dict valueForKey:@"firstName"];
-    self.lblLName.text=[dict valueForKey:@"lastName"];
+    NSMutableDictionary *dictForUserData=[[defaults objectForKey:@"UserData"] mutableCopy];
+    self.lblFName.text=[dictForUserData valueForKey:@"firstName"];
+    self.lblLName.text=[dictForUserData valueForKey:@"lastName"];
 
-    if ([dict valueForKey:@"userPhotoPath"]) {
+    if ([dictForUserData valueForKey:@"userPhotoPath"]) {
         NSString *baseURL=APPDELEGATE.Base_URL;
-        NSString *str = [NSString stringWithFormat:@"//%@/uploads/uid/%@",[dict valueForKey:@"userPhotoPath"],baseURL];
-        NSString *strSub = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-        NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",strSub]];
+        NSString *str = [NSString stringWithFormat:@"//%@/uploads/uid/%@",[dictForUserData valueForKey:@"userPhotoPath"],baseURL];
+        NSString *subStr = [str stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+        NSURL *imgUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@",subStr]];
         dispatch_queue_t q = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
         dispatch_async(q, ^{
             /* Fetch the image from the server... */
@@ -68,42 +68,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkingInLocation:) name:@"LocationChecking" object:nil];
     
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(historyTabSelected) name:@"HistoryTabSelected" object:nil];
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clockTimeUpdating) name:@"clockTimeUpdating" object:nil];
 }
-
--(void)historyTabSelected{
-    self.vwForIndividualItem.hidden = YES;
-    self.backBtn.hidden = YES;
-}
-
--(void)checkingInLocation:(NSNotification*)notification{
-    
-    NSDictionary *userInfo = notification.userInfo;
-    
-    if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
-        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-        self.lblForStoreLocation.textColor=[UIColor whiteColor];
-    }else{
-        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
-    }
-    
-    self.lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
-}
-
--(void)changeLocationStatus:(NSDictionary*)dictInfo{
-    
-    if ([[dictInfo valueForKey:@"LocationStatus"] integerValue]==1) {
-        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
-        self.lblForStoreLocation.textColor=[UIColor whiteColor];
-    }else{
-        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
-        self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
-    }
-    
-    self.lblForStoreLocation.text=[dictInfo valueForKey:@"StoreName"];
-}
-
-
 -(void)viewWillAppear:(BOOL)animated{
     
     self.lblForStoreLocation.text=@"";
@@ -113,14 +79,6 @@
     self.navigationItem.hidesBackButton = YES;
     [self.navigationItem setHidesBackButton:YES];
     
-    NSDate *now = [NSDate date];
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"hh:mm a";
-    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    
-    self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
     self.tableVw.hidden = NO;
     self.lblNodata.hidden = YES;
     
@@ -145,19 +103,60 @@
                                     message:@"Please Enable GPS"
                                    delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
     }
+    
+    [self clockTimeUpdating];
 }
 
-- (void)refreshFooter
-{
+#pragma mark - 
+
+-(void)historyTabSelected{
+    self.vwForIndividualItem.hidden = YES;
+    self.backBtn.hidden = YES;
+}
+
+-(void)clockTimeUpdating{
+    
+    NSDate *timeNow = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"hh:mm a";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    self.lblTime.text=[[dateFormatter stringFromDate:timeNow] substringToIndex:[[dateFormatter stringFromDate:timeNow] length]-3];
+    self.lblAMOrPM.text=[[dateFormatter stringFromDate:timeNow] substringFromIndex:[[dateFormatter stringFromDate:timeNow] length]-2];
+}
+
+-(void)checkingInLocation:(NSNotification*)notification{
+    
+    NSDictionary *userInfo = notification.userInfo;
+    if ([[userInfo valueForKey:@"LocationStatus"] integerValue]==1) {
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        self.lblForStoreLocation.textColor=[UIColor whiteColor];
+    }else{
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+        self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
+    }
+    self.lblForStoreLocation.text=[userInfo valueForKey:@"StoreName"];
+}
+
+-(void)changeLocationStatus:(NSDictionary*)dictInfo{
+    
+    if ([[dictInfo valueForKey:@"LocationStatus"] integerValue]==1) {
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_On"];
+        self.lblForStoreLocation.textColor=[UIColor whiteColor];
+    }else{
+        self.imgVwForLocationIcon.image=[UIImage imageNamed:@"location_Off"];
+        self.lblForStoreLocation.textColor=[UIColor darkGrayColor];
+    }
+    self.lblForStoreLocation.text=[dictInfo valueForKey:@"StoreName"];
+}
+
+
+- (void)refreshFooter{
     if(arrayCountToCheck > pageNumber){
         pageNumber++;
-        
         [self getHistory];
-        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.tableVw reloadData];
             [self.tableVw footerEndRefreshing];
-            //        [self.tableVw removeFooter];
         });
     }else{
         [self.tableVw footerEndRefreshing];
@@ -345,24 +344,23 @@
     NSString *strDateChange=strDate;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
-    NSDateFormatter *dateFormatter1 = [[NSDateFormatter alloc] init];
-    dateFormatter1.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
-    NSDate *daate=[dateFormatter1 dateFromString:strDateChange];
+//    NSDateFormatter *dateFormatter1 = [[NSDateFormatter alloc] init];
+//    dateFormatter1.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
+//    NSDate *daate=[dateFormatter1 dateFromString:strDateChange];
+//    NSTimeZone *tz = [NSTimeZone localTimeZone];
+//    NSInteger seconds = [tz secondsFromGMTForDate:daate];
+//    daate = [NSDate dateWithTimeInterval: seconds sinceDate: daate];
     
-    NSTimeZone *tz = [NSTimeZone localTimeZone];
-    NSInteger seconds = [tz secondsFromGMTForDate:daate];
-    daate = [NSDate dateWithTimeInterval: seconds sinceDate: daate];
-    
-    NSDate *date_1 = [dateFormatter dateFromString:strDateChange];
+    NSDate *dateFromString = [dateFormatter dateFromString:strDateChange];
     dateFormatter.dateFormat = @"hh:mm a";
     dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:[NSTimeZone localTimeZone].secondsFromGMT];
-    strDateChange = [dateFormatter stringFromDate:date_1];
+    strDateChange = [dateFormatter stringFromDate:dateFromString];
    
     return strDateChange;
 }
 
--(NSString*)getTime:(NSString*)strDate
-{
+-(NSString*)getTime:(NSString*)strDate{
+    
     if ([strDate isKindOfClass:[NSNull class]]) {
         return @"--";
     }
@@ -449,7 +447,6 @@
     NSMutableArray *arrayForNullValues=[[NSMutableArray alloc] init];
     
     for (NSString *dateString in array) {
-        
         NSInteger indexValue=[array indexOfObject:dateString];
         if (![dateString isKindOfClass:[NSNull class]]){
             NSString *str=dateString;
@@ -469,8 +466,8 @@
     tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
     NSMutableArray *correctOrderStringArray = [NSMutableArray array];
     
-    for (NSDate *date_1 in tempArray) {
-        [correctOrderStringArray addObject:date_1.description];
+    for (NSDate *date in tempArray) {
+        [correctOrderStringArray addObject:date.description];
     }
     
     for (NSString *str in arrayForNullValues){

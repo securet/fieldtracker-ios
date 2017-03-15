@@ -16,22 +16,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    
-    //    self.txtFieldForEmail.text=@"anand@securet.in";
-    //    self.txtFieldForPassword.text=@"test@1234";
+   
     self.txtFieldForEmail.text=@"";
     self.txtFieldForPassword.text=@"";
+    self.imgVwForLogo.image=[UIImage imageNamed:@""];
+    self.btnLogin.layer.cornerRadius = 5;
+    self.txtFieldForEmail.keyboardType = UIKeyboardTypeEmailAddress;
     [self addPadding:self.txtFieldForEmail];
     [self addPadding:self.txtFieldForPassword];
     [self addPadding:self.txtFieldForDomainName];
-    self.imgVwForLogo.image=[UIImage imageNamed:@""];
-    self.btnLogin.layer.cornerRadius = 5;
-    
-    self.txtFieldForEmail.keyboardType = UIKeyboardTypeEmailAddress;
-    
+
     if (![APPDELEGATE connected]) {
-        
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
@@ -47,7 +42,6 @@
 -(void)addPadding:(UITextField*)txtField{
     
     txtField.delegate = self;
-    
     txtField.keyboardType=UIKeyboardTypeASCIICapable;
     
     UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 20)];
@@ -56,7 +50,6 @@
     txtField.layer.cornerRadius=5;
     
     UIImageView *imgVw=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    
     if (txtField == self.txtFieldForEmail){
         imgVw.image=[UIImage imageNamed:@"email"];
     }else if (txtField == self.txtFieldForPassword){
@@ -64,11 +57,9 @@
     }else if (txtField == self.txtFieldForDomainName){
         imgVw.image=[UIImage imageNamed:@"domain"];
     }
-    
     imgVw.contentMode = UIViewContentModeScaleAspectFit;
     txtField.rightView=imgVw;
     txtField.rightViewMode=UITextFieldViewModeAlways;
-    
     [txtField addTarget:self action:@selector(resignFirstResponder) forControlEvents:UIControlEventEditingDidEndOnExit];
 }
 
@@ -92,9 +83,7 @@
 - (IBAction)onClickLogin:(UIButton *)sender{
     
     if (self.txtFieldForEmail.text.length>0 && self.txtFieldForPassword.text.length>0 && self.txtFieldForDomainName.text.length>0) {
-        
         if ([self isValidEmail:self.txtFieldForEmail.text]) {
-            
             if ([APPDELEGATE connected]) {
                 [self login];
             }else{
@@ -125,18 +114,7 @@
     
     if (self.txtFieldForEmail.text.length > 0) {
         if ([self isValidEmail:self.txtFieldForEmail.text]) {
-            
             [self forgotPassword];
-            //            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            //            UIViewController *smallViewController = [storyboard instantiateViewControllerWithIdentifier:@"MKForgotPasswordVC"];
-            //
-            //            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad){
-            //                BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width-100, self.view.frame.size.height/2+100)];
-            //                [self presentViewController:popupViewController animated:NO completion:nil];
-            //            }else{
-            //                BIZPopupViewController *popupViewController = [[BIZPopupViewController alloc] initWithContentViewController:smallViewController contentSize:CGSizeMake(self.view.frame.size.width,self.view.frame.size.height)];
-            //                [self presentViewController:popupViewController animated:NO completion:nil];
-            //            }
         }else{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Email ID is not valid" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
@@ -154,7 +132,6 @@
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
         NSURL * url = [NSURL URLWithString:APPDELEGATE.Base_URL];
         NSString *strAuthorization=[defaults valueForKey:@"BasicAuth"];
-        
         AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
         httpClient.parameterEncoding = AFJSONParameterEncoding;
         [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
@@ -213,8 +190,8 @@
 }
 
 
--(BOOL)isValidEmail:(NSString *)checkString
-{
+-(BOOL)isValidEmail:(NSString *)checkString{
+    
     BOOL stricterFilter = NO;
     NSString *stricterFilterString = @"^[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}$";
     NSString *laxString = @"^.+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2}[A-Za-z]*$";
@@ -265,29 +242,29 @@
         if ([[JSON objectForKey:@"user"] isKindOfClass:[NSArray class]]) {
             if ([[JSON objectForKey:@"user"] count]>0)
             {
-                NSMutableDictionary *prunedDictionary = [NSMutableDictionary dictionary];
+                NSMutableDictionary *filteredDictionary = [NSMutableDictionary dictionary];
                 for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys]){
                     if (![key isEqualToString:@"reportingPerson"]) {
                         
                         if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
-                            [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                            [filteredDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
                     }
                 }
                 
                 if ([[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]) {
                     NSMutableDictionary *reportingPerson = [NSMutableDictionary dictionary];
+                    
                     for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]){
+                        
                         if (![key isEqualToString:@"reportingPerson"]) {
-                            if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
-                                [reportingPerson setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                            if (![[[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"] valueForKey:key] isKindOfClass:[NSNull class]])
+                                [reportingPerson setObject:[[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"] valueForKey:key] forKey:key];
                         }
                     }
-                    [prunedDictionary setObject:reportingPerson forKey:@"reportingPerson"];
+                    [filteredDictionary setObject:reportingPerson forKey:@"reportingPerson"];
                 }
-                
-                //                [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"] forKey:@"reportingPerson"];
                 [defaults setObject:@"1" forKey:@"Is_Login"];
-                [defaults setObject:prunedDictionary forKey:@"UserData"];
+                [defaults setObject:filteredDictionary forKey:@"UserData"];
                 [defaults setObject:self.txtFieldForDomainName.text forKey:@"Domain"];
                 [defaults synchronize];
                 
@@ -309,18 +286,13 @@
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                          [DejalBezelActivityView removeView];
                                          NSLog(@"%i====Error %@",[operation.response statusCode],[error description]);
-                                         //
-                                         //                                         if([operation.response statusCode] == 401)
-                                         //                                         {
-                                         //                                             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Not account found" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                                         //                                             [alert show];
-                                         //                                         }
-                                         NSError *jsonError;
-                                         NSData *objectData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
                                          
-                                         if (objectData != nil) {
+                                         NSError *jsonError;
+                                         NSData *errorData = [[[error userInfo] objectForKey:NSLocalizedRecoverySuggestionErrorKey] dataUsingEncoding:NSUTF8StringEncoding];
+                                         
+                                         if (errorData != nil) {
                                              
-                                             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:objectData
+                                             NSDictionary *json = [NSJSONSerialization JSONObjectWithData:errorData
                                                                                                   options:NSJSONReadingMutableContainers
                                                                                                     error:&jsonError];
                                              
@@ -331,18 +303,5 @@
                                          }
                                      }];
     [operation start];
-}
-
-- (NSString*)encodeStringTo64:(NSString*)fromString
-{
-    NSData *plainData = [fromString dataUsingEncoding:NSUTF8StringEncoding];
-    NSString *base64String;
-    if ([plainData respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
-        base64String = [plainData base64EncodedStringWithOptions:kNilOptions];  // iOS 7+
-    } else {
-        base64String = [plainData base64Encoding];                              // pre iOS7
-    }
-    
-    return base64String;
 }
 @end

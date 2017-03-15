@@ -192,7 +192,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="am" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tPx-gm-62v">
-                                        <rect key="frame" x="67" y="27" width="25" height="21"/>
+                                        <rect key="frame" x="67" y="20" width="25" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="3TA-Tc-Q0C"/>
                                             <constraint firstAttribute="width" constant="25" id="S1L-hc-6Og"/>
@@ -254,6 +254,7 @@
                                     <constraint firstItem="37e-cX-3sv" firstAttribute="top" secondItem="Ofk-NB-eyx" secondAttribute="top" constant="19" id="5Nt-00-mCc"/>
                                     <constraint firstItem="Fiw-NY-iff" firstAttribute="top" secondItem="Ofk-NB-eyx" secondAttribute="top" id="C4O-wG-nT7"/>
                                     <constraint firstItem="jI7-dK-ahM" firstAttribute="leading" secondItem="37e-cX-3sv" secondAttribute="trailing" constant="8" id="JfI-Zf-Kbf"/>
+                                    <constraint firstItem="tPx-gm-62v" firstAttribute="centerY" secondItem="FER-PQ-fJk" secondAttribute="centerY" id="KNH-xK-XBK"/>
                                     <constraint firstAttribute="height" constant="80" id="KVa-LV-uis"/>
                                     <constraint firstItem="jI7-dK-ahM" firstAttribute="centerY" secondItem="Fiw-NY-iff" secondAttribute="centerY" id="Sks-mW-htZ"/>
                                     <constraint firstAttribute="bottom" secondItem="Fiw-NY-iff" secondAttribute="bottom" id="Tus-oI-4p2"/>
@@ -267,7 +268,6 @@
                                     <constraint firstAttribute="bottom" secondItem="ipn-O5-eF2" secondAttribute="bottom" constant="19" id="pN1-fY-oAV"/>
                                     <constraint firstAttribute="bottom" secondItem="55b-n9-1xT" secondAttribute="bottom" constant="8" id="rm3-es-7PF"/>
                                     <constraint firstItem="tPx-gm-62v" firstAttribute="leading" secondItem="FER-PQ-fJk" secondAttribute="trailing" constant="4" id="w7A-h3-f7l"/>
-                                    <constraint firstItem="tPx-gm-62v" firstAttribute="bottom" secondItem="FER-PQ-fJk" secondAttribute="bottom" constant="-5" id="wlF-jN-E5k"/>
                                     <constraint firstItem="jI7-dK-ahM" firstAttribute="leading" secondItem="ipn-O5-eF2" secondAttribute="trailing" constant="8" id="xLw-GU-XuP"/>
                                 </constraints>
                             </view>
@@ -1192,7 +1192,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="am" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bRw-AV-w7l">
-                                        <rect key="frame" x="67" y="27" width="25" height="21"/>
+                                        <rect key="frame" x="67" y="20" width="25" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="14D-jM-ph6"/>
                                             <constraint firstAttribute="width" constant="25" id="aPT-Nt-6SF"/>
@@ -1267,9 +1267,15 @@
                                     <constraint firstAttribute="bottom" secondItem="Tu7-aB-PeI" secondAttribute="bottom" constant="8" id="Wd9-xG-njm"/>
                                     <constraint firstItem="Tu7-aB-PeI" firstAttribute="leading" secondItem="5Ik-am-duX" secondAttribute="trailing" constant="4" id="fB6-Bw-UsA"/>
                                     <constraint firstItem="agt-PI-gfd" firstAttribute="leading" secondItem="xhq-3I-8mD" secondAttribute="leading" constant="8" id="hNq-34-Mcr"/>
+                                    <constraint firstItem="bRw-AV-w7l" firstAttribute="centerY" secondItem="agt-PI-gfd" secondAttribute="centerY" id="iQh-jb-KDP"/>
                                     <constraint firstItem="bRw-AV-w7l" firstAttribute="leading" secondItem="agt-PI-gfd" secondAttribute="trailing" constant="4" id="mvl-nk-au6"/>
                                     <constraint firstItem="UOZ-Wk-aem" firstAttribute="centerY" secondItem="PZu-Nh-Ais" secondAttribute="centerY" id="xa0-XI-cie"/>
                                 </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="N8n-Oz-EZ6"/>
+                                    </mask>
+                                </variation>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="81" sectionHeaderHeight="1" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="khH-n5-sdY">
                                 <rect key="frame" x="0.0" y="174" width="600" height="377"/>
@@ -1685,7 +1691,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="am" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ifK-zK-H8r">
-                                        <rect key="frame" x="67" y="27" width="25" height="21"/>
+                                        <rect key="frame" x="67" y="20" width="25" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="25" id="tMc-Uv-LC2"/>
                                             <constraint firstAttribute="height" constant="21" id="vje-wi-uYg"/>
@@ -1745,6 +1751,7 @@
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="eTw-H6-3v2" secondAttribute="trailing" id="0aR-OI-ZWW"/>
                                     <constraint firstItem="azd-yz-vME" firstAttribute="leading" secondItem="P9a-GI-d5G" secondAttribute="trailing" constant="8" id="0eL-XA-RLV"/>
+                                    <constraint firstItem="ifK-zK-H8r" firstAttribute="centerY" secondItem="rld-Bz-HUF" secondAttribute="centerY" id="5PP-bn-XMx"/>
                                     <constraint firstItem="ifK-zK-H8r" firstAttribute="bottom" secondItem="rld-Bz-HUF" secondAttribute="bottom" constant="-5" id="AW2-tu-Qyg"/>
                                     <constraint firstAttribute="bottom" secondItem="P9a-GI-d5G" secondAttribute="bottom" constant="19" id="HlZ-cp-fAi"/>
                                     <constraint firstItem="eTw-H6-3v2" firstAttribute="top" secondItem="RpL-Y3-tug" secondAttribute="top" id="LPE-yz-eUK"/>
@@ -1763,6 +1770,11 @@
                                     <constraint firstAttribute="bottom" secondItem="zuQ-79-kpb" secondAttribute="bottom" constant="8" id="yAn-zE-k1F"/>
                                     <constraint firstItem="rld-Bz-HUF" firstAttribute="leading" secondItem="RpL-Y3-tug" secondAttribute="leading" constant="8" id="yUG-LV-G1X"/>
                                 </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="AW2-tu-Qyg"/>
+                                    </mask>
+                                </variation>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="5xz-km-jdT">
                                 <rect key="frame" x="0.0" y="174" width="600" height="627"/>

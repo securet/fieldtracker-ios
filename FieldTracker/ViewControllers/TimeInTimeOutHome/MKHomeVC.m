@@ -22,7 +22,7 @@
     UIImage *imgToSend;
     NSString *imgPathToSend;
     BOOL boolValueForInLocationOrNot;
-    NSTimer *timerForShiftTime,*timerForLocation;
+    NSTimer *timerForShiftTime,*timerForLocation,*timerForClockTime;
     NSMutableArray *arrayForStatusData,*arrayForAgents;
     AVCaptureSession *captureSession;
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
@@ -36,7 +36,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
     [self getUserInfo];
     [self getStoreDetails];
     [self checkAppVersion];
@@ -67,9 +67,7 @@
     self.bottomVw.layer.masksToBounds = YES;
     
     [self updateLocationManagerr];
-    
     CLLocationCoordinate2D coordinate = [self getLocation];
-    
     strForCurLatitude = [NSString stringWithFormat:@"%f", coordinate.latitude];
     strForCurLongitude= [NSString stringWithFormat:@"%f", coordinate.longitude];
     
@@ -87,7 +85,6 @@
     //    markerCar.map = mapView;
     
     self.lblStoreName.text=@"";
-    
     self.vwForImgPreview.hidden = YES;
     
     if (IS_IPHONE_4) {
@@ -110,7 +107,6 @@
     self.tableVwForTimeline.tableFooterView = [[UIView alloc] init];
     
     self.vwForTimer.backgroundColor=[[UIColor whiteColor] colorWithAlphaComponent:0.7];
-    
     self.vwForManager.hidden = YES;
     
     if ([[dict valueForKey:@"roleTypeId"] isEqualToString:@"SalesExecutive"]){
@@ -126,8 +122,9 @@
     [self startTimedTask];
     
     [self checkLocation];
-    timerForLocation= [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateLocationBackground) userInfo:nil repeats:YES];
     
+    timerForLocation= [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateLocationBackground) userInfo:nil repeats:YES];
+    timerForClockTime=[NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(clockTimeUpdating) userInfo:nil repeats:YES];
     self.tabBarController.delegate=self;
 }
 
@@ -138,14 +135,6 @@
     self.navigationController.navigationBarHidden = YES;
     self.navigationItem.hidesBackButton = YES;
     [self.navigationItem setHidesBackButton:YES];
-    
-    NSDate *now = [NSDate date];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"hh:mm a";
-    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    
-    self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
     
     if (![APPDELEGATE connected]) {
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -167,6 +156,16 @@
     }else if (tabBarController.selectedIndex ==1){
         [[NSNotificationCenter defaultCenter] postNotificationName:@"HistoryTabSelected" object:nil];
     }
+}
+
+-(void)clockTimeUpdating{
+    NSDate *timeNow = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"hh:mm a";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    self.lblTime.text=[[dateFormatter stringFromDate:timeNow] substringToIndex:[[dateFormatter stringFromDate:timeNow] length]-3];
+    self.lblAMOrPM.text=[[dateFormatter stringFromDate:timeNow] substringFromIndex:[[dateFormatter stringFromDate:timeNow] length]-2];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"clockTimeUpdating" object:nil];
 }
 #pragma mark - Check App Version
 
@@ -196,17 +195,13 @@
         NSDictionary* infoDictionary = [[NSBundle mainBundle] infoDictionary];
         NSString* currentVersion = infoDictionary[@"CFBundleShortVersionString"];
         if (![[JSON valueForKey:@"appVersion"] isEqualToString:currentVersion] && [[JSON valueForKey:@"forceUpdate"] isEqualToString:@"Y"]){
-            
-            //             NSLog(@"Need to update = %@",currentVersion);
             UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"Update" message:[JSON valueForKey:@"message"] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Update",nil];
             alertView.tag=200;
             [alertView show];
         }
-        NSLog(@"App Version Details==%@",JSON);
     }
      //==================================================ERROR
                                      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                         //                                         [DejalBezelActivityView removeView];
                                          NSLog(@"Error %@",[error description]);
                                      }];
     [operation start];
@@ -235,11 +230,8 @@
     }];
     // Start the long-running task and return immediately.
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
         // Do the work associated with the task.
-        NSLog(@"Started background task");
         if ([APPDELEGATE connected]) {
-            
             NSMutableArray *arrayForData=[[NSMutableArray alloc] init];
             arrayForData=[self getTimeLineData];
             for (NSDictionary *dict in arrayForData) {
@@ -252,28 +244,6 @@
         task = UIBackgroundTaskInvalid;
     });
 }
-//#pragma mark-
-/*
- -(NSMutableArray*)getImageData{
- NSError *error=nil;
- 
- NSMutableArray *arrayOfData=[[NSMutableArray alloc] init];
- 
- self.timeLineStatusEntity=[NSEntityDescription entityForName:@"ImageData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
- NSFetchRequest * fr = [[NSFetchRequest alloc]init];
- [fr setEntity:self.timeLineStatusEntity];
- NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
- 
- for (NSManagedObject * fetRec  in result) {
- NSMutableDictionary *dict=[[NSMutableDictionary alloc] init];
- //success userimage
- [dict setValue:[fetRec valueForKey:@"success"] forKey:@"success"];
- [dict setValue:[fetRec valueForKey:@"userimage"] forKey:@"userimage"];
- [arrayOfData addObject:dict];
- }
- 
- return arrayOfData;
- }*/
 #pragma mark - Get User Info
 -(void)getUserInfo{
     
@@ -303,28 +273,31 @@
         if ([[JSON objectForKey:@"user"] isKindOfClass:[NSArray class]]) {
             if ([[JSON objectForKey:@"user"] count]>0)
             {
-                NSMutableDictionary *prunedDictionary = [NSMutableDictionary dictionary];
+                NSMutableDictionary *filteredDictionary = [NSMutableDictionary dictionary];
                 for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] allKeys]){
                     if (![key isEqualToString:@"reportingPerson"]) {
                         
                         if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
-                            [prunedDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                            [filteredDictionary setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
                     }
                 }
                 
                 if ([[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]) {
                     NSMutableDictionary *reportingPerson = [NSMutableDictionary dictionary];
+                    
                     for (NSString * key in [[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"]){
+                        
                         if (![key isEqualToString:@"reportingPerson"]) {
-                            if (![[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] isKindOfClass:[NSNull class]])
-                                [reportingPerson setObject:[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:key] forKey:key];
+                            
+                            if (![[[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"] valueForKey:key] isKindOfClass:[NSNull class]])
+                                
+                                [reportingPerson setObject:[[[[JSON objectForKey:@"user"] objectAtIndex:0] objectForKey:@"reportingPerson"] valueForKey:key] forKey:key];
                         }
                     }
-                    [prunedDictionary setObject:reportingPerson forKey:@"reportingPerson"];
+                    [filteredDictionary setObject:reportingPerson forKey:@"reportingPerson"];
                 }
-                
-                [defaults setObject:prunedDictionary forKey:@"UserData"];
-                NSLog(@"USER Data====%@",prunedDictionary);
+                [defaults setObject:filteredDictionary forKey:@"UserData"];
+                NSLog(@"USER Data====%@",filteredDictionary);
                 [self getStoreDetails];
             }
         }
@@ -531,15 +504,15 @@
     NSString *strDateChange=strDate;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss Z";
-    NSDate *date_1 = [dateFormatter dateFromString:strDateChange];
+    NSDate *dateFromString = [dateFormatter dateFromString:strDateChange];
     dateFormatter.dateFormat = @"hh:mm a";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    strDateChange = [dateFormatter stringFromDate:date_1];
+    strDateChange = [dateFormatter stringFromDate:dateFromString];
     return strDateChange;
 }
 
--(NSString*)getTime:(NSString*)strDate
-{
+-(NSString*)getTime:(NSString*)strDate{
+    
     NSRange range=[strDate rangeOfString:@"T"];
     strDate=[strDate substringFromIndex:NSMaxRange(range)];
     range=[strDate rangeOfString:@"+"];
@@ -549,11 +522,9 @@
     strDate=[NSString stringWithFormat:@"%@ %@",strDate,timeZone];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"HH:mm:ss xxxx"];
-    NSDate *date_1 = [dateFormatter dateFromString:strDate];
-    
+    NSDate *dateFromString = [dateFormatter dateFromString:strDate];
     [dateFormatter setDateFormat:@"hh:mm a"];
-    
-    return [dateFormatter stringFromDate:date_1];
+    return [dateFormatter stringFromDate:dateFromString];
 }
 #pragma mark - LocationManagaer
 
@@ -562,7 +533,6 @@
 - (void)checkLocation{
     
     [[MKSharedClass shareManager] setDictForCheckInLoctn:nil];
-    
     dictForStoreDetails=[[NSMutableDictionary alloc] init];
     
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
@@ -584,14 +554,9 @@
         
         radiusForStore = [[dictForStoreDetails valueForKey:@"proximityRadius"] doubleValue];
         
-        //SalesExecutive
-        //FieldExecutiveOnPremise
-        //FieldExectiveOffPremise
-        
         if (distance <= radiusForStore && distance >= 0){
             
             if ([self.lblForStoreLocation.text isEqualToString:@"Off site"]) {
-                
                 UILocalNotification *notification = [[UILocalNotification alloc] init];
                 notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:1];
                 notification.alertBody = @"Entering To Store Region !";
@@ -723,7 +688,6 @@
     if([locationManager respondsToSelector:@selector(allowsBackgroundLocationUpdates)]){
         [locationManager setAllowsBackgroundLocationUpdates:YES];
     }
-    
     [locationManager startUpdatingLocation];
 }
 
@@ -786,7 +750,6 @@
         strForCurLatitude = [NSString stringWithFormat:@"%f", coordinate.latitude];
         strForCurLongitude= [NSString stringWithFormat:@"%f", coordinate.longitude];
         
-        // NSLog(@"Time Got From GPS===%@",[self getTimeIndividual:now.description]);
         GMSCameraUpdate *updatedCamera = [GMSCameraUpdate setTarget:coordinate zoom:15];
         [mapView animateWithCameraUpdate:updatedCamera];
         mapView.myLocationEnabled = YES;
@@ -845,7 +808,6 @@
                     //                    NSLog(@"longitude===%@",[dict valueForKey:@"longitude"]);
                     //                    NSLog(@"productstoreid===%@",[dict valueForKey:@"productstoreid"]);
                     //                    NSLog(@"issend===%@",[dict valueForKey:@"issend"]);
-                    
                     if ([[dict valueForKey:@"actiontype"] isEqualToString:@"clockOut"]) {
                         [arrayOfDates addObject:dict];
                     }
@@ -1037,7 +999,6 @@
         }
     }
     
-    NSLog(@"About to request a capture from: %@", stillImageOutput);
     [stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
         UIImage *image = [[UIImage alloc] initWithData:imageData];
@@ -1271,15 +1232,12 @@
     NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
     NSString *userName=[dict valueForKey:@"username"];
     NSString *productStoreId=[dictForStoreDetails valueForKey:@"productStoreId"];
-    NSDate *now = [NSDate date];
+    NSDate *timeNow = [NSDate date];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    NSTimeZone *timeZone = [NSTimeZone localTimeZone];
-    NSString *tzName = [timeZone name];
-    
-    // NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
-    NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+   
+    NSString *strCurrentTime=[dateFormatter stringFromDate:timeNow];
     strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
     
     NSString *actionType;
@@ -1389,8 +1347,8 @@
 }
 
 -(NSDictionary*)getStatus{
-    NSError *error=nil;
     
+    NSError *error=nil;
     NSString *statusData;
     
     self.timeLineStatusEntity=[NSEntityDescription entityForName:@"TimelineStatus" inManagedObjectContext:APPDELEGATE.managedObjectContext];
@@ -1398,38 +1356,30 @@
     [fr setEntity:self.timeLineStatusEntity];
     NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
     
-    NSMutableDictionary *dict=[[NSMutableDictionary alloc] init];
-    
-    // NSMutableArray *arrayForStatus=[[NSMutableArray alloc] init];
-    
+    NSMutableDictionary *dictForStatus=[[NSMutableDictionary alloc] init];
+
     for (NSManagedObject * fetRec  in result) {
-        //NSMutableDictionary *dicting=[[NSMutableDictionary alloc] init];
         statusData=[fetRec valueForKey:@"status"];
-        [dict setValue:statusData forKey:@"status"];
+        [dictForStatus setValue:statusData forKey:@"status"];
         statusData=[fetRec valueForKey:@"comments"];
-        [dict setValue:statusData forKey:@"comments"];
+        [dictForStatus setValue:statusData forKey:@"comments"];
         statusData=[fetRec valueForKey:@"time"];
-        [dict setValue:statusData forKey:@"time"];
-        //        dicting=[dict mutableCopy];
-        //        [arrayForStatus addObject:dicting];
+        [dictForStatus setValue:statusData forKey:@"time"];
     }
-    
-    //NSLog(@"arrayForStatus====%@",arrayForStatus);
-    
-    if ([dict valueForKey:@"status"]) {
-        if ([[dict valueForKey:@"status"] isEqualToString:@"TimeOut"]) {
+    if ([dictForStatus valueForKey:@"status"]) {
+        if ([[dictForStatus valueForKey:@"status"] isEqualToString:@"TimeOut"]) {
             timerForShiftTime=nil;
             [timerForShiftTime invalidate];
         }
     }
-    return dict;
+    return dictForStatus;
 }
 
 -(NSMutableArray*)getTimeLineData{
     
     NSError *error=nil;
     
-    NSMutableArray *arrayOfData=[[NSMutableArray alloc] init];
+    NSMutableArray *arrayOfTimelineData=[[NSMutableArray alloc] init];
     
     self.timeLineDataEntity=[NSEntityDescription entityForName:@"TimeLineData" inManagedObjectContext:APPDELEGATE.managedObjectContext];
     NSFetchRequest * fr = [[NSFetchRequest alloc]init];
@@ -1438,18 +1388,18 @@
     NSArray * result = [APPDELEGATE.managedObjectContext executeFetchRequest:fr error:&error];
     
     for (NSManagedObject * fetRec  in result) {
-        NSMutableDictionary *dict=[[NSMutableDictionary alloc] init];
+        NSMutableDictionary *dictTimelineData=[[NSMutableDictionary alloc] init];
         //actiontype clockdate comments latitude longitude productstoreid actionimage username issend
-        [dict setValue:[fetRec valueForKey:@"username"] forKey:@"username"];
-        [dict setValue:[fetRec valueForKey:@"actiontype"] forKey:@"actiontype"];
-        [dict setValue:[fetRec valueForKey:@"clockdate"] forKey:@"clockdate"];
-        [dict setValue:[fetRec valueForKey:@"comments"] forKey:@"comments"];
-        [dict setValue:[fetRec valueForKey:@"latitude"] forKey:@"latitude"];
-        [dict setValue:[fetRec valueForKey:@"longitude"] forKey:@"longitude"];
-        [dict setValue:[fetRec valueForKey:@"productstoreid"] forKey:@"productstoreid"];
-        [dict setValue:[fetRec valueForKey:@"actionimage"] forKey:@"actionimage"];
-        [dict setValue:[fetRec valueForKey:@"issend"] forKey:@"issend"];
-        [arrayOfData addObject:dict];
+        [dictTimelineData setValue:[fetRec valueForKey:@"username"] forKey:@"username"];
+        [dictTimelineData setValue:[fetRec valueForKey:@"actiontype"] forKey:@"actiontype"];
+        [dictTimelineData setValue:[fetRec valueForKey:@"clockdate"] forKey:@"clockdate"];
+        [dictTimelineData setValue:[fetRec valueForKey:@"comments"] forKey:@"comments"];
+        [dictTimelineData setValue:[fetRec valueForKey:@"latitude"] forKey:@"latitude"];
+        [dictTimelineData setValue:[fetRec valueForKey:@"longitude"] forKey:@"longitude"];
+        [dictTimelineData setValue:[fetRec valueForKey:@"productstoreid"] forKey:@"productstoreid"];
+        [dictTimelineData setValue:[fetRec valueForKey:@"actionimage"] forKey:@"actionimage"];
+        [dictTimelineData setValue:[fetRec valueForKey:@"issend"] forKey:@"issend"];
+        [arrayOfTimelineData addObject:dictTimelineData];
     }
     //        for (NSDictionary*dict in arrayOfData) {
     //            NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
@@ -1461,7 +1411,7 @@
     //            NSLog(@"productstoreid===%@",[dict valueForKey:@"productstoreid"]);
     //            NSLog(@"issend===%@",[dict valueForKey:@"issend"]);
     //        }
-    return arrayOfData;
+    return arrayOfTimelineData;
 }
 
 -(void)updateDatabase:(NSInteger)index{
@@ -1507,11 +1457,11 @@
     NSString *firstViewd;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
-    NSDate *now = [NSDate date];
+    NSDate *timeNow = [NSDate date];
     dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
     //    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    firstViewd=[dateFormatter stringFromDate:now];
+    firstViewd=[dateFormatter stringFromDate:timeNow];
     
     NSString *lastViewedString;
     time = [time stringByReplacingOccurrencesOfString:@"T" withString:@" "];
@@ -1520,8 +1470,8 @@
     NSInteger   hoursBetweenDates = 0;
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ssZ"];
     NSDate *lastViewed = [dateFormatter dateFromString:lastViewedString];
-    now = [dateFormatter dateFromString:firstViewd];
-    NSTimeInterval distanceBetweenDates = [now timeIntervalSinceDate:lastViewed];
+    timeNow = [dateFormatter dateFromString:firstViewd];
+    NSTimeInterval distanceBetweenDates = [timeNow timeIntervalSinceDate:lastViewed];
     double minutesInAnHour = 60;
     hoursBetweenDates = (distanceBetweenDates / minutesInAnHour);
     int hour = hoursBetweenDates / 60;

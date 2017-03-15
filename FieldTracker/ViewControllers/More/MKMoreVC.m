@@ -137,6 +137,7 @@
     [self setupUIForAllViews];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hiddenAllViews) name:@"MoreTabSelected" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clockTimeUpdating) name:@"clockTimeUpdating" object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -150,13 +151,6 @@
     self.navigationItem.hidesBackButton = YES;
     [self.navigationItem setHidesBackButton:YES];
     
-    NSDate *now = [NSDate date];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"hh:mm a";
-    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-    
-    self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
-    self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
     
     if (![APPDELEGATE connected]) {
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"" message:@"It appears you are not connected to internet" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -170,6 +164,8 @@
                                     message:@"Please Enable GPS"
                                    delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
     }
+    
+    [self clockTimeUpdating];
 }
 
 -(void)hiddenAllViews{
@@ -192,6 +188,17 @@
     self.vwForReportiesHistory.hidden = YES;
     self.vwForReportiesIndividualHistory.hidden = YES;
     self.vwForImgPreview.hidden = YES;
+}
+
+
+-(void)clockTimeUpdating{
+    NSDate *now = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"hh:mm a";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    
+    self.lblTime.text=[[dateFormatter stringFromDate:now] substringToIndex:[[dateFormatter stringFromDate:now] length]-3];
+    self.lblAMOrPM.text=[[dateFormatter stringFromDate:now] substringFromIndex:[[dateFormatter stringFromDate:now] length]-2];
 }
 
 #pragma mark - ---
@@ -879,9 +886,8 @@
         httpClient.parameterEncoding = AFFormURLParameterEncoding;
         [httpClient registerHTTPOperationClass:[AFJSONRequestOperation class]];
         
-        NSString *str=[defaults valueForKey:@"BasicAuth"];
-        
-        [httpClient setDefaultHeader:@"Authorization" value:str];
+        NSString *strAuth=[defaults valueForKey:@"BasicAuth"];
+        [httpClient setDefaultHeader:@"Authorization" value:strAuth];
         //{"storeName":"OPPO Tirumalgherry","address":"Via Rest API","latitude":100.00,"longitude":100.00,"proximityRadius":200}
         if (strUserPhotoPath == nil) {
             strUserPhotoPath=@"locationImagePath";
