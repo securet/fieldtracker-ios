@@ -340,11 +340,10 @@
                                             <constraint firstAttribute="height" constant="44" id="uEC-cz-cCV"/>
                                         </constraints>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time In" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H7h-1D-NOr">
-                                        <rect key="frame" x="62" y="8" width="120" height="21"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time In" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="15" translatesAutoresizingMaskIntoConstraints="NO" id="H7h-1D-NOr">
+                                        <rect key="frame" x="62" y="8" width="448" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="5Wf-Zu-OqU"/>
-                                            <constraint firstAttribute="width" constant="120" id="SJM-t2-Pdo"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -371,6 +370,7 @@
                                     <constraint firstItem="zfF-ub-74y" firstAttribute="top" secondItem="YDF-EJ-gMa" secondAttribute="top" id="06Q-o9-9rv"/>
                                     <constraint firstAttribute="bottom" secondItem="zfF-ub-74y" secondAttribute="bottom" id="3qf-Hm-MJy"/>
                                     <constraint firstItem="H7h-1D-NOr" firstAttribute="top" secondItem="YDF-EJ-gMa" secondAttribute="top" constant="8" id="4Y5-ct-UoV"/>
+                                    <constraint firstItem="HNG-Ni-qKq" firstAttribute="leading" secondItem="H7h-1D-NOr" secondAttribute="trailing" constant="8" id="DSD-58-zRT"/>
                                     <constraint firstItem="CGQ-XS-Wce" firstAttribute="leading" secondItem="YDF-EJ-gMa" secondAttribute="leading" id="FgA-qW-Qqi"/>
                                     <constraint firstAttribute="bottom" secondItem="HNG-Ni-qKq" secondAttribute="bottom" constant="8" id="Hwd-IQ-vm7"/>
                                     <constraint firstItem="E4w-Vr-966" firstAttribute="leading" secondItem="YDF-EJ-gMa" secondAttribute="leading" constant="10" id="LPA-1l-9qY"/>
@@ -1077,7 +1077,8 @@
                     <navigationItem key="navigationItem" id="LJN-dc-mXH"/>
                     <connections>
                         <outlet property="backBtn" destination="Vlj-8H-ZSg" id="hDD-uZ-IR5"/>
-                        <outlet property="bottomVw" destination="CGQ-XS-Wce" id="Lhm-Kb-qsH"/>
+                        <outlet property="bottomVw" destination="CGQ-XS-Wce" id="Vjx-ds-z30"/>
+                        <outlet property="btnForTimeInOut" destination="zfF-ub-74y" id="wk8-L8-Wfn"/>
                         <outlet property="btnPhotoConfirm" destination="PK9-6G-1gz" id="7YG-rF-9DE"/>
                         <outlet property="btnPhotoRetake" destination="ycY-1X-fmg" id="aJz-fB-8Lf"/>
                         <outlet property="cameraBtn" destination="LjV-nH-74Y" id="jTM-pK-sjF"/>
@@ -1105,6 +1106,7 @@
                         <outlet property="vwForCamera" destination="rSW-yu-S3a" id="CSm-WD-rTa"/>
                         <outlet property="vwForImgPreview" destination="37P-Vr-vPr" id="BMe-o7-Scu"/>
                         <outlet property="vwForManager" destination="FSl-xN-1I3" id="c6X-Xi-uDo"/>
+                        <outlet property="vwForTimeInOutBtn" destination="YDF-EJ-gMa" id="7iS-mP-pIo"/>
                         <outlet property="vwForTimer" destination="akI-3S-dHJ" id="Whq-EG-CFW"/>
                         <outlet property="widthOfImgPrvw" destination="8VN-lh-ZWP" id="Bm6-X1-1v6"/>
                     </connections>

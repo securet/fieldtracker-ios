@@ -19,12 +19,16 @@
 
 @property (strong, nonatomic) IBOutlet UIImageView *imgVwUser;
 
-@property (strong, nonatomic) IBOutlet UIView *bottomVw;
+@property (strong, nonatomic) IBOutlet UIImageView *bottomVw;
 
 @property (weak, nonatomic) IBOutlet UILabel *lblFName;
 @property (weak, nonatomic) IBOutlet UILabel *lblLName;
 @property (strong, nonatomic) IBOutlet UILabel *lblTime;
 @property (strong, nonatomic) IBOutlet UILabel *lblAMOrPM;
+
+@property (strong, nonatomic) IBOutlet UIButton *btnForTimeInOut;
+
+@property (strong, nonatomic) IBOutlet UIView *vwForTimeInOutBtn;
 
 @property (strong, nonatomic) IBOutlet UILabel *lblStoreName;
 @property (weak, nonatomic) IBOutlet MKMapView *mapVw;

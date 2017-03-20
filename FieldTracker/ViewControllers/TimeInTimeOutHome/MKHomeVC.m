@@ -126,6 +126,9 @@
     timerForLocation= [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(updateLocationBackground) userInfo:nil repeats:YES];
     timerForClockTime=[NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(clockTimeUpdating) userInfo:nil repeats:YES];
     self.tabBarController.delegate=self;
+    
+    
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -148,6 +151,9 @@
                                     message:@"Please Enable GPS"
                                    delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil] show];
     }
+    
+    [self checkStatus];
+    [self checkForOneTimeLogin];
 }
 
 -(void) tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController{
@@ -167,6 +173,62 @@
     self.lblAMOrPM.text=[[dateFormatter stringFromDate:timeNow] substringFromIndex:[[dateFormatter stringFromDate:timeNow] length]-2];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"clockTimeUpdating" object:nil];
 }
+#pragma mark - 
+
+-(BOOL)checkForOneTimeLogin{
+    
+    NSMutableArray *arrayData=[self getTimeLineData];
+    NSMutableArray *arrayOfDates=[[NSMutableArray alloc] init];
+    NSMutableArray *arrayOfUsernames=[[NSMutableArray alloc] init];
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSMutableDictionary *dictUserData=[[defaults objectForKey:@"UserData"] mutableCopy];
+    
+    NSDate *now = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd";
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+    NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+    
+    BOOL isLoginTodayAlready = false;
+    
+    for (NSDictionary*dict in arrayData) {
+        if ([[dict valueForKey:@"actiontype"] isEqualToString:@"clockOut"]) {
+            [arrayOfDates addObject:dict];
+        }
+    }
+    
+    if (arrayOfDates.count > 0) {
+        for (NSDictionary*dict in arrayOfDates) {
+            if ([[[dict valueForKey:@"clockdate"] substringToIndex:10] isEqualToString:strCurrentTime]){
+                [arrayOfUsernames addObject:dict];
+            }
+        }
+    }else{
+        isLoginTodayAlready = NO;
+    }
+    
+    if (arrayOfUsernames.count > 0) {
+        for (NSDictionary*dict in arrayOfUsernames) {
+            if ([[dict valueForKey:@"username"]  isEqualToString:[dictUserData valueForKey:@"username"]]){
+                isLoginTodayAlready = YES;
+            }
+        }
+    }else{
+        isLoginTodayAlready = NO;
+    }
+    
+    if (!isLoginTodayAlready) {
+        _btnForTimeInOut.enabled = YES;
+    }else{
+        _btnForTimeInOut.enabled = NO;
+         _lblTimeInStatus.text=@"Time In/Out done for today";
+            self.bottomVw.image=[UIImage imageNamed:@""];
+            self.bottomVw.backgroundColor=[UIColor lightGrayColor];
+    }
+    return isLoginTodayAlready;
+}
+
 #pragma mark - Check App Version
 
 -(void)checkAppVersion{
@@ -783,77 +845,8 @@
         if (boolValueForInLocationOrNot){
             
             if ([UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera]){
-                
-                NSMutableArray *arrayData=[self getTimeLineData];
-                NSMutableArray *arrayOfDates=[[NSMutableArray alloc] init];
-                NSMutableArray *arrayOfUsernames=[[NSMutableArray alloc] init];
-                
-                NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-                NSMutableDictionary *dictUserData=[[defaults objectForKey:@"UserData"] mutableCopy];
-                
-                NSDate *now = [NSDate date];
-                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                dateFormatter.dateFormat = @"yyyy-MM-dd";
-                [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-                NSString *strCurrentTime=[dateFormatter stringFromDate:now];
-                
-                BOOL isLoginTodayAlready = false;
-                
-                for (NSDictionary*dict in arrayData) {
-                    //                    NSLog(@"User Name===%@",[dict valueForKey:@"username"]);
-                    //  NSLog(@"Action Type===%@",[dict valueForKey:@"actiontype"]);
-                    //                    NSLog(@"clockdate===%@",[dict valueForKey:@"clockdate"]);
-                    //                    NSLog(@"comments===%@",[dict valueForKey:@"comments"]);
-                    //                    NSLog(@"latitude===%@",[dict valueForKey:@"latitude"]);
-                    //                    NSLog(@"longitude===%@",[dict valueForKey:@"longitude"]);
-                    //                    NSLog(@"productstoreid===%@",[dict valueForKey:@"productstoreid"]);
-                    //                    NSLog(@"issend===%@",[dict valueForKey:@"issend"]);
-                    if ([[dict valueForKey:@"actiontype"] isEqualToString:@"clockOut"]) {
-                        [arrayOfDates addObject:dict];
-                    }
-                }
-                
-                if (arrayOfDates.count > 0) {
-                    for (NSDictionary*dict in arrayOfDates) {
-                        if ([[[dict valueForKey:@"clockdate"] substringToIndex:10] isEqualToString:strCurrentTime]){
-                            [arrayOfUsernames addObject:dict];
-                        }
-                    }
-                }else{
-                    isLoginTodayAlready = NO;
-                }
-                
-                if (arrayOfUsernames.count > 0) {
-                    for (NSDictionary*dict in arrayOfUsernames) {
-                        if ([[dict valueForKey:@"username"]  isEqualToString:[dictUserData valueForKey:@"username"]]){
-                            isLoginTodayAlready = YES;
-                            NSLog(@"User had Time In Today Already==%i",isLoginTodayAlready);
-                        }
-                    }
-                }else{
-                    isLoginTodayAlready = NO;
-                }
-                
-                if (!isLoginTodayAlready) {
+                if (![self checkForOneTimeLogin]) {
                     [self openCamera];
-                    //                if ([[dictUserData valueForKey:@"username"] isEqualToString:[[arrayData lastObject] valueForKey:@"username"]]) {
-                    //                    if ([[[arrayData lastObject] valueForKey:@"actiontype"] isEqualToString:@"clockOut"]) {
-                    //                        //2017-03-01T17:40:21+0530
-                    //                        if ([strCurrentTime isEqualToString:[[[arrayData lastObject] valueForKey:@"clockdate"] substringToIndex:10]]) {
-                    //                            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Time In/Out done for today" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                    //                            [alert show];
-                    //                        }else{
-                    //                            [self openCamera];
-                    //                        }
-                    //                    }else{
-                    //                        [self openCamera];
-                    //                    }
-                    //                }else{
-                    //                    [self openCamera];
-                    //                }
-                }else{
-                    UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Time In/Out done for today" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                    [alert show];
                 }
             }else{
                 UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"No Camera" message:@"Camera Is Not Available" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -898,6 +891,7 @@
         if (buttonIndex == 1) {
             [self saveDataIntoLocal:NO];
             [self getTimeLineData];
+            [self checkForOneTimeLogin];
         }
     }
 }
@@ -1431,21 +1425,38 @@
     NSDictionary *statusData=[self getStatus];
     
     if ([[statusData valueForKey:@"status"] length]<=0) {
-        self.lblTimeInStatus.text=@"Time In";
+        if (![self checkForOneTimeLogin]) {
+            self.lblTimeInStatus.text=@"Time In";
+            self.bottomVw.image=[UIImage imageNamed:@"topbar"];
+            self.bottomVw.backgroundColor=[UIColor clearColor];
+        }else{
+            self.lblTimeInStatus.text=@"Time In/Out done for today";
+            self.bottomVw.image=[UIImage imageNamed:@""];
+            self.bottomVw.backgroundColor=[UIColor lightGrayColor];
+        }
         self.vwForTimer.hidden=YES;
         timerForShiftTime=nil;
         [timerForShiftTime invalidate];
         
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeIn"]){
+        self.bottomVw.image=[UIImage imageNamed:@"topbar"];
         self.lblTimeInStatus.text=@"Time Out";
         self.vwForTimer.hidden=NO;
-        
         NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
         NSString *strTime=[defaults objectForKey:@"TimeIn"];
         [self getTimerForTimeIn:strTime];
         // [self getTimerForTimeIn:[statusData valueForKey:@"time"]];
     }else if([[statusData valueForKey:@"status"] isEqualToString:@"TimeOut"]){
-        self.lblTimeInStatus.text=@"Time In";
+        if (![self checkForOneTimeLogin]) {
+             self.lblTimeInStatus.text=@"Time In";
+            self.bottomVw.image=[UIImage imageNamed:@"topbar"];
+            self.bottomVw.backgroundColor=[UIColor clearColor];
+        }else{
+             self.lblTimeInStatus.text=@"Time In/Out done for today";
+            self.bottomVw.image=[UIImage imageNamed:@""];
+            self.bottomVw.backgroundColor=[UIColor lightGrayColor];
+            
+        }
         self.vwForTimer.hidden=YES;
         timerForShiftTime=nil;
         [timerForShiftTime invalidate];
@@ -1652,12 +1663,10 @@
             }];
             
             tempArray =[[[tempArray reverseObjectEnumerator] allObjects] mutableCopy];
-            
             NSMutableArray *correctOrderStringArray = [NSMutableArray array];
             
-            for (NSDate *date_1 in tempArray) {
-                //      NSString *dateString = [formatter stringFromDate:date_1];
-                [correctOrderStringArray addObject:date_1.description];
+            for (NSDate *date in tempArray) {
+                [correctOrderStringArray addObject:date.description];
             }
             
             arrayForStatusData = [correctOrderStringArray mutableCopy];

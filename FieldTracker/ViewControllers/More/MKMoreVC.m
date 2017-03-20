@@ -190,7 +190,6 @@
     self.vwForImgPreview.hidden = YES;
 }
 
-
 -(void)clockTimeUpdating{
     NSDate *now = [NSDate date];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -2414,8 +2413,13 @@
                     }
                 }
             }
+            
+            if ([[JSON objectForKey:@"employeeLeavesList"] count] <= 0) {
+                countForLeaveData=0;
+            }
+            
             [self.tableVwForLeaveRqst reloadData];
-            NSLog(@"Leave List==%@",arrayForLeaveHistory);
+            NSLog(@"Leave List==%@",JSON);
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -2467,24 +2471,20 @@
             NSDictionary * json;
             NSMutableURLRequest *request;
             
-            
             NSDate *now = [NSDate date];
             NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
             dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
             [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-            NSTimeZone *timeZone = [NSTimeZone localTimeZone];
-            NSString *tzName = [timeZone name];
-            
-            //  NSLog(@"The Current Time is %@====%@",[dateFormatter stringFromDate:now],tzName);
+     
             NSString *strCurrentTime=[dateFormatter stringFromDate:now];
             strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+     
+            //            NSString *strStartDate=[NSString stringWithFormat:@"%@%@",self.txtFieldStartDate.text,[strCurrentTime substringFromIndex:10]];
+            //            NSString *strEndDate=[NSString stringWithFormat:@"%@%@",self.txtFieldEndDate.text,[strCurrentTime substringFromIndex:10]];
+
+            NSString *strStartDate=[NSString stringWithFormat:@"%@",self.txtFieldStartDate.text];
             
-            
-            NSLog(@"%@",[strCurrentTime substringFromIndex:10]);
-            
-            NSString *strStartDate=[NSString stringWithFormat:@"%@%@",self.txtFieldStartDate.text,[strCurrentTime substringFromIndex:10]];
-            NSString *strEndDate=[NSString stringWithFormat:@"%@%@",self.txtFieldEndDate.text,[strCurrentTime substringFromIndex:10]];
-            
+            NSString *strEndDate=[NSString stringWithFormat:@"%@",self.txtFieldEndDate.text];
             
             if (isLeaveEditRNew) {
                 json = @{@"leaveTypeEnumId":leaveTypeEnumID,
@@ -2684,14 +2684,26 @@
         NSDictionary * json;
         NSMutableURLRequest *request;
         
-        NSDate *now = [NSDate date];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ssZ";
-        [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-
-        NSString *strCurrentTime=[dateFormatter stringFromDate:now];
-        strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+//        NSDate *now = [NSDate date];
+//        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//        dateFormatter.dateFormat = @"yyyy-MM-dd";
+//        [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+//
+//        NSString *strCurrentTime=[dateFormatter stringFromDate:now];
+//        strCurrentTime = [strCurrentTime stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+        
+        
         NSString *strStartDate=[NSString stringWithFormat:@"%@",self.txtFieldStartDate.text];
+        
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+        NSDate *dateFromString = [[NSDate alloc] init];
+        dateFromString = [dateFormatter dateFromString:strStartDate];
+        NSTimeInterval timeInMiliseconds = [dateFromString timeIntervalSince1970]*1000;
+        
+        strStartDate=[[NSString stringWithFormat:@"%f",timeInMiliseconds] stringByReplacingOccurrencesOfString:@".000000" withString:@""  ];
+        
+    
         NSString *strEndDate=[NSString stringWithFormat:@"%@",self.txtFieldEndDate.text];
         NSString *partyRelationshipId=[[arrayForLeaveHistory objectAtIndex:indexValueForLeaveEdit] valueForKey:@"partyRelationshipId"];
         
@@ -3090,7 +3102,9 @@
             
             cellLeave.lblForTypeOfLeave.text=@"";
             strLeaveApprove=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
-            
+//            if (![[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"]) {
+//                
+//            }
             NSString *strFirstName;
             if (![[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"firstName"] isKindOfClass:[NSNull class]]) {
                 strFirstName=[[arrayForLeaveApprovalList objectAtIndex:indexPath.row] valueForKey:@"firstName"];
@@ -3124,6 +3138,10 @@
         if (![strLeaveApprove isKindOfClass:[NSNull class]]) {
             if ([strLeaveApprove isEqualToString:@"Y"]) {
                 cellLeave.lblForStatusOfLeave.text=@"Approved";
+            }else if ([strLeaveApprove isEqualToString:@"N"]) {
+                cellLeave.lblForStatusOfLeave.text=@"Rejected";
+            }else{
+                cellLeave.lblForStatusOfLeave.text=@"Pending";
             }
         }else{
             cellLeave.lblForStatusOfLeave.text=@"Pending";
@@ -3334,8 +3352,7 @@
         
         NSString *strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
         
-        if ([strLeaveApprove isKindOfClass:[NSNull class]]) {
-            
+        if (![strLeaveApprove isKindOfClass:[NSNull class]] && ![strLeaveApprove isEqualToString:@"Y"] && ![strLeaveApprove isEqualToString:@"N"]) {
             [self emptyLeaveRequestFields];
             //  [self getLeaveType:indexPath.row];
             indexValueForLeaveEdit=indexPath.row;
@@ -3345,17 +3362,23 @@
             [self leaveRequestEdit:indexPath.row];
         }
     }else if (tableView == self.tableVwForLeaveApproval){
-        indexValueForLeaveEdit=indexPath.row;
-        self.txtFieldLeaveComments.text=@"";
+        
         arrayForLeaveHistory=arrayForLeaveApprovalList;
-        [self emptyLeaveRequestFields];
-        //  [self getLeaveType:indexPath.row];
-        self.backBtn.hidden = NO;
-        self.vwForLeaveRqstAdd.hidden = NO;
-        [self.btnLeaveRqstSubmit setTitle:@"Approve" forState:UIControlStateNormal];
-        [self.btnLeaveRqstCancel setTitle:@"Reject" forState:UIControlStateNormal];
-        [self leaveRequestEdit:indexPath.row];
-        [self disableLeaveRequestFields];
+        
+        NSString *strLeaveApprove=[[arrayForLeaveHistory objectAtIndex:indexPath.row] valueForKey:@"leaveApproved"];
+        
+        if (![strLeaveApprove isEqualToString:@"Y"] && ![strLeaveApprove isEqualToString:@"N"]) {
+            indexValueForLeaveEdit=indexPath.row;
+            self.txtFieldLeaveComments.text=@"";
+            [self emptyLeaveRequestFields];
+            //  [self getLeaveType:indexPath.row];
+            self.backBtn.hidden = NO;
+            self.vwForLeaveRqstAdd.hidden = NO;
+            [self.btnLeaveRqstSubmit setTitle:@"Approve" forState:UIControlStateNormal];
+            [self.btnLeaveRqstCancel setTitle:@"Reject" forState:UIControlStateNormal];
+            [self leaveRequestEdit:indexPath.row];
+            [self disableLeaveRequestFields];
+        }
     }else if (tableView == self.tableVwForReporties){
         
         strForReporteeUserName=[[arrayForReportee objectAtIndex:indexPath.row] valueForKey:@"username"];
@@ -3590,10 +3613,8 @@
         
         strURL=[strURL stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"];
         
-        
         NSString *urlEncoded = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,(CFStringRef)strPath,NULL,(CFStringRef)@"+",kCFStringEncodingUTF8));
         NSLog(@"Encoded String===%@",urlEncoded);
-        
         
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"GET"
                                                                 path:urlEncoded
