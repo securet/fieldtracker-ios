@@ -14,47 +14,24 @@
 
 @interface MKMoreVC ()<RSDFDatePickerViewDelegate,RSDFDatePickerViewDataSource>
 {
-    NSMutableArray *arrayForTableData;
-    NSMutableArray *arrayForStoreList;
-    NSMutableArray *arrayForPromoters;
-    NSMutableArray *arrayForLeaveHistory;
-    NSMutableArray *arrayForLeaveApprovalList;
-    NSMutableArray *arrayForReportee;
-    NSMutableArray *arrayForReporteeHistory;
-    NSMutableArray *arrayForReporteeStatusData;
-    
+    NSMutableArray *arrayForTableData,*arrayForStoreList,*arrayForPromoters,*arrayForLeaveHistory,*arrayForLeaveApprovalList,*arrayForReportee,*arrayForReporteeHistory,*arrayForReporteeStatusData;
     NSInteger countForReporteeHistory,countForReportee;
-    
     NSString *strForReporteeUserName;
-    
     NSInteger countForLeaveData,pageNumberForLeave,indexValueForLeaveEdit,leaveApprovalListCount,pageNumberForLeaveApproval,countForStoreList;
     BOOL isLeaveEditRNew;
     NSDictionary *dictForLeaveTypes;
-    
     NSString *strForCurLatitude,*strForCurLongitude;
-    
     BOOL isStartOrEndDate;
-    
     NSInteger indexValueOfPromoterEdit;
-    
     UIImage *imgToSend;
-    
     NSString *stringForImagePurpose;
-    
-    NSString *strUserPhotoPath;
-    NSString *strAadharIDPath;
-    NSString *strAddressProofPath;
-    NSString *storeIDForPromoterAdd;
-    
+    NSString *strUserPhotoPath, *strAadharIDPath,*strAddressProofPath,*storeIDForPromoterAdd;
     NSInteger arrayCountToCheck;
     NSInteger pageNumber;
-    
     AVCaptureSession *captureSession;
     AVCaptureVideoPreviewLayer *videoPreviewLayer;
     AVCaptureStillImageOutput *stillImageOutput;
-    
     NSString *leaveTypeEnumID,*leaveReasonEnumID;
-    
     __weak IBOutlet RSDFDatePickerView *datePicker;
     
     NSString *roleType;
@@ -781,7 +758,7 @@
         textView.text=@"Address";
     }
 }
-
+  
 #pragma mark - Add StoreView
 
 -(void)setUpForAddStore:(NSInteger)indexValue{
@@ -939,6 +916,10 @@
                 UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Store Edited Successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
             }
+            
+            pageNumber = 0;
+            [arrayForStoreList removeAllObjects];
+            [self getStores];
         }
          //==================================================ERROR
                                          failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -1910,7 +1891,6 @@
     [data writeToFile:savedImagePath atomically:NO];
     
     return savedImagePath;
-    
 }
 
 -(void)onClickPhotoConfirm:(UIButton*)sender{
@@ -2138,6 +2118,10 @@
                                                   strAddressProofPath=[jsonData valueForKey:@"savedFilename"];
                                                   JSBadgeView *badgeView = [[JSBadgeView alloc] initWithParentView:self.btnAdressProofPromoter alignment:JSBadgeViewAlignmentTopRight];
                                                   badgeView.badgeText = [NSString stringWithFormat:@" "];
+                                              }
+                                              
+                                              if ([jsonData valueForKey:@"savedFilename"]) {
+                                                  [[[UIAlertView alloc] initWithTitle:@"" message:@"Image uploaded successfuly" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
                                               }
                                           }
                                           [DejalBezelActivityView removeView];
@@ -2515,7 +2499,7 @@
                 request = [httpClient requestWithMethod:@"PUT"
                                                    path:@"/rest/s1/ft/leaves"
                                              parameters:json];
-                NSLog(@"Json URL---PUT===%@",json);
+                NSLog(@"Json URL--/rest/s1/ft/leaves---PUT===%@",json);
             }
             
             //====================================================RESPONSE
@@ -2534,8 +2518,15 @@
                 self.vwForLeaveRqstAdd.hidden = YES;
                 if ([JSON objectForKey:@"employeeLeave"] && isLeaveEditRNew) {
                     
+                    [arrayForLeaveHistory removeAllObjects];
+                    pageNumberForLeave = 0;
+                    
+                    [self getMyLeaveHistory];
+                    
                     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:@"Leave requested successfully" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert show];
+                    
+                    
                 }else{
                     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Success" message:[JSON valueForKey:@"messages"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert show];
